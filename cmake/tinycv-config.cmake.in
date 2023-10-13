@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.10)
+
+if(TARGET "tinycv_static")
+    return()
+endif()
+
+add_library(tinycv_static STATIC IMPORTED)
+
+# --------------------------------------------------------------------------- #
+
+set(__TINYCV_PACKAGE_ROOTDIR__ "${CMAKE_CURRENT_LIST_DIR}/../../..")
+
+# --------------------------------------------------------------------------- #
+
+# exported definitions
+
+set(TINYCV_VERSION_MAJOR @TINYCV_VERSION_MAJOR@)
+set(TINYCV_VERSION_MINOR @TINYCV_VERSION_MINOR@)
+set(TINYCV_VERSION_PATCH @TINYCV_VERSION_PATCH@)
+
+set(TINYCV_USE_X86 @TINYCV_USE_X86@)
+set(TINYCV_USE_ARM @TINYCV_USE_ARM@)
+
+set(TINYCV_INCLUDE_DIRS "${__TINYCV_PACKAGE_ROOTDIR__}/include")
+set(TINYCV_LIBRARIES "tinycv_static")
+
+# --------------------------------------------------------------------------- #
+
+if(MSVC)
+    set_target_properties(tinycv_static PROPERTIES
+        IMPORTED_LOCATION "${__TINYCV_PACKAGE_ROOTDIR__}/lib/tinycv_static.lib"
+        IMPORTED_LOCATION_DEBUG "${__TINYCV_PACKAGE_ROOTDIR__}/lib/tinycv_static.lib"
+        IMPORTED_LOCATION_RELEASE "${__TINYCV_PACKAGE_ROOTDIR__}/lib/tinycv_static.lib")
+else()
+    set_target_properties(tinycv_static PROPERTIES
+        IMPORTED_LOCATION "${__TINYCV_PACKAGE_ROOTDIR__}/lib/libtinycv_static.a"
+        IMPORTED_LOCATION_DEBUG "${__TINYCV_PACKAGE_ROOTDIR__}/lib/libtinycv_static.a"
+        IMPORTED_LOCATION_RELEASE "${__TINYCV_PACKAGE_ROOTDIR__}/lib/libtinycv_static.a")
+endif()
+
+# --------------------------------------------------------------------------- #
+
+unset(__TINYCV_PACKAGE_ROOTDIR__)

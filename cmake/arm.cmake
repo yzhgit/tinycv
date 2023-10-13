@@ -1,0 +1,19 @@
+# AARCH64 source cmake script
+
+set(TINYCV_USE_ARM ON)
+
+file(GLOB TINYCV_AARCH64_PUBLIC_HEADERS src/tinycv/arm/*.h)
+install(FILES ${TINYCV_AARCH64_PUBLIC_HEADERS}
+        DESTINATION include/tinycv/arm)
+
+list(APPEND TINYCV_COMPILE_DEFINITIONS TINYCV_USE_AARCH64)
+
+file(GLOB TINYCV_AARCH64_SRC
+     src/tinycv/arm/*.cpp)
+list(APPEND TINYCV_SRC ${TINYCV_AARCH64_SRC})
+
+# glob benchmark and unittest sources
+file(GLOB TINYCV_AARCH64_BENCHMARK_SRC "src/tinycv/arm/*_benchmark.cpp")
+file(GLOB TINYCV_AARCH64_UNITTEST_SRC "src/tinycv/arm/*_unittest.cpp")
+list(APPEND TINYCV_BENCHMARK_SRC ${TINYCV_AARCH64_BENCHMARK_SRC})
+list(APPEND TINYCV_UNITTEST_SRC ${TINYCV_AARCH64_UNITTEST_SRC})
