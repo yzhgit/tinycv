@@ -15,16 +15,18 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "benchmark/benchmark.h"
 #include "tinycv/debug.h"
 
-int main(int argc, char** argv)
+#include "benchmark/benchmark.h"
+
+int main(int argc, char **argv)
 {
 #ifdef TINYCV_BENCHMARK_OPENCV
     cv::setNumThreads(0);
 #endif // TINYCV_BENCHMARK_OPENCV
     ::benchmark::Initialize(&argc, argv);
-    if (::benchmark::ReportUnrecognizedArguments(argc, argv)) return 1;
+    if (::benchmark::ReportUnrecognizedArguments(argc, argv))
+        return 1;
     ::benchmark::RunSpecifiedBenchmarks();
     return 0;
 }

@@ -15,34 +15,35 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/resize.h"
-#include "tinycv/types.h"
-#include "operation_utils.hpp"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <algorithm>
 #include <arm_neon.h>
 #include <float.h>
 #include <limits.h>
-#include <algorithm>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "tinycv/resize.h"
+#include "tinycv/types.h"
+
+#include "operation_utils.hpp"
 
 namespace tinycv {
 
-template <typename Tsrc, typename Tdst, int32_t nc>
+template<typename Tsrc, typename Tdst, int32_t nc>
 void resizeNearestPoint(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const Tsrc* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    Tdst* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const Tsrc *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        Tdst *outData)
 {
     int32_t x, y;
-    int32_t* x_ofs = (int32_t*)malloc(outWidth * sizeof(int32_t));
+    int32_t *x_ofs = (int32_t *)malloc(outWidth * sizeof(int32_t));
     double fx = (double)outWidth / inWidth;
     double fy = (double)outHeight / inHeight;
     double ifx = 1. / fx;
@@ -53,9 +54,9 @@ void resizeNearestPoint(
         x_ofs[x] = std::min(sx, inWidth - 1) * pix_size;
     }
     for (y = 0; y < outHeight; y++) {
-        Tdst* D = outData + y * outWidthStride;
+        Tdst *D = outData + y * outWidthStride;
         int32_t sy = std::min(int32_t(y * ify), inHeight - 1);
-        const Tsrc* S = inData + sy * inWidthStride;
+        const Tsrc *S = inData + sy * inWidthStride;
         for (x = 0; x < outWidth; x++) {
             for (int32_t i = 0; i < nc; i++) {
                 Tsrc t0 = S[x_ofs[x] + i];
@@ -66,19 +67,19 @@ void resizeNearestPoint(
     free(x_ofs);
 }
 
-template <>
+template<>
 void resizeNearestPoint<float, float, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData) // resize_nereast_f32c1
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData) // resize_nereast_f32c1
 {
     int32_t x, y;
-    int32_t* x_ofs = (int32_t*)malloc(outWidth * sizeof(int32_t));
+    int32_t *x_ofs = (int32_t *)malloc(outWidth * sizeof(int32_t));
     double fx = (double)outWidth / inWidth;
     double fy = (double)outHeight / inHeight;
     double ifx = 1.0f / fx;
@@ -88,9 +89,9 @@ void resizeNearestPoint<float, float, 1>(
         x_ofs[x] = std::min(sx, inWidth - 1);
     }
     for (y = 0; y < outHeight; y++) {
-        float* D = outData + y * outWidthStride;
+        float *D = outData + y * outWidthStride;
         int32_t sy = std::min(int32_t(y * ify), inHeight - 1);
-        const float* S = inData + sy * inWidthStride;
+        const float *S = inData + sy * inWidthStride;
         for (x = 0; x + 4 <= outWidth; x += 4) {
             int32_t x0 = x_ofs[x];
             int32_t x1 = x_ofs[x + 1];
@@ -106,19 +107,19 @@ void resizeNearestPoint<float, float, 1>(
     free(x_ofs);
 }
 
-template <>
+template<>
 void resizeNearestPoint<float, float, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData) // resize_nereast_f32c3
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData) // resize_nereast_f32c3
 {
     int32_t x, y;
-    int32_t* x_ofs = (int32_t*)malloc(outWidth * sizeof(int32_t));
+    int32_t *x_ofs = (int32_t *)malloc(outWidth * sizeof(int32_t));
     double fx = (double)outWidth / inWidth;
     double fy = (double)outHeight / inHeight;
     double ifx = 1.0f / fx;
@@ -129,9 +130,9 @@ void resizeNearestPoint<float, float, 3>(
         x_ofs[x] = std::min(sx, inWidth - 1) * nc;
     }
     for (y = 0; y < outHeight; y++) {
-        float* D = outData + y * outWidthStride;
+        float *D = outData + y * outWidthStride;
         int32_t sy = std::min(int32_t(y * ify), inHeight - 1);
-        const float* S = inData + sy * inWidthStride;
+        const float *S = inData + sy * inWidthStride;
         for (x = 0; x + 4 <= outWidth; x += 4) {
             int32_t x0 = x_ofs[x];
             int32_t x1 = x_ofs[x + 1];
@@ -152,19 +153,19 @@ void resizeNearestPoint<float, float, 3>(
     free(x_ofs);
 }
 
-template <>
+template<>
 void resizeNearestPoint<float, float, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData) // resize_nereast_f32c4
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData) // resize_nereast_f32c4
 {
     int32_t x, y;
-    int32_t* x_ofs = (int32_t*)malloc(outWidth * sizeof(int32_t));
+    int32_t *x_ofs = (int32_t *)malloc(outWidth * sizeof(int32_t));
     double fx = (double)outWidth / inWidth;
     double fy = (double)outHeight / inHeight;
     double ifx = 1.0f / fx;
@@ -175,9 +176,9 @@ void resizeNearestPoint<float, float, 4>(
         x_ofs[x] = std::min(sx, inWidth - 1) * nc;
     }
     for (y = 0; y < outHeight; y++) {
-        float* D = outData + y * outWidthStride;
+        float *D = outData + y * outWidthStride;
         int32_t sy = std::min(int32_t(y * ify), inHeight - 1);
-        const float* S = inData + sy * inWidthStride;
+        const float *S = inData + sy * inWidthStride;
         for (x = 0; x + 4 <= outWidth; x += 4) {
             int32_t x0 = x_ofs[x];
             int32_t x1 = x_ofs[x + 1];
@@ -204,19 +205,19 @@ void resizeNearestPoint<float, float, 4>(
 }
 
 static void img_resize_cal_offset_linear_f32(
-    int32_t* xofs,
-    float* ialpha,
-    int32_t* yofs,
-    float* ibeta,
-    int32_t* xmin,
-    int32_t* xmax,
-    int32_t ksize,
-    int32_t ksize2,
-    int32_t srcw,
-    int32_t srch,
-    int32_t dstw,
-    int32_t dsth,
-    int32_t channels)
+        int32_t *xofs,
+        float *ialpha,
+        int32_t *yofs,
+        float *ibeta,
+        int32_t *xmin,
+        int32_t *xmax,
+        int32_t ksize,
+        int32_t ksize2,
+        int32_t srcw,
+        int32_t srch,
+        int32_t dstw,
+        int32_t dsth,
+        int32_t channels)
 {
     float inv_scale_x = (float)dstw / srcw;
     float inv_scale_y = (float)dsth / srch;
@@ -275,16 +276,16 @@ static void img_resize_cal_offset_linear_f32(
 }
 
 void img_hresize_4channels_linear_neon_f32(
-    const float** src,
-    float** dst,
-    int32_t count,
-    const int32_t* xofs,
-    const float* alpha,
-    int32_t swidth,
-    int32_t dwidth,
-    int32_t cn,
-    int32_t xmin,
-    int32_t xmax)
+        const float **src,
+        float **dst,
+        int32_t count,
+        const int32_t *xofs,
+        const float *alpha,
+        int32_t swidth,
+        int32_t dwidth,
+        int32_t cn,
+        int32_t xmin,
+        int32_t xmax)
 {
     int32_t dx, k;
     int32_t dx0 = 0;
@@ -330,8 +331,8 @@ void img_hresize_4channels_linear_neon_f32(
     // for (; k < count; k++)
     if (count == 1) {
         k = 0;
-        const float* S = src[k];
-        float* D = dst[k];
+        const float *S = src[k];
+        float *D = dst[k];
         for (dx = 0; dx < xmax; dx += 4) {
             int32_t sx = xofs[dx];
 
@@ -354,16 +355,16 @@ void img_hresize_4channels_linear_neon_f32(
 }
 
 static void img_hresize_linear_c_f32(
-    const float** src,
-    float** dst,
-    int32_t count,
-    const int32_t* xofs,
-    const float* alpha,
-    int32_t swidth,
-    int32_t dwidth,
-    int32_t cn,
-    int32_t xmin,
-    int32_t xmax)
+        const float **src,
+        float **dst,
+        int32_t count,
+        const int32_t *xofs,
+        const float *alpha,
+        int32_t swidth,
+        int32_t dwidth,
+        int32_t cn,
+        int32_t xmin,
+        int32_t xmax)
 {
     int32_t dx, k;
 
@@ -392,8 +393,8 @@ static void img_hresize_linear_c_f32(
     // for (; k < count; k++)
     if (count == 1) {
         k = 0;
-        const float* S = src[k];
-        float* D = dst[k];
+        const float *S = src[k];
+        float *D = dst[k];
         for (dx = k0; dx < xmax; dx++) {
             int32_t sx = xofs[dx];
             D[dx] = S[sx] * alpha[dx * 2] + S[sx + cn] * alpha[dx * 2 + 1];
@@ -405,10 +406,10 @@ static void img_hresize_linear_c_f32(
 }
 
 void img_vresize_linear_neon_f32(
-    const float** src,
-    float* dst,
-    const float* beta,
-    int32_t width)
+        const float **src,
+        float *dst,
+        const float *beta,
+        int32_t width)
 {
     const float *S0 = src[0], *S1 = src[1];
 
@@ -457,25 +458,25 @@ void img_vresize_linear_neon_f32(
 }
 
 static void img_resize_generic_linear_neon_f32(
-    const float* src,
-    float* dst,
-    const int32_t* xofs,
-    const float* _alpha,
-    const int32_t* yofs,
-    const float* _beta,
-    int32_t xmin,
-    int32_t xmax,
-    int32_t ksize,
-    int32_t srcw,
-    int32_t srch,
-    int32_t srcstep,
-    int32_t dstw,
-    int32_t dsth,
-    int32_t dststep,
-    int32_t channels)
+        const float *src,
+        float *dst,
+        const int32_t *xofs,
+        const float *_alpha,
+        const int32_t *yofs,
+        const float *_beta,
+        int32_t xmin,
+        int32_t xmax,
+        int32_t ksize,
+        int32_t srcw,
+        int32_t srch,
+        int32_t srcstep,
+        int32_t dstw,
+        int32_t dsth,
+        int32_t dststep,
+        int32_t channels)
 {
-    const float* alpha = _alpha;
-    const float* beta = _beta;
+    const float *alpha = _alpha;
+    const float *beta = _beta;
     int32_t cn = channels;
     srcw *= cn;
     dstw *= cn;
@@ -484,10 +485,10 @@ static void img_resize_generic_linear_neon_f32(
     // int32_t dststep = (int32_t) align_size (dstw, 4);
     // int32_t dststep = dstw;
 
-    float* buffer_ = (float*)malloc(bufstep * ksize * sizeof(float));
+    float *buffer_ = (float *)malloc(bufstep * ksize * sizeof(float));
 
-    const float* srows[MAX_ESIZE];
-    float* rows[MAX_ESIZE];
+    const float *srows[MAX_ESIZE];
+    float *rows[MAX_ESIZE];
     int32_t prev_sy[MAX_ESIZE];
     int32_t k, dy;
     xmin *= cn;
@@ -495,7 +496,7 @@ static void img_resize_generic_linear_neon_f32(
 
     for (k = 0; k < ksize; k++) {
         prev_sy[k] = -1;
-        rows[k] = (float*)buffer_ + bufstep * k;
+        rows[k] = (float *)buffer_ + bufstep * k;
     }
 
     // image resize is a separable operation. In case of not too strong
@@ -514,7 +515,7 @@ static void img_resize_generic_linear_neon_f32(
             }
             if (k1 == ksize)
                 k0 = FUNC_MIN(k0, k); // remember the first row that needs to be computed
-            srows[k] = (const float*)(src + srcstep * sy);
+            srows[k] = (const float *)(src + srcstep * sy);
             prev_sy[k] = sy;
         }
 
@@ -526,7 +527,7 @@ static void img_resize_generic_linear_neon_f32(
             else
                 img_hresize_linear_c_f32(srows + k0, rows + k0, ksize - k0, xofs, alpha, srcw, dstw, cn, xmin, xmax);
         }
-        img_vresize_linear_neon_f32((const float**)rows, (float*)(dst + dststep * dy), beta, dstw);
+        img_vresize_linear_neon_f32((const float **)rows, (float *)(dst + dststep * dy), beta, dstw);
     }
 
     free(buffer_);
@@ -534,15 +535,15 @@ static void img_resize_generic_linear_neon_f32(
 }
 
 bool img_resize_bilinear_neon_shrink2_f32(
-    float* dst,
-    uint32_t dst_width,
-    uint32_t dst_height,
-    uint32_t dst_stride,
-    const float* src,
-    uint32_t src_width,
-    uint32_t src_height,
-    uint32_t src_stride,
-    uint32_t channels)
+        float *dst,
+        uint32_t dst_width,
+        uint32_t dst_height,
+        uint32_t dst_stride,
+        const float *src,
+        uint32_t src_width,
+        uint32_t src_height,
+        uint32_t src_stride,
+        uint32_t channels)
 {
     if (src_width % 2 != 0 || dst_width != src_width / 2 ||
         src_height % 2 != 0 || dst_height != src_height / 2) {
@@ -554,8 +555,8 @@ bool img_resize_bilinear_neon_shrink2_f32(
     int32_t cn = channels;
     if (channels == 1) {
         for (int32_t i = 0; i < dsth; i++) {
-            const float* row1 = src + (2 * i) * src_stride;
-            const float* row2 = src + (2 * i + 1) * src_stride;
+            const float *row1 = src + (2 * i) * src_stride;
+            const float *row2 = src + (2 * i + 1) * src_stride;
             int32_t j = 0;
             for (; j <= dstw - 4; j += 4) {
                 float32x4x2_t q0 = vld2q_f32(row1 + 2 * j);
@@ -577,8 +578,8 @@ bool img_resize_bilinear_neon_shrink2_f32(
         }
     } else if (cn == 4) {
         for (int32_t i = 0; i < dsth; i++) {
-            const float* row1 = src + (2 * i) * src_stride;
-            const float* row2 = src + (2 * i + 1) * src_stride;
+            const float *row1 = src + (2 * i) * src_stride;
+            const float *row2 = src + (2 * i + 1) * src_stride;
 
             for (int32_t j = 0; j < dstw; j++) {
                 float32x4_t q0 = vld1q_f32(row1 + j * 8);
@@ -593,8 +594,8 @@ bool img_resize_bilinear_neon_shrink2_f32(
         }
     } else {
         for (int32_t i = 0; i < dsth; i++) {
-            const float* row1 = src + (2 * i) * src_stride;
-            const float* row2 = src + (2 * i + 1) * src_stride;
+            const float *row1 = src + (2 * i) * src_stride;
+            const float *row2 = src + (2 * i + 1) * src_stride;
             int32_t j = 0;
             for (; j < dstw; j++) {
                 for (int32_t c = 0; c < cn; c++) {
@@ -609,15 +610,15 @@ bool img_resize_bilinear_neon_shrink2_f32(
 }
 
 void img_resize_bilinear_neon_f32(
-    float* dst,
-    uint32_t dst_width,
-    uint32_t dst_height,
-    uint32_t dst_stride,
-    const float* src,
-    uint32_t src_width,
-    uint32_t src_height,
-    uint32_t src_stride,
-    uint32_t channels)
+        float *dst,
+        uint32_t dst_width,
+        uint32_t dst_height,
+        uint32_t dst_stride,
+        const float *src,
+        uint32_t src_width,
+        uint32_t src_height,
+        uint32_t src_stride,
+        uint32_t channels)
 {
     if (src_width % 2 == 0 && dst_width == src_width / 2 &&
         src_height % 2 == 0 && dst_height == src_height / 2 && (channels == 1 || channels == 4)) {
@@ -641,12 +642,12 @@ void img_resize_bilinear_neon_f32(
     ksize = 2;
     ksize2 = ksize / 2;
 
-    uint8_t* buffer_ = (uint8_t*)malloc((width + dsth) * (sizeof(int32_t) + sizeof(float) * ksize));
+    uint8_t *buffer_ = (uint8_t *)malloc((width + dsth) * (sizeof(int32_t) + sizeof(float) * ksize));
 
-    int32_t* xofs = (int32_t*)buffer_;
-    int32_t* yofs = xofs + width;
-    float* ialpha = (float*)(yofs + dsth);
-    float* ibeta = ialpha + width * ksize;
+    int32_t *xofs = (int32_t *)buffer_;
+    int32_t *yofs = xofs + width;
+    float *ialpha = (float *)(yofs + dsth);
+    float *ibeta = ialpha + width * ksize;
 
     img_resize_cal_offset_linear_f32(xofs, ialpha, yofs, ibeta, &xmin, &xmax, ksize, ksize2, srcw, srch, dstw, dsth, cn);
 
@@ -662,21 +663,21 @@ struct DecimateAlpha {
     float alpha;
 };
 
-template <typename T>
+template<typename T>
 T img_saturate_cast(float x);
 
-template <>
+template<>
 inline float img_saturate_cast<float>(float x)
 {
     return (x > FLT_MIN ? (x < FLT_MAX ? x : FLT_MAX) : FLT_MIN);
 }
-template <>
+template<>
 inline uint8_t img_saturate_cast<uint8_t>(float x)
 {
     return (x > 0 ? (x < 255 ? x : 255) : 0);
 }
 
-static int32_t computeResizeAreaTab(int32_t src_size, int32_t dst_size, int32_t cn, double scale, DecimateAlpha* tab)
+static int32_t computeResizeAreaTab(int32_t src_size, int32_t dst_size, int32_t cn, double scale, DecimateAlpha *tab)
 {
     int32_t k = 0;
     for (int32_t dx = 0; dx < dst_size; ++dx) {
@@ -708,22 +709,22 @@ static int32_t computeResizeAreaTab(int32_t src_size, int32_t dst_size, int32_t 
     return k;
 }
 
-template <typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
+template<typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
 void resizeAreaFast(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const Tsrc* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    Tdst* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const Tsrc *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        Tdst *outData)
 {
     int32_t scale_x = inWidth / outWidth;
     int32_t scale_y = inHeight / outHeight;
     int32_t area = scale_x * scale_y;
     // size_t srcstep = inWidthStride / (sizeof(Tsrc));
-    int32_t* _ofs = (int32_t*)malloc((area + outWidth * nc) * sizeof(int32_t));
+    int32_t *_ofs = (int32_t *)malloc((area + outWidth * nc) * sizeof(int32_t));
     int32_t *ofs = _ofs, *xofs = ofs + area;
     for (int32_t sy = 0, k = 0; sy < scale_y; ++sy) {
         for (int32_t sx = 0; sx < scale_x; ++sx) {
@@ -743,7 +744,7 @@ void resizeAreaFast(
     outWidth *= nc;
     int32_t dy, dx, k = 0;
     for (dy = 0; dy < outHeight; ++dy) {
-        Tdst* D = (Tdst*)(outData + outWidthStride * dy);
+        Tdst *D = (Tdst *)(outData + outWidthStride * dy);
         int32_t sy0 = dy * scale_y;
         int32_t w = sy0 + scale_y <= inHeight ? dwidth : 0;
         if (sy0 >= inHeight) {
@@ -752,7 +753,7 @@ void resizeAreaFast(
             continue;
         }
         for (dx = 0; dx < w; ++dx) {
-            const Tsrc* S = (const Tsrc*)(inData + inWidthStride * sy0) + xofs[dx];
+            const Tsrc *S = (const Tsrc *)(inData + inWidthStride * sy0) + xofs[dx];
             float sum = 0;
             for (k = 0; k < area; ++k) {
                 sum += S[ofs[k]];
@@ -765,10 +766,12 @@ void resizeAreaFast(
             if (sx0 >= inWidth)
                 D[dx] = 0;
             for (int32_t sy = 0; sy < scale_y; ++sy) {
-                if (sy0 + sy <= inHeight) break;
-                const Tsrc* S = (const Tsrc*)(inData + inWidthStride * (sy0 + sy)) + sx0;
+                if (sy0 + sy <= inHeight)
+                    break;
+                const Tsrc *S = (const Tsrc *)(inData + inWidthStride * (sy0 + sy)) + sx0;
                 for (int32_t sx = 0; sx < scale_x * nc; sx += nc) {
-                    if (sx0 + sx >= inWidth) break;
+                    if (sx0 + sx >= inWidth)
+                        break;
                     sum += S[sx];
                     ++count;
                 }
@@ -780,19 +783,19 @@ void resizeAreaFast(
 }
 
 static void img_resize_cal_offset_area_f32(
-    int32_t* xofs,
-    float* ialpha,
-    int32_t* yofs,
-    float* ibeta,
-    int32_t* xmin,
-    int32_t* xmax,
-    int32_t ksize,
-    int32_t ksize2,
-    int32_t srcw,
-    int32_t srch,
-    int32_t dstw,
-    int32_t dsth,
-    int32_t channels)
+        int32_t *xofs,
+        float *ialpha,
+        int32_t *yofs,
+        float *ibeta,
+        int32_t *xmin,
+        int32_t *xmax,
+        int32_t ksize,
+        int32_t ksize2,
+        int32_t srcw,
+        int32_t srch,
+        int32_t dstw,
+        int32_t dsth,
+        int32_t channels)
 {
     double inv_scale_x = (double)dstw / srcw;
     double inv_scale_y = (double)dsth / srch;
@@ -856,16 +859,16 @@ static void img_resize_cal_offset_area_f32(
     }
 }
 
-template <typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
+template<typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
 void resizeArea(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const Tsrc* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    Tdst* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const Tsrc *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        Tdst *outData)
 {
     if (inWidth % 2 == 0 && outWidth == inWidth / 2 &&
         inHeight % 2 == 0 && outHeight == inHeight / 2 && (nc == 1 || nc == 4)) {
@@ -877,13 +880,13 @@ void resizeArea(
         return;
     }
 
-    DecimateAlpha* _xytab = (DecimateAlpha*)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
+    DecimateAlpha *_xytab = (DecimateAlpha *)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
     DecimateAlpha *xtab = _xytab, *ytab = xtab + inWidth * 2;
 
     int32_t xtab_size = computeResizeAreaTab(inWidth, outWidth, nc, double(inWidth) / outWidth, xtab);
     int32_t ytab_size = computeResizeAreaTab(inHeight, outHeight, 1, double(inHeight) / outHeight, ytab);
 
-    int32_t* tabofs = (int32_t*)malloc((outHeight + 1) * sizeof(int32_t));
+    int32_t *tabofs = (int32_t *)malloc((outHeight + 1) * sizeof(int32_t));
     int32_t k, dy;
     for (k = 0, dy = 0; k < ytab_size; ++k) {
         if (k == 0 || ytab[k].di != ytab[k - 1].di) {
@@ -894,7 +897,7 @@ void resizeArea(
 
     // invoker's operator
     outWidth *= nc;
-    float* _buffer = (float*)malloc(outWidth * 2 * sizeof(float));
+    float *_buffer = (float *)malloc(outWidth * 2 * sizeof(float));
     float *buf = _buffer, *sum = buf + outWidth;
     int32_t j_start = tabofs[0], j_end = tabofs[outHeight], j, dx, prev_dy = ytab[j_start].di;
 
@@ -906,7 +909,7 @@ void resizeArea(
         int32_t dy = ytab[j].di;
         int32_t sy = ytab[j].si;
 
-        const Tsrc* S = (const Tsrc*)(inData + inWidthStride * sy);
+        const Tsrc *S = (const Tsrc *)(inData + inWidthStride * sy);
         for (dx = 0; dx < outWidth; ++dx)
             buf[dx] = (Tdst)0;
         for (k = 0; k < xtab_size; ++k) {
@@ -919,7 +922,7 @@ void resizeArea(
         }
 
         if (dy != prev_dy) {
-            Tdst* D = (Tdst*)(outData + outWidthStride * prev_dy);
+            Tdst *D = (Tdst *)(outData + outWidthStride * prev_dy);
             for (dx = 0; dx < outWidth; ++dx) {
                 D[dx] = img_saturate_cast<Tdst>(sum[dx]);
                 sum[dx] = beta * buf[dx];
@@ -931,7 +934,7 @@ void resizeArea(
         }
     }
 
-    Tdst* D = (Tdst*)(outData + outWidthStride * prev_dy);
+    Tdst *D = (Tdst *)(outData + outWidthStride * prev_dy);
     for (dx = 0; dx < outWidth; ++dx) {
         D[dx] = (Tdst)sum[dx];
     }
@@ -946,15 +949,15 @@ void resizeArea(
 }
 
 void img_resize_area_neon_f32(
-    float* dst,
-    uint32_t dst_width,
-    uint32_t dst_height,
-    uint32_t dst_stride,
-    const float* src,
-    uint32_t src_width,
-    uint32_t src_height,
-    uint32_t src_stride,
-    uint32_t channels)
+        float *dst,
+        uint32_t dst_width,
+        uint32_t dst_height,
+        uint32_t dst_stride,
+        const float *src,
+        uint32_t src_width,
+        uint32_t src_height,
+        uint32_t src_stride,
+        uint32_t channels)
 {
     int32_t dstw = dst_width;
     int32_t dsth = dst_height;
@@ -973,12 +976,12 @@ void img_resize_area_neon_f32(
     ksize = 2;
     ksize2 = ksize / 2;
 
-    uint8_t* buffer_ = (uint8_t*)malloc((width + dsth) * (sizeof(int32_t) + sizeof(float) * ksize));
+    uint8_t *buffer_ = (uint8_t *)malloc((width + dsth) * (sizeof(int32_t) + sizeof(float) * ksize));
 
-    int32_t* xofs = (int32_t*)buffer_;
-    int32_t* yofs = xofs + width;
-    float* ialpha = (float*)(yofs + dsth);
-    float* ibeta = ialpha + width * ksize;
+    int32_t *xofs = (int32_t *)buffer_;
+    int32_t *yofs = xofs + width;
+    float *ialpha = (float *)(yofs + dsth);
+    float *ibeta = ialpha + width * ksize;
 
     img_resize_cal_offset_area_f32(xofs, ialpha, yofs, ibeta, &xmin, &xmax, ksize, ksize2, srcw, srch, dstw, dsth, cn);
 
@@ -988,16 +991,16 @@ void img_resize_area_neon_f32(
     buffer_ = NULL;
 }
 
-template <>
+template<>
 void ResizeNearestPoint<float, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -1008,16 +1011,16 @@ void ResizeNearestPoint<float, 1>(
     resizeNearestPoint<float, float, 1>(inHeight, inWidth, inWidthStride, inData, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<float, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -1028,16 +1031,16 @@ void ResizeNearestPoint<float, 3>(
     resizeNearestPoint<float, float, 3>(inHeight, inWidth, inWidthStride, inData, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<float, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -1048,16 +1051,16 @@ void ResizeNearestPoint<float, 4>(
     resizeNearestPoint<float, float, 4>(inHeight, inWidth, inWidthStride, inData, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeLinear<float, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -1068,16 +1071,16 @@ void ResizeLinear<float, 1>(
     img_resize_bilinear_neon_f32(outData, outWidth, outHeight, outWidthStride, inData, inWidth, inHeight, inWidthStride, 1);
 }
 
-template <>
+template<>
 void ResizeLinear<float, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -1087,16 +1090,16 @@ void ResizeLinear<float, 3>(
     }
     img_resize_bilinear_neon_f32(outData, outWidth, outHeight, outWidthStride, inData, inWidth, inHeight, inWidthStride, 3);
 }
-template <>
+template<>
 void ResizeLinear<float, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -1107,16 +1110,16 @@ void ResizeLinear<float, 4>(
     img_resize_bilinear_neon_f32(outData, outWidth, outHeight, outWidthStride, inData, inWidth, inHeight, inWidthStride, 4);
 }
 
-template <>
+template<>
 void ResizeArea<float, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -1132,16 +1135,16 @@ void ResizeArea<float, 1>(
     }
 }
 
-template <>
+template<>
 void ResizeArea<float, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -1157,16 +1160,16 @@ void ResizeArea<float, 3>(
     }
 }
 
-template <>
+template<>
 void ResizeArea<float, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;

@@ -18,18 +18,18 @@
 #ifndef __ST_TINYCV_X86_INTRINUTILS_H__
 #define __ST_TINYCV_X86_INTRINUTILS_H__
 
-#include "tinycv/types.h"
-
 #include <immintrin.h>
 #include <stdio.h>
 
-inline void v_load_deinterleave(const uint8_t* ptr, __m128i& a, __m128i& b, __m128i& c)
+#include "tinycv/types.h"
+
+inline void v_load_deinterleave(const uint8_t *ptr, __m128i &a, __m128i &b, __m128i &c)
 {
     const __m128i m0 = _mm_setr_epi8(0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0);
     const __m128i m1 = _mm_setr_epi8(0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0);
-    __m128i s0 = _mm_loadu_si128((const __m128i*)ptr);
-    __m128i s1 = _mm_loadu_si128((const __m128i*)(ptr + 16));
-    __m128i s2 = _mm_loadu_si128((const __m128i*)(ptr + 32));
+    __m128i s0 = _mm_loadu_si128((const __m128i *)ptr);
+    __m128i s1 = _mm_loadu_si128((const __m128i *)(ptr + 16));
+    __m128i s2 = _mm_loadu_si128((const __m128i *)(ptr + 32));
     __m128i a0 = _mm_blendv_epi8(_mm_blendv_epi8(s0, s1, m0), s2, m1);
     __m128i b0 = _mm_blendv_epi8(_mm_blendv_epi8(s1, s2, m0), s0, m1);
     __m128i c0 = _mm_blendv_epi8(_mm_blendv_epi8(s2, s0, m0), s1, m1);
@@ -41,12 +41,12 @@ inline void v_load_deinterleave(const uint8_t* ptr, __m128i& a, __m128i& b, __m1
     c = _mm_shuffle_epi8(c0, sh_r);
 }
 
-inline void v_load_deinterleave(const uint8_t* ptr, __m128i& a, __m128i& b, __m128i& c, __m128i& d)
+inline void v_load_deinterleave(const uint8_t *ptr, __m128i &a, __m128i &b, __m128i &c, __m128i &d)
 {
-    __m128i u0 = _mm_loadu_si128((const __m128i*)ptr); // a0 b0 c0 d0 a1 b1 c1 d1 ...
-    __m128i u1 = _mm_loadu_si128((const __m128i*)(ptr + 16)); // a4 b4 c4 d4 ...
-    __m128i u2 = _mm_loadu_si128((const __m128i*)(ptr + 32)); // a8 b8 c8 d8 ...
-    __m128i u3 = _mm_loadu_si128((const __m128i*)(ptr + 48)); // a12 b12 c12 d12 ...
+    __m128i u0 = _mm_loadu_si128((const __m128i *)ptr); // a0 b0 c0 d0 a1 b1 c1 d1 ...
+    __m128i u1 = _mm_loadu_si128((const __m128i *)(ptr + 16)); // a4 b4 c4 d4 ...
+    __m128i u2 = _mm_loadu_si128((const __m128i *)(ptr + 32)); // a8 b8 c8 d8 ...
+    __m128i u3 = _mm_loadu_si128((const __m128i *)(ptr + 48)); // a12 b12 c12 d12 ...
 
     __m128i v0 = _mm_unpacklo_epi8(u0, u2); // a0 a8 b0 b8 ...
     __m128i v1 = _mm_unpackhi_epi8(u0, u2); // a2 a10 b2 b10 ...
@@ -69,7 +69,7 @@ inline void v_load_deinterleave(const uint8_t* ptr, __m128i& a, __m128i& b, __m1
     d = _mm_unpackhi_epi8(v2, v3);
 }
 
-inline void _mm_interleave_epi8(__m128i& v_r0, __m128i& v_r1, __m128i& v_g0, __m128i& v_g1, __m128i& v_b0, __m128i& v_b1)
+inline void _mm_interleave_epi8(__m128i &v_r0, __m128i &v_r1, __m128i &v_g0, __m128i &v_g1, __m128i &v_b0, __m128i &v_b1)
 {
     __m128i v_mask = _mm_set1_epi16(0x00ff);
 
@@ -109,7 +109,7 @@ inline void _mm_interleave_epi8(__m128i& v_r0, __m128i& v_r1, __m128i& v_g0, __m
     v_b1 = _mm_packus_epi16(_mm_srli_epi16(layer1_chunk4, 8), _mm_srli_epi16(layer1_chunk5, 8));
 }
 
-inline void _mm_interleave_epi8(__m128i& v_r0, __m128i& v_r1, __m128i& v_g0, __m128i& v_g1, __m128i& v_b0, __m128i& v_b1, __m128i& v_a0, __m128i& v_a1)
+inline void _mm_interleave_epi8(__m128i &v_r0, __m128i &v_r1, __m128i &v_g0, __m128i &v_g1, __m128i &v_b0, __m128i &v_b1, __m128i &v_a0, __m128i &v_a1)
 {
     __m128i v_mask = _mm_set1_epi16(0x00ff);
 
@@ -159,7 +159,7 @@ inline void _mm_interleave_epi8(__m128i& v_r0, __m128i& v_r1, __m128i& v_g0, __m
     v_a1 = _mm_packus_epi16(_mm_srli_epi16(layer1_chunk6, 8), _mm_srli_epi16(layer1_chunk7, 8));
 }
 
-inline void v_load_deinterleave(const float* ptr, __m128& a, __m128& b, __m128& c)
+inline void v_load_deinterleave(const float *ptr, __m128 &a, __m128 &b, __m128 &c)
 {
     __m128 t0 = _mm_loadu_ps(ptr + 0);
     __m128 t1 = _mm_loadu_ps(ptr + 4);
@@ -176,7 +176,7 @@ inline void v_load_deinterleave(const float* ptr, __m128& a, __m128& b, __m128& 
     c = _mm_shuffle_ps(ct01, t2, _MM_SHUFFLE(3, 0, 2, 0));
 }
 
-inline void v_load_deinterleave(const float* ptr, __m128& a, __m128& b, __m128& c, __m128& d)
+inline void v_load_deinterleave(const float *ptr, __m128 &a, __m128 &b, __m128 &c, __m128 &d)
 {
     __m128 t0 = _mm_loadu_ps(ptr + 0);
     __m128 t1 = _mm_loadu_ps(ptr + 4);
@@ -192,7 +192,7 @@ inline void v_load_deinterleave(const float* ptr, __m128& a, __m128& b, __m128& 
     d = _mm_unpackhi_ps(t02hi, t13hi);
 }
 
-inline void _mm_interleave_epi16(__m128i& v_r0, __m128i& v_r1, __m128i& v_g0, __m128i& v_g1)
+inline void _mm_interleave_epi16(__m128i &v_r0, __m128i &v_r1, __m128i &v_g0, __m128i &v_g1)
 {
     __m128i v_mask = _mm_set1_epi32(0x0000ffff);
 

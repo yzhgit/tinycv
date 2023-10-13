@@ -15,18 +15,19 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/resize.h"
-#include "tinycv/types.h"
-#include "tinycv/sys.h"
-#include "tinycv/x86/sysinfo.h"
-#include "tinycv/x86/fma/internal_fma.hpp"
-
-#include <string.h>
-#include <limits.h>
-#include <immintrin.h>
 #include <float.h>
-#include <stdint.h>
+#include <immintrin.h>
+#include <limits.h>
 #include <math.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "tinycv/resize.h"
+#include "tinycv/sys.h"
+#include "tinycv/types.h"
+#include "tinycv/x86/sysinfo.h"
+
+#include "tinycv/x86/fma/internal_fma.hpp"
 
 namespace tinycv {
 
@@ -36,16 +37,16 @@ static inline int32_t resize_img_floor(float a)
 }
 
 static void resize_linear_calc_offset_fp32(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t channels,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t &w_max,
-    int32_t *h_offset,
-    int32_t *w_offset,
-    float *h_coeff,
-    float *w_coeff)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t channels,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t &w_max,
+        int32_t *h_offset,
+        int32_t *w_offset,
+        float *h_coeff,
+        float *w_coeff)
 {
     double inv_scale_h = (double)outHeight / inHeight;
     double scale_h = 1.0 / inv_scale_h;
@@ -96,19 +97,19 @@ static void resize_linear_calc_offset_fp32(
 }
 
 static void resize_linear_twoline_fp32(
-    int32_t inWidth,
-    int32_t outWidth,
-    int32_t channels,
-    const float *inData_0,
-    const float *inData_1,
-    int32_t w_max,
-    const int32_t *w_offset,
-    const float *w_coeff,
-    int32_t h_idx,
-    float h_coeff,
-    float *row_0,
-    float *row_1,
-    float *outData)
+        int32_t inWidth,
+        int32_t outWidth,
+        int32_t channels,
+        const float *inData_0,
+        const float *inData_1,
+        int32_t w_max,
+        const int32_t *w_offset,
+        const float *w_coeff,
+        int32_t h_idx,
+        float h_coeff,
+        float *row_0,
+        float *row_1,
+        float *outData)
 {
     int32_t i = 0;
 
@@ -205,14 +206,14 @@ static void resize_linear_twoline_fp32(
 }
 
 static void resize_linear_w_oneline_fp32(
-    int32_t inWidth,
-    int32_t outWidth,
-    int32_t channels,
-    const float *inData,
-    int32_t w_max,
-    const int32_t *w_offset,
-    const float *w_coeff,
-    float *row)
+        int32_t inWidth,
+        int32_t outWidth,
+        int32_t channels,
+        const float *inData,
+        int32_t w_max,
+        const int32_t *w_offset,
+        const float *w_coeff,
+        float *row)
 {
     __m128 m_one = _mm_set1_ps(1.0f);
     int32_t i = 0;
@@ -261,13 +262,13 @@ static void resize_linear_w_oneline_fp32(
 }
 
 static void resize_linear_h_fp32(
-    int32_t outWidth,
-    int32_t channels,
-    const float *row_0,
-    const float *row_1,
-    int32_t h_idx,
-    float h_coeff,
-    float *outData)
+        int32_t outWidth,
+        int32_t channels,
+        const float *row_0,
+        const float *row_1,
+        int32_t h_idx,
+        float h_coeff,
+        float *outData)
 {
     int32_t i = 0;
 
@@ -286,15 +287,15 @@ static void resize_linear_h_fp32(
 }
 
 static void resize_linear_kernel_fp32(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t channels,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t channels,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     int32_t cn_width = channels * outWidth;
     uint64_t size_for_h_offset = (outHeight * sizeof(int32_t) + 128 - 1) / 128 * 128;
@@ -318,8 +319,8 @@ static void resize_linear_kernel_fp32(
     int32_t w_max = 0;
     resize_linear_calc_offset_fp32(inHeight, inWidth, channels, outHeight, outWidth, w_max, h_offset, w_offset, h_coeff, w_coeff);
 
-    int32_t prev_h[2] = {-1, -1};
-    float *prev_ptr[2] = {nullptr, nullptr};
+    int32_t prev_h[2] = { -1, -1 };
+    float *prev_ptr[2] = { nullptr, nullptr };
 
     int32_t reuse_count;
     float *row_ptr[2];
@@ -379,12 +380,12 @@ static void resize_linear_kernel_fp32(
 }
 
 static void resize_linear_shrink2_c1_kernel_fp32(
-    const float *inData,
-    int32_t inWidthStride,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        const float *inData,
+        int32_t inWidthStride,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     __m128 m_p25 = _mm_set1_ps(0.25f);
 
@@ -415,12 +416,12 @@ static void resize_linear_shrink2_c1_kernel_fp32(
 }
 
 static void resize_linear_shrink2_c3_kernel_fp32(
-    const float *inData,
-    int32_t inWidthStride,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        const float *inData,
+        int32_t inWidthStride,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     __m128 m_p25 = _mm_set1_ps(0.25f);
     for (int32_t i = 0; i < outHeight; ++i) {
@@ -459,12 +460,12 @@ static void resize_linear_shrink2_c3_kernel_fp32(
 }
 
 static void resize_linear_shrink2_c4_kernel_fp32(
-    const float *inData,
-    int32_t inWidthStride,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        const float *inData,
+        int32_t inWidthStride,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     __m128 m_p25 = _mm_set1_ps(0.25f);
 
@@ -481,16 +482,16 @@ static void resize_linear_shrink2_c4_kernel_fp32(
     }
 }
 
-template <>
+template<>
 void ResizeLinear<float, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -505,19 +506,19 @@ void ResizeLinear<float, 1>(
     }
 
     resize_linear_kernel_fp32(
-        inHeight, inWidth, inWidthStride, inData, 1, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 1, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeLinear<float, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -532,19 +533,19 @@ void ResizeLinear<float, 3>(
     }
 
     resize_linear_kernel_fp32(
-        inHeight, inWidth, inWidthStride, inData, 3, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 3, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeLinear<float, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -559,7 +560,7 @@ void ResizeLinear<float, 4>(
     }
 
     resize_linear_kernel_fp32(
-        inHeight, inWidth, inWidthStride, inData, 4, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 4, outHeight, outWidth, outWidthStride, outData);
 }
 
 } // namespace tinycv

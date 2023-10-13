@@ -15,26 +15,27 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/x86/avx/intrinutils_avx.hpp"
-#include "tinycv/x86/avx/internal_avx.hpp"
+#include <cstring>
+#include <immintrin.h>
+#include <stdint.h>
+#include <vector>
+
 #include "tinycv/sys.h"
 #include "tinycv/x86/sysinfo.h"
 
-#include <vector>
-#include <stdint.h>
-#include <cstring>
-#include <immintrin.h>
+#include "tinycv/x86/avx/internal_avx.hpp"
+#include "tinycv/x86/avx/intrinutils_avx.hpp"
 
 namespace tinycv {
 
-template <typename _Tp>
+template<typename _Tp>
 struct RGB2Gray {
     typedef _Tp channel_type;
 
     RGB2Gray(int32_t _srccn, int32_t blueIdx, const float *_coeffs)
-        : srccn(_srccn)
+            : srccn(_srccn)
     {
-        static const float coeffs0[] = {0.299f, 0.587f, 0.114f};
+        static const float coeffs0[] = { 0.299f, 0.587f, 0.114f };
         memcpy(coeffs, _coeffs ? _coeffs : coeffs0, 3 * sizeof(coeffs[0]));
         if (blueIdx == 0)
             std::swap(coeffs[0], coeffs[2]);
@@ -51,14 +52,14 @@ struct RGB2Gray {
     float coeffs[3];
 };
 
-template <>
+template<>
 struct RGB2Gray<float> {
     typedef float channel_type;
 
     RGB2Gray(int32_t _srccn, int32_t blueIdx, const float *_coeffs)
-        : srccn(_srccn)
+            : srccn(_srccn)
     {
-        static const float coeffs0[] = {0.299f, 0.587f, 0.114f};
+        static const float coeffs0[] = { 0.299f, 0.587f, 0.114f };
         memcpy(coeffs, _coeffs ? _coeffs : coeffs0, 3 * sizeof(coeffs[0]));
         if (blueIdx == 0)
             std::swap(coeffs[0], coeffs[2]);
@@ -120,14 +121,14 @@ struct RGB2Gray<float> {
     bool bSupportAVX;
 };
 
-template <>
+template<>
 void BGR2GRAYImage_avx<float, 3, float, 1>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -148,14 +149,14 @@ void BGR2GRAYImage_avx<float, 3, float, 1>(
     }
 }
 
-template <>
+template<>
 void BGR2GRAYImage_avx<float, 4, float, 1>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -176,14 +177,14 @@ void BGR2GRAYImage_avx<float, 4, float, 1>(
     }
 }
 
-template <>
+template<>
 void RGB2GRAYImage_avx<float, 3, float, 1>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -204,14 +205,14 @@ void RGB2GRAYImage_avx<float, 3, float, 1>(
     }
 }
 
-template <>
+template<>
 void RGB2GRAYImage_avx<float, 4, float, 1>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;

@@ -21,7 +21,7 @@
 #include "tinycv/types.h"
 
 namespace tinycv {
-    
+
 /**
  * @brief Copy the source image into the middle of dest image, and make border pixels according to specific border type.
  * @tparam T The data type of input image, currently \a float and \a uint8_t are supported.
@@ -38,18 +38,18 @@ namespace tinycv {
  * @param border_value      padding value when border_type is BORDER_CONSTANT
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ***************************************************************************************************/
-template <typename T, int32_t channels>
+template<typename T, int32_t channels>
 void CopyMakeBorder(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const T* src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    T* dst,
-    BorderType border_type,
-    T border_value = 0);
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const T *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        T *dst,
+        BorderType border_type,
+        T border_value = 0);
 
 } // namespace tinycv
 

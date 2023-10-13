@@ -18,11 +18,12 @@
 #ifndef __ST_HPC_TINYCV_AARCH64_COLOR_YUV_HPP__
 #define __ST_HPC_TINYCV_AARCH64_COLOR_YUV_HPP__
 
-#include "tinycv/types.h"
-#include "tinycv/arm/typetraits.hpp"
-
 #include <algorithm>
 #include <arm_neon.h>
+
+#include "tinycv/types.h"
+
+#include "tinycv/arm/typetraits.hpp"
 
 namespace tinycv {
 namespace arm {
@@ -104,18 +105,18 @@ static uint8_t sat_cast(int32_t data)
 
 struct YUV4202RGBA_u8 {
     YUV4202RGBA_u8(int32_t _bIdx)
-        : bIdx(_bIdx) {}
+            : bIdx(_bIdx) {}
 
     void convert_per_2rows(
-        int32_t width,
-        const uint8_t* y1,
-        const uint8_t* u1,
-        const uint8_t* v1,
-        uint8_t* row1,
-        uint8_t* row2,
-        int32_t stride) const
+            int32_t width,
+            const uint8_t *y1,
+            const uint8_t *u1,
+            const uint8_t *v1,
+            uint8_t *row1,
+            uint8_t *row2,
+            int32_t stride) const
     {
-        const uint8_t* y2 = y1 + stride;
+        const uint8_t *y2 = y1 + stride;
         for (int32_t i = 0; i < width / 2; i += 1, row1 += 8, row2 += 8) {
             int32_t u = int32_t(u1[i]) - 128;
             int32_t v = int32_t(v1[i]) - 128;
@@ -151,64 +152,64 @@ struct YUV4202RGBA_u8 {
     }
 
     void convert_from_yuv420_continuous_layout(
-        int32_t height,
-        int32_t width,
-        const uint8_t* y1,
-        const uint8_t* u1,
-        const uint8_t* v1,
-        uint8_t* dst,
-        int32_t stride,
-        int32_t ustepIdx,
-        int32_t vstepIdx,
-        int32_t outWidthStride) const
+            int32_t height,
+            int32_t width,
+            const uint8_t *y1,
+            const uint8_t *u1,
+            const uint8_t *v1,
+            uint8_t *dst,
+            int32_t stride,
+            int32_t ustepIdx,
+            int32_t vstepIdx,
+            int32_t outWidthStride) const
     {
-        int32_t uvsteps[2] = {width / 2, stride - width / 2};
+        int32_t uvsteps[2] = { width / 2, stride - width / 2 };
         int32_t usIdx = ustepIdx, vsIdx = vstepIdx;
 
         for (int32_t j = 0; j < height; j += 2, y1 += stride * 2, u1 += uvsteps[(usIdx++) & 1], v1 += uvsteps[(vsIdx++) & 1]) {
-            uint8_t* row1 = dst + j * outWidthStride;
-            uint8_t* row2 = dst + (j + 1) * outWidthStride;
+            uint8_t *row1 = dst + j * outWidthStride;
+            uint8_t *row2 = dst + (j + 1) * outWidthStride;
             convert_per_2rows(width, y1, u1, v1, row1, row2, stride);
         }
     }
 
     void convert_from_yuv420_seperate_layout(
-        int32_t height,
-        int32_t width,
-        const uint8_t* y1,
-        const uint8_t* u1,
-        const uint8_t* v1,
-        uint8_t* dst,
-        int32_t ystride,
-        int32_t ustride,
-        int32_t vstride,
-        int32_t outWidthStride) const
+            int32_t height,
+            int32_t width,
+            const uint8_t *y1,
+            const uint8_t *u1,
+            const uint8_t *v1,
+            uint8_t *dst,
+            int32_t ystride,
+            int32_t ustride,
+            int32_t vstride,
+            int32_t outWidthStride) const
     {
         for (int32_t j = 0; j < height; j += 2, y1 += ystride * 2, u1 += ustride, v1 += vstride) {
-            uint8_t* row1 = dst + j * outWidthStride;
-            uint8_t* row2 = dst + (j + 1) * outWidthStride;
+            uint8_t *row1 = dst + j * outWidthStride;
+            uint8_t *row2 = dst + (j + 1) * outWidthStride;
             convert_per_2rows(width, y1, u1, v1, row1, row2, ystride);
         }
     }
 
     // nv12 or nv21
     void convert_from_yuv420sp_layout(
-        int32_t height,
-        int32_t width,
-        int32_t yStride,
-        const uint8_t* y,
-        int32_t uvStride,
-        const uint8_t* uv,
-        int32_t outWidthStride,
-        uint8_t* dst,
-        bool isUV) const
+            int32_t height,
+            int32_t width,
+            int32_t yStride,
+            const uint8_t *y,
+            int32_t uvStride,
+            const uint8_t *uv,
+            int32_t outWidthStride,
+            uint8_t *dst,
+            bool isUV) const
     {
-        const uint8_t* y1 = y;
-        uint8_t* u1 = (uint8_t*)malloc(width / 2);
-        uint8_t* v1 = (uint8_t*)malloc(width / 2);
+        const uint8_t *y1 = y;
+        uint8_t *u1 = (uint8_t *)malloc(width / 2);
+        uint8_t *v1 = (uint8_t *)malloc(width / 2);
         for (int32_t j = 0; j < height; j += 2, y1 += yStride * 2, uv += yStride) {
-            uint8_t* row1 = dst + j * outWidthStride;
-            uint8_t* row2 = dst + (j + 1) * outWidthStride;
+            uint8_t *row1 = dst + j * outWidthStride;
+            uint8_t *row2 = dst + (j + 1) * outWidthStride;
             if (isUV) {
                 for (int32_t i = 0; i < width / 2; i++) {
                     u1[i] = uv[2 * i];
@@ -230,7 +231,7 @@ struct YUV4202RGBA_u8 {
     int32_t bIdx;
 };
 
-}
-} // namespace tinycv::arm
+} // namespace arm
+} // namespace tinycv
 
 #endif //__ST_HPC_TINYCV_AARCH64_COLOR_YUV_HPP__

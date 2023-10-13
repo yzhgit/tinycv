@@ -16,14 +16,15 @@
 // under the License.
 
 #include "tinycv/copymakeborder.h"
-#include "tinycv/types.h"
 
-#include <vector>
 #include <cstring>
+#include <vector>
+
+#include "tinycv/types.h"
 
 namespace tinycv {
 
-template <BorderType borderType>
+template<BorderType borderType>
 inline int32_t BorderInterpolate(int32_t p, int32_t len)
 {
     if (borderType == tinycv::BORDER_REFLECT_101) {
@@ -38,16 +39,16 @@ inline int32_t BorderInterpolate(int32_t p, int32_t len)
     return p;
 }
 
-template <typename T, int32_t cn, BorderType border_type>
+template<typename T, int32_t cn, BorderType border_type>
 void CopyMakeNonConstBorder(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const T *src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    T *dst)
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const T *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        T *dst)
 {
     int32_t i, j, k, elemSize = sizeof(T);
     int32_t left = (dstWidth - srcWidth) / 2;
@@ -97,17 +98,17 @@ void CopyMakeNonConstBorder(
     }
 }
 
-template <typename T, int32_t cn>
+template<typename T, int32_t cn>
 void CopyMakeConstBorder(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const T *src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    T *dst,
-    T border_value)
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const T *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        T *dst,
+        T border_value)
 {
     int32_t left = (dstWidth - srcWidth) / 2;
     // int32_t right = (dstWidth - srcWidth) / 2;
@@ -137,18 +138,18 @@ void CopyMakeConstBorder(
     }
 }
 
-template <typename T, int32_t cn>
+template<typename T, int32_t cn>
 void CopyMakeBorder(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const T *src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    T *dst,
-    BorderType border_type,
-    T border_value)
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const T *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        T *dst,
+        BorderType border_type,
+        T border_value)
 {
     if (border_type != tinycv::BORDER_REFLECT_101 &&
         border_type != tinycv::BORDER_REFLECT &&
@@ -169,71 +170,71 @@ void CopyMakeBorder(
     }
 }
 template void CopyMakeBorder<uint8_t, 1>(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const uint8_t *src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    uint8_t *dst,
-    BorderType border_type,
-    uint8_t border_value);
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const uint8_t *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        uint8_t *dst,
+        BorderType border_type,
+        uint8_t border_value);
 template void CopyMakeBorder<uint8_t, 3>(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const uint8_t *src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    uint8_t *dst,
-    BorderType border_type,
-    uint8_t border_value);
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const uint8_t *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        uint8_t *dst,
+        BorderType border_type,
+        uint8_t border_value);
 template void CopyMakeBorder<uint8_t, 4>(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const uint8_t *src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    uint8_t *dst,
-    BorderType border_type,
-    uint8_t border_value);
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const uint8_t *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        uint8_t *dst,
+        BorderType border_type,
+        uint8_t border_value);
 
 template void CopyMakeBorder<float, 1>(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const float *src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    float *dst,
-    BorderType border_type,
-    float border_value);
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const float *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        float *dst,
+        BorderType border_type,
+        float border_value);
 template void CopyMakeBorder<float, 3>(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const float *src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    float *dst,
-    BorderType border_type,
-    float border_value);
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const float *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        float *dst,
+        BorderType border_type,
+        float border_value);
 template void CopyMakeBorder<float, 4>(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcWidthStride,
-    const float *src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstWidthStride,
-    float *dst,
-    BorderType border_type,
-    float border_value);
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcWidthStride,
+        const float *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstWidthStride,
+        float *dst,
+        BorderType border_type,
+        float border_value);
 
 } // namespace tinycv

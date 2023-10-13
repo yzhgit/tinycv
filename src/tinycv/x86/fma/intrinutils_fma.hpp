@@ -18,10 +18,10 @@
 #ifndef __INTRINUTILS_FMA_H__
 #define __INTRINUTILS_FMA_H__
 
-#include "tinycv/types.h"
-
 #include <immintrin.h>
 #include <stdio.h>
+
+#include "tinycv/types.h"
 
 namespace tinycv {
 namespace fma {
@@ -43,9 +43,9 @@ inline void v_load_deinterleave(const uint8_t *ptr, __m256i &a, __m256i &b, __m2
     __m256i r0 = _mm256_blendv_epi8(_mm256_blendv_epi8(bgr1, s02_low, m0), s02_high, m1);
 
     const __m256i
-        sh_b = _mm256_setr_epi8(0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13),
-        sh_g = _mm256_setr_epi8(1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14),
-        sh_r = _mm256_setr_epi8(2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15);
+            sh_b = _mm256_setr_epi8(0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13),
+            sh_g = _mm256_setr_epi8(1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14),
+            sh_r = _mm256_setr_epi8(2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2, 5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15);
     a = _mm256_shuffle_epi8(b0, sh_b);
     b = _mm256_shuffle_epi8(g0, sh_g);
     c = _mm256_shuffle_epi8(r0, sh_r);
@@ -108,7 +108,7 @@ inline void v_load_deinterleave(const float *ptr, __m256 &a, __m256 &b, __m256 &
     d = _mm256_castsi256_ps(a0);
 }
 
-}
-} // namespace tinycv::fma
+} // namespace fma
+} // namespace tinycv
 
 #endif

@@ -15,19 +15,20 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <algorithm>
+#include <cmath>
+#include <immintrin.h>
+#include <limits.h>
+#include <string.h>
+
 #include "tinycv/cvtcolor.h"
-#include "tinycv/x86/avx/internal_avx.hpp"
-#include "tinycv/x86/fma/internal_fma.hpp"
-#include "tinycv/types.h"
-#include "tinycv/x86/util.hpp"
 #include "tinycv/sys.h"
+#include "tinycv/types.h"
 #include "tinycv/x86/sysinfo.h"
 
-#include <string.h>
-#include <cmath>
-#include <limits.h>
-#include <immintrin.h>
-#include <algorithm>
+#include "tinycv/x86/avx/internal_avx.hpp"
+#include "tinycv/x86/fma/internal_fma.hpp"
+#include "tinycv/x86/util.hpp"
 
 namespace tinycv {
 
@@ -51,19 +52,19 @@ const int32_t CGV_coeff = -385875;
 const int32_t CBV_coeff = -74448;
 struct YUV420p2RGB_u8 {
     YUV420p2RGB_u8(int32_t _bIdx)
-        : bIdx(_bIdx) {}
+            : bIdx(_bIdx) {}
 
     void operator()(
-        int32_t height,
-        int32_t width,
-        int32_t yStride,
-        const uint8_t *y1,
-        int32_t uStride,
-        const uint8_t *u1,
-        int32_t vStride,
-        const uint8_t *v1,
-        int32_t outWidthStride,
-        uint8_t *dst) const
+            int32_t height,
+            int32_t width,
+            int32_t yStride,
+            const uint8_t *y1,
+            int32_t uStride,
+            const uint8_t *u1,
+            int32_t vStride,
+            const uint8_t *v1,
+            int32_t outWidthStride,
+            uint8_t *dst) const
     {
         if (nullptr == y1) {
             return;
@@ -118,19 +119,19 @@ struct YUV420p2RGB_u8 {
 
 struct YUV420p2RGBA_u8 {
     YUV420p2RGBA_u8(int32_t _bIdx)
-        : bIdx(_bIdx) {}
+            : bIdx(_bIdx) {}
 
     void operator()(
-        int32_t height,
-        int32_t width,
-        int32_t yStride,
-        const uint8_t *y1,
-        int32_t uStride,
-        const uint8_t *u1,
-        int32_t vStride,
-        const uint8_t *v1,
-        int32_t outWidthStride,
-        uint8_t *dst) const
+            int32_t height,
+            int32_t width,
+            int32_t yStride,
+            const uint8_t *y1,
+            int32_t uStride,
+            const uint8_t *u1,
+            int32_t vStride,
+            const uint8_t *v1,
+            int32_t outWidthStride,
+            uint8_t *dst) const
     {
         if (nullptr == y1) {
             return;
@@ -189,20 +190,20 @@ struct YUV420p2RGBA_u8 {
 
 struct RGBtoYUV420p_u8 {
     RGBtoYUV420p_u8(int32_t _bIdx)
-        : bIdx(_bIdx) {}
+            : bIdx(_bIdx) {}
 
     void operator()(
-        int32_t height,
-        int32_t width,
-        int32_t cn,
-        int32_t inWidthStride,
-        const uint8_t *src,
-        int32_t yStride,
-        uint8_t *dst_y,
-        int32_t uStride,
-        uint8_t *dst_u,
-        int32_t vStride,
-        uint8_t *dst_v) const
+            int32_t height,
+            int32_t width,
+            int32_t cn,
+            int32_t inWidthStride,
+            const uint8_t *src,
+            int32_t yStride,
+            uint8_t *dst_y,
+            int32_t uStride,
+            uint8_t *dst_u,
+            int32_t vStride,
+            uint8_t *dst_v) const
     {
         if (nullptr == src) {
             return;
@@ -267,17 +268,17 @@ struct RGBtoYUV420p_u8 {
 };
 
 void BGR2I420SSE(
-    const uint8_t *src,
-    uint8_t *dstY,
-    uint8_t *dstU,
-    uint8_t *dstV,
-    int32_t width,
-    int32_t height,
-    int32_t inWidthStride,
-    int32_t yStride,
-    int32_t uStride,
-    int32_t vStride,
-    bool flag_rgb = false)
+        const uint8_t *src,
+        uint8_t *dstY,
+        uint8_t *dstU,
+        uint8_t *dstV,
+        int32_t width,
+        int32_t height,
+        int32_t inWidthStride,
+        int32_t yStride,
+        int32_t uStride,
+        int32_t vStride,
+        bool flag_rgb = false)
 {
     const int32_t shift = 13;
     const int32_t half_shift = 1 << (shift - 1);
@@ -413,18 +414,18 @@ void BGR2I420SSE(
     }
 }
 
-template <int32_t dcn, int32_t bIdx>
+template<int32_t dcn, int32_t bIdx>
 void YUV420ptoRGB(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (width % 2 != 0 || height % 2 != 0) {
         return;
@@ -438,18 +439,18 @@ void YUV420ptoRGB(
     }
 }
 
-template <int32_t scn, int32_t bIdx>
+template<int32_t scn, int32_t bIdx>
 void RGBtoYUV420p(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outDataY,
-    int32_t outUStride,
-    uint8_t *outDataU,
-    int32_t outVStride,
-    uint8_t *outDataV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outDataY,
+        int32_t outUStride,
+        uint8_t *outDataU,
+        int32_t outVStride,
+        uint8_t *outDataV)
 {
     if (width % 2 != 0 || height % 2 != 0) {
         return;
@@ -458,14 +459,14 @@ void RGBtoYUV420p(
     s.operator()(height, width, scn, inWidthStride, inData, outYStride, outDataY, outUStride, outDataU, outVStride, outDataV);
 }
 
-template <>
+template<>
 void I4202BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -487,14 +488,14 @@ void I4202BGR<uint8_t>(
         YUV420ptoRGB<3, 0>(height, width, inWidthStride, inDataY, inWidthStride / 2, inDataU, inWidthStride / 2, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void YV122BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -516,14 +517,14 @@ void YV122BGR<uint8_t>(
         YUV420ptoRGB<3, 0>(height, width, inWidthStride, inDataY, inWidthStride / 2, inDataU, inWidthStride / 2, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void I4202BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -543,14 +544,14 @@ void I4202BGRA<uint8_t>(
         YUV420ptoRGB<4, 0>(height, width, inWidthStride, inDataY, inWidthStride / 2, inDataU, inWidthStride / 2, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void YV122BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -571,14 +572,14 @@ void YV122BGRA<uint8_t>(
     }
 }
 
-template <>
+template<>
 void BGR2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -598,14 +599,14 @@ void BGR2I420<uint8_t>(
         RGBtoYUV420p<3, 0>(height, width, inWidthStride, inData, outWidthStride, outDataY, outWidthStride / 2, outDataU, outWidthStride / 2, outDataV);
     }
 }
-template <>
+template<>
 void BGR2YV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -626,14 +627,14 @@ void BGR2YV12<uint8_t>(
     }
 }
 
-template <>
+template<>
 void BGRA2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -650,14 +651,14 @@ void BGRA2I420<uint8_t>(
     RGBtoYUV420p<4, 0>(height, width, inWidthStride, inData, outWidthStride, outDataY, outWidthStride / 2, outDataU, outWidthStride / 2, outDataV);
 }
 
-template <>
+template<>
 void BGRA2YV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -674,14 +675,14 @@ void BGRA2YV12<uint8_t>(
     RGBtoYUV420p<4, 0>(height, width, inWidthStride, inData, outWidthStride, outDataY, outWidthStride / 2, outDataU, outWidthStride / 2, outDataV);
 }
 
-template <>
+template<>
 void I4202RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -703,14 +704,14 @@ void I4202RGB<uint8_t>(
         YUV420ptoRGB<3, 2>(height, width, inWidthStride, inDataY, inWidthStride / 2, inDataU, inWidthStride / 2, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void YV122RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -732,14 +733,14 @@ void YV122RGB<uint8_t>(
         YUV420ptoRGB<3, 2>(height, width, inWidthStride, inDataY, inWidthStride / 2, inDataU, inWidthStride / 2, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void I4202RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -759,14 +760,14 @@ void I4202RGBA<uint8_t>(
         YUV420ptoRGB<4, 2>(height, width, inWidthStride, inDataY, inWidthStride / 2, inDataU, inWidthStride / 2, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void YV122RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -786,14 +787,14 @@ void YV122RGBA<uint8_t>(
         YUV420ptoRGB<4, 2>(height, width, inWidthStride, inDataY, inWidthStride / 2, inDataU, inWidthStride / 2, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void RGB2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -814,14 +815,14 @@ void RGB2I420<uint8_t>(
     }
 }
 
-template <>
+template<>
 void RGB2YV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -842,14 +843,14 @@ void RGB2YV12<uint8_t>(
     }
 }
 
-template <>
+template<>
 void RGBA2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -866,14 +867,14 @@ void RGBA2I420<uint8_t>(
     RGBtoYUV420p<4, 2>(height, width, inWidthStride, inData, outWidthStride, outDataY, outWidthStride / 2, outDataU, outWidthStride / 2, outDataV);
 }
 
-template <>
+template<>
 void RGBA2YV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -891,18 +892,18 @@ void RGBA2YV12<uint8_t>(
 }
 
 // multiple plane implement
-template <>
+template<>
 void I4202BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inDataY && nullptr == inDataU && nullptr == inDataV) {
         return;
@@ -921,18 +922,18 @@ void I4202BGR<uint8_t>(
         YUV420ptoRGB<3, 0>(height, width, inYStride, inDataY, inUStride, inDataU, inVStride, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void I4202BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inDataY && nullptr == inDataU && nullptr == inDataV) {
         return;
@@ -949,18 +950,18 @@ void I4202BGRA<uint8_t>(
         YUV420ptoRGB<4, 0>(height, width, inYStride, inDataY, inUStride, inDataU, inVStride, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void BGR2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outDataY,
-    int32_t outUStride,
-    uint8_t *outDataU,
-    int32_t outVStride,
-    uint8_t *outDataV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outDataY,
+        int32_t outUStride,
+        uint8_t *outDataU,
+        int32_t outVStride,
+        uint8_t *outDataV)
 {
     if (nullptr == inData) {
         return;
@@ -978,18 +979,18 @@ void BGR2I420<uint8_t>(
     }
 }
 
-template <>
+template<>
 void BGRA2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outDataY,
-    int32_t outUStride,
-    uint8_t *outDataU,
-    int32_t outVStride,
-    uint8_t *outDataV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outDataY,
+        int32_t outUStride,
+        uint8_t *outDataU,
+        int32_t outVStride,
+        uint8_t *outDataV)
 {
     if (nullptr == inData) {
         return;
@@ -1003,18 +1004,18 @@ void BGRA2I420<uint8_t>(
     RGBtoYUV420p<4, 0>(height, width, inWidthStride, inData, outYStride, outDataY, outUStride, outDataU, outVStride, outDataV);
 }
 
-template <>
+template<>
 void I4202RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inDataY && nullptr == inDataU && nullptr == inDataV) {
         return;
@@ -1033,18 +1034,18 @@ void I4202RGB<uint8_t>(
         YUV420ptoRGB<3, 2>(height, width, inYStride, inDataY, inUStride, inDataU, inVStride, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void I4202RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inDataY && nullptr == inDataU && nullptr == inDataV) {
         return;
@@ -1061,18 +1062,18 @@ void I4202RGBA<uint8_t>(
         YUV420ptoRGB<4, 2>(height, width, inYStride, inDataY, inUStride, inDataU, inVStride, inDataV, outWidthStride, outData);
     }
 }
-template <>
+template<>
 void RGB2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outDataY,
-    int32_t outUStride,
-    uint8_t *outDataU,
-    int32_t outVStride,
-    uint8_t *outDataV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outDataY,
+        int32_t outUStride,
+        uint8_t *outDataU,
+        int32_t outVStride,
+        uint8_t *outDataV)
 {
     if (nullptr == inData) {
         return;
@@ -1090,18 +1091,18 @@ void RGB2I420<uint8_t>(
     RGBtoYUV420p<3, 2>(height, width, inWidthStride, inData, outYStride, outDataY, outUStride, outDataU, outVStride, outDataV);
 }
 
-template <>
+template<>
 void RGBA2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outDataY,
-    int32_t outUStride,
-    uint8_t *outDataU,
-    int32_t outVStride,
-    uint8_t *outDataV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outDataY,
+        int32_t outUStride,
+        uint8_t *outDataU,
+        int32_t outVStride,
+        uint8_t *outDataV)
 {
     if (nullptr == inData) {
         return;

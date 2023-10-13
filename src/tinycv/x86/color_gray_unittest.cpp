@@ -15,17 +15,17 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <memory>
+
 #include "tinycv/cvtcolor.h"
-#include "tinycv/x86/test.h"
 #include "tinycv/debug.h"
+#include "tinycv/x86/test.h"
 
 #include <gtest/gtest.h>
 
-#include <memory>
-
 enum Color2GrayMode { BGR2GRAY_MODE,
                       RGB2GRAY_MODE };
-template <typename T, int32_t nc, Color2GrayMode mode>
+template<typename T, int32_t nc, Color2GrayMode mode>
 void Color2GRAYTest(int32_t height, int32_t width)
 {
     std::unique_ptr<T[]> src(new T[width * height * nc]);
@@ -58,7 +58,7 @@ void Color2GRAYTest(int32_t height, int32_t width)
 
 enum Gray2ColorMode { GRAY2BGR_MODE,
                       GRAY2RGB_MODE };
-template <typename T, int32_t nc, Gray2ColorMode mode>
+template<typename T, int32_t nc, Gray2ColorMode mode>
 void GRAY2ColorTest(int32_t height, int32_t width)
 {
     std::unique_ptr<T[]> src(new T[width * height]);

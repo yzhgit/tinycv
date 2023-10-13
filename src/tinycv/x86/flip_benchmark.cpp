@@ -15,17 +15,17 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/flip.h"
-#include "tinycv/debug.h"
-
-#include <opencv2/imgproc.hpp>
-#include <benchmark/benchmark.h>
-
 #include <memory>
+
+#include "tinycv/debug.h"
+#include "tinycv/flip.h"
+
+#include <benchmark/benchmark.h>
+#include <opencv2/imgproc.hpp>
 
 namespace {
 
-template <typename T, int32_t nc, int32_t flip_mode>
+template<typename T, int32_t nc, int32_t flip_mode>
 void BM_Flip_tinycv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -42,27 +42,27 @@ void BM_Flip_tinycv_x86(benchmark::State &state)
 
 using namespace tinycv::debug;
 
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c1, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c1, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c1, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c3, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c3, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c3, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c4, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c4, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c4, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c1, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c1, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c1, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c3, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c3, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c3, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c4, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c4, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c4, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c1, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c1, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c1, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c3, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c3, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c3, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c4, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c4, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, uint8_t, c4, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c1, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c1, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c1, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c3, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c3, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c3, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c4, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c4, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_tinycv_x86, float, c4, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
 #ifdef TINYCV_BENCHMARK_OPENCV
-template <typename T, int32_t nc, int32_t flip_mode>
+template<typename T, int32_t nc, int32_t flip_mode>
 static void BM_Flip_opencv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -78,24 +78,24 @@ static void BM_Flip_opencv_x86(benchmark::State &state)
     state.SetItemsProcessed(state.iterations() * 1);
 }
 
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c1, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c1, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c1, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c3, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c3, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c3, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c4, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c4, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c4, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c1, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c1, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c1, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c3, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c3, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c3, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c4, -1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c4, 0)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c4, 1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c1, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c1, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c1, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c3, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c3, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c3, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c4, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c4, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, uint8_t, c4, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c1, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c1, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c1, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c3, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c3, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c3, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c4, -1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c4, 0)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Flip_opencv_x86, float, c4, 1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
 #endif //! TINYCV_BENCHMARK_OPENCV
 } // namespace

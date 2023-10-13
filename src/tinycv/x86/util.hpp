@@ -18,11 +18,11 @@
 #ifndef TINYCV_X86_UTIL_H_
 #define TINYCV_X86_UTIL_H_
 
-#include "tinycv/types.h"
-
-#include <vector>
-#include <cstring>
 #include <cassert>
+#include <cstring>
+#include <vector>
+
+#include "tinycv/types.h"
 
 namespace tinycv {
 
@@ -30,19 +30,19 @@ inline const uint8_t sat_cast_u8(int32_t data)
 {
     return data > 255 ? 255 : (data < 0 ? 0 : data);
 }
-template <typename T>
+template<typename T>
 inline const T round(const T &a, const T &b)
 {
     return a / b * b;
 }
 
-template <typename T>
+template<typename T>
 inline const T round_up(const T &a, const T &b)
 {
     return (a + b - static_cast<T>(1)) / b * b;
 }
 
-template <typename T, typename FUNCTION>
+template<typename T, typename FUNCTION>
 inline void Map(T *out_data, const T *in_data, int32_t n, FUNCTION f, T operand0)
 {
     for (int32_t i = 0; i < n; ++i) {
@@ -50,7 +50,7 @@ inline void Map(T *out_data, const T *in_data, int32_t n, FUNCTION f, T operand0
     }
 }
 
-template <typename T, typename FUNCTION>
+template<typename T, typename FUNCTION>
 inline void Map(T *out_data, const T *in_data0, const T *in_data1, int32_t n, FUNCTION f)
 {
     for (int32_t i = 0; i < n; ++i) {
@@ -58,7 +58,7 @@ inline void Map(T *out_data, const T *in_data0, const T *in_data1, int32_t n, FU
     }
 }
 
-template <typename T, typename FUNCTION>
+template<typename T, typename FUNCTION>
 inline void Map(T *out_data, const T *in_data, float alpha, int32_t n, FUNCTION f, T operand0)
 {
     for (int32_t i = 0; i < n; ++i) {
@@ -66,7 +66,7 @@ inline void Map(T *out_data, const T *in_data, float alpha, int32_t n, FUNCTION 
     }
 }
 
-template <typename T, typename FUNCTION>
+template<typename T, typename FUNCTION>
 inline void Map(T *out_data, const T *in_data0, const T *in_data1, float alpha, int32_t n, FUNCTION f)
 {
     for (int32_t i = 0; i < n; ++i) {

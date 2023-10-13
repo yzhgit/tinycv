@@ -15,28 +15,29 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/sys.h"
 #include "tinycv/x86/sysinfo.h"
 
-#include <string.h>
 #include <mutex>
+#include <string.h>
+
+#include "tinycv/sys.h"
 #ifdef _WIN32
 #define NOGDI
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
-#include <windows.h>
 #include <immintrin.h>
+#include <windows.h>
 #else
 #include <errno.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <immintrin.h>
-#include <unistd.h>
 #include <fcntl.h>
+#include <immintrin.h>
+#include <setjmp.h>
+#include <signal.h>
+#include <unistd.h>
 #endif
 
-template <typename... Args>
-static inline void supress_unused_warnings(Args&&...)
+template<typename... Args>
+static inline void supress_unused_warnings(Args &&...)
 {
 }
 
@@ -45,11 +46,11 @@ static inline void supress_unused_warnings(Args&&...)
 #endif
 
 #ifdef __APPLE__
-extern "C" void _do_cpuid(int ieax, int iecx, int* rst_reg);
+extern "C" void _do_cpuid(int ieax, int iecx, int *rst_reg);
 #elif !(defined(_WIN32) || defined(_WIN64))
-extern "C" void __do_cpuid(int ieax, int iecx, int* rst_reg);
+extern "C" void __do_cpuid(int ieax, int iecx, int *rst_reg);
 #endif
-static void DoCpuid(int ieax, int iecx, int* eax, int* ebx, int* ecx, int* edx)
+static void DoCpuid(int ieax, int iecx, int *eax, int *ebx, int *ecx, int *edx)
 {
     int iEXXValue[4];
 #if defined(_WIN32) || defined(_WIN64)
@@ -59,10 +60,14 @@ static void DoCpuid(int ieax, int iecx, int* eax, int* ebx, int* ecx, int* edx)
 #else
     __do_cpuid(ieax, iecx, iEXXValue);
 #endif
-    if (eax) *eax = iEXXValue[0];
-    if (ebx) *ebx = iEXXValue[1];
-    if (ecx) *ecx = iEXXValue[2];
-    if (edx) *edx = iEXXValue[3];
+    if (eax)
+        *eax = iEXXValue[0];
+    if (ebx)
+        *ebx = iEXXValue[1];
+    if (ecx)
+        *ecx = iEXXValue[2];
+    if (edx)
+        *edx = iEXXValue[3];
 }
 
 #ifdef _WIN32
@@ -109,20 +114,20 @@ namespace tinycv {
 
 static
 #ifndef _MSC_VER
-    __attribute__((__target__("sse"))) __attribute__((optimize(0)))
+        __attribute__((__target__("sse"))) __attribute__((optimize(0)))
 #endif
-    float
-    TestIsaSSE()
+        float
+        TestIsaSSE()
 {
     return 0.0f;
 }
 
 static
 #ifndef _MSC_VER
-    __attribute__((__target__("avx"))) __attribute__((optimize(0)))
+        __attribute__((__target__("avx"))) __attribute__((optimize(0)))
 #endif
-    float
-    TestIsaAVX()
+        float
+        TestIsaAVX()
 {
     __m256 ymm0, ymm1, ymm2;
 #if defined(_WIN64) || defined(_WIN32)
@@ -166,10 +171,10 @@ static
 
 static
 #ifndef _MSC_VER
-    __attribute__((__target__("fma"))) __attribute__((optimize(0)))
+        __attribute__((__target__("fma"))) __attribute__((optimize(0)))
 #endif
-    float
-    TestIsaFMA()
+        float
+        TestIsaFMA()
 {
     __m256 ymm0, ymm1, ymm2;
 #if defined(_WIN64) || defined(_WIN32)
@@ -215,9 +220,9 @@ static
 #if (GCC_VERSION >= 40902 || _MSC_VER >= 1910)
 static float
 #ifdef __GNUC__
-    __attribute__((__target__("avx512f"))) __attribute__((optimize(0)))
+        __attribute__((__target__("avx512f"))) __attribute__((optimize(0)))
 #endif // __GNUC__
-    TestIsaAVX512()
+        TestIsaAVX512()
 {
     __m512 zmm0, zmm1, zmm2;
 #if defined(_WIN64) || defined(_WIN32)
@@ -289,7 +294,7 @@ static float
 #pragma GCC pop_options
 #endif
 
-static void GetCacheInfoIntel(const int& eax, const int& ebx, const int& ecx, const int& edx, uint64_t* cache_size, bool* inclusive)
+static void GetCacheInfoIntel(const int &eax, const int &ebx, const int &ecx, const int &edx, uint64_t *cache_size, bool *inclusive)
 {
     int cache_type = eax & 31;
     if (cache_type == 1 || cache_type == 3) {
@@ -304,7 +309,7 @@ static void GetCacheInfoIntel(const int& eax, const int& ebx, const int& ecx, co
     }
 }
 
-static void GetCacheInfo(struct CpuInfo* info)
+static void GetCacheInfo(struct CpuInfo *info)
 {
     int eax, ebx, ecx, edx;
     // detect cache
@@ -319,11 +324,13 @@ static void GetCacheInfo(struct CpuInfo* info)
         info->l2_cache_size = 0;
         DoCpuid(0x80000006, 0x0, &eax, &ebx, &ecx, &edx);
         temp = ecx;
-        if (temp) info->l2_cache_size = ((temp >> 16) & 0xFFFF) << 10;
+        if (temp)
+            info->l2_cache_size = ((temp >> 16) & 0xFFFF) << 10;
         // L3
         info->l3_cache_size = 0;
         temp = edx;
-        if (temp) info->l3_cache_size = ((temp >> 18) & 0x3FFF) << 19;
+        if (temp)
+            info->l3_cache_size = ((temp >> 18) & 0x3FFF) << 19;
     }
 
     DoCpuid(4, 0, &eax, &ebx, &ecx, &edx);
@@ -334,18 +341,18 @@ static void GetCacheInfo(struct CpuInfo* info)
     GetCacheInfoIntel(eax, ebx, ecx, edx, &(info->l3_cache_size), nullptr);
 }
 
-static void GetVendorId(struct CpuInfo* info)
+static void GetVendorId(struct CpuInfo *info)
 {
     int eax, ebx, ecx, edx;
     DoCpuid(0x00000000, 0x0, &eax, &ebx, &ecx, &edx);
-    int* vendor_id_int = (int*)info->vendor_id;
+    int *vendor_id_int = (int *)info->vendor_id;
     vendor_id_int[0] = ebx;
     vendor_id_int[1] = edx;
     vendor_id_int[2] = ecx;
     vendor_id_int[3] = 0;
 }
 
-void GetCPUInfoByCPUID(struct CpuInfo* info)
+void GetCPUInfoByCPUID(struct CpuInfo *info)
 {
 #define BIT_TEST(bit_map, pos) (((bit_map) & (0x1 << (pos))) ? 1 : 0)
     int eax, ebx, ecx, edx;
@@ -369,7 +376,7 @@ void GetCPUInfoByCPUID(struct CpuInfo* info)
     GetVendorId(info);
 }
 
-void GetCPUInfoByRun(CpuInfo* info)
+void GetCPUInfoByRun(CpuInfo *info)
 {
 #if (GCC_VERSION >= 40902 || _MSC_VER >= 1910)
     if (0 == try_run(&TestIsaAVX512)) {
@@ -390,7 +397,7 @@ void GetCPUInfoByRun(CpuInfo* info)
     GetVendorId(info);
 }
 
-static CpuInfo __st_cpuinfo{0, 0, 0, 0};
+static CpuInfo __st_cpuinfo{ 0, 0, 0, 0 };
 static std::once_flag __st_cpuinfo_once_flag;
 
 static void detect_cpuinfo_once()
@@ -398,7 +405,7 @@ static void detect_cpuinfo_once()
     GetCPUInfoByCPUID(&__st_cpuinfo);
 }
 
-const CpuInfo* GetCpuInfo(int)
+const CpuInfo *GetCpuInfo(int)
 {
     std::call_once(__st_cpuinfo_once_flag, &detect_cpuinfo_once);
     return &__st_cpuinfo;

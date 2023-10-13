@@ -15,16 +15,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/resize.h"
-#include "tinycv/x86/test.h"
-#include "tinycv/debug.h"
-
-#include <opencv2/imgproc.hpp>
-#include <gtest/gtest.h>
-
 #include <memory>
 
-template <typename T, int32_t nc>
+#include "tinycv/debug.h"
+#include "tinycv/resize.h"
+#include "tinycv/x86/test.h"
+
+#include <gtest/gtest.h>
+#include <opencv2/imgproc.hpp>
+
+template<typename T, int32_t nc>
 void ResizeLinearTest(int32_t inHeight, int32_t inWidth, int32_t outHeight, int32_t outWidth, T diff)
 {
     std::unique_ptr<T[]> src(new T[inWidth * inHeight * nc]);
@@ -41,7 +41,7 @@ void ResizeLinearTest(int32_t inHeight, int32_t inWidth, int32_t outHeight, int3
     checkResult<T, nc>(dst_ref.get(), dst.get(), outHeight, outWidth, outWidth * nc, outWidth * nc, diff);
 }
 
-template <typename T, int32_t nc>
+template<typename T, int32_t nc>
 void ResizeNearestTest(int32_t inHeight, int32_t inWidth, int32_t outHeight, int32_t outWidth, T diff)
 {
     std::unique_ptr<T[]> src(new T[inWidth * inHeight * nc]);

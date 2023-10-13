@@ -36,15 +36,15 @@ namespace tinycv {
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ***************************************************************************************************/
 
-template <typename T, int32_t nc>
+template<typename T, int32_t nc>
 void Flip(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T *inData,
-    int32_t outWidthStride,
-    T *outData,
-    int32_t flipCode);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData,
+        int32_t flipCode);
 
 } // namespace tinycv
 

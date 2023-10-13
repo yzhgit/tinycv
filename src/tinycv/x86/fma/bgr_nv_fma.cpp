@@ -15,36 +15,37 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <algorithm>
+#include <cmath>
+#include <immintrin.h>
+#include <limits.h>
+#include <string.h>
+
 #include "tinycv/types.h"
+
 #include "tinycv/x86/util.hpp"
 
-#include <string.h>
-#include <cmath>
-#include <limits.h>
-#include <immintrin.h>
-#include <algorithm>
-
-#define CY_coeff  1220542
+#define CY_coeff 1220542
 #define CUB_coeff 2116026
 #define CUG_coeff -409993
 #define CVG_coeff -852492
 #define CVR_coeff 1673527
-#define SHIFT     20
+#define SHIFT 20
 
 namespace tinycv {
 namespace fma {
 
 #define DESCALE(x, n) (((x) + (1 << ((n)-1))) >> (n))
-template <int32_t dstcn, int32_t blueIdx, bool isUV>
+template<int32_t dstcn, int32_t blueIdx, bool isUV>
 void nv_2_rgb(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uchar *inY,
-    int32_t inUVStride,
-    const uchar *inUV,
-    int32_t outWidthStride,
-    uchar *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uchar *inY,
+        int32_t inUVStride,
+        const uchar *inUV,
+        int32_t outWidthStride,
+        uchar *outData)
 {
     const uchar delta_uv = 128, alpha = 255;
     __m256i CY_coeff_VEC = _mm256_set1_epi32(CY_coeff);
@@ -158,44 +159,44 @@ void nv_2_rgb(
 }
 
 template void nv_2_rgb<3, 0, true>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uchar *inY,
-    int32_t inUVStride,
-    const uchar *inUV,
-    int32_t outWidthStride,
-    uchar *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uchar *inY,
+        int32_t inUVStride,
+        const uchar *inUV,
+        int32_t outWidthStride,
+        uchar *outData);
 
 template void nv_2_rgb<3, 2, true>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uchar *inY,
-    int32_t inUVStride,
-    const uchar *inUV,
-    int32_t outWidthStride,
-    uchar *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uchar *inY,
+        int32_t inUVStride,
+        const uchar *inUV,
+        int32_t outWidthStride,
+        uchar *outData);
 
 template void nv_2_rgb<3, 0, false>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uchar *inY,
-    int32_t inUVStride,
-    const uchar *inUV,
-    int32_t outWidthStride,
-    uchar *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uchar *inY,
+        int32_t inUVStride,
+        const uchar *inUV,
+        int32_t outWidthStride,
+        uchar *outData);
 
 template void nv_2_rgb<3, 2, false>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uchar *inY,
-    int32_t inUVStride,
-    const uchar *inUV,
-    int32_t outWidthStride,
-    uchar *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uchar *inY,
+        int32_t inUVStride,
+        const uchar *inUV,
+        int32_t outWidthStride,
+        uchar *outData);
 
-}
-} // namespace tinycv::fma
+} // namespace fma
+} // namespace tinycv

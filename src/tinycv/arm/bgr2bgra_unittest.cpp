@@ -15,15 +15,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include "tinycv/arm/test.h"
 #include "tinycv/cvtcolor.h"
 #include "tinycv/debug.h"
-#include "tinycv/arm/test.h"
 
 #include <gtest/gtest.h>
 #include <opencv2/imgproc.hpp>
 
-template <typename T, int32_t input_channels, int32_t output_channels>
-class BGR2BGRA : public ::testing::TestWithParam<std::tuple<Size, float>> {
+template<typename T, int32_t input_channels, int32_t output_channels>
+class BGR2BGRA : public ::testing::TestWithParam<std::tuple<Size, float>>
+{
 public:
     using BGR2BGRAParam = std::tuple<Size, float>;
     BGR2BGRA()
@@ -51,21 +52,21 @@ public:
         cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_BGR2BGRA);
 
         tinycv::BGR2BGRA<T>(
-            size.height,
-            size.width,
-            size.width * input_channels,
-            src.get(),
-            size.width * output_channels,
-            dst.get());
+                size.height,
+                size.width,
+                size.width * input_channels,
+                src.get(),
+                size.width * output_channels,
+                dst.get());
 
         checkResult<T, output_channels>(
-            dst_ref.get(),
-            dst.get(),
-            size.height,
-            size.width,
-            size.width * output_channels,
-            size.width * output_channels,
-            diff);
+                dst_ref.get(),
+                dst.get(),
+                size.height,
+                size.width,
+                size.width * output_channels,
+                size.width * output_channels,
+                diff);
     }
     void BGRA2BGRapply(const BGR2BGRAParam &param)
     {
@@ -84,21 +85,21 @@ public:
         cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_BGRA2BGR);
 
         tinycv::BGRA2BGR<T>(
-            size.height,
-            size.width,
-            size.width * input_channels,
-            src.get(),
-            size.width * output_channels,
-            dst.get());
+                size.height,
+                size.width,
+                size.width * input_channels,
+                src.get(),
+                size.width * output_channels,
+                dst.get());
 
         checkResult<T, output_channels>(
-            dst_ref.get(),
-            dst.get(),
-            size.height,
-            size.width,
-            size.width * output_channels,
-            size.width * output_channels,
-            diff);
+                dst_ref.get(),
+                dst.get(),
+                size.height,
+                size.width,
+                size.width * output_channels,
+                size.width * output_channels,
+                diff);
     }
 };
 
@@ -111,7 +112,7 @@ constexpr int32_t c4 = 4;
     {                                    \
         this->BGR2BGRAapply(GetParam()); \
     }                                    \
-    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size{320, 256}, Size{720, 480}), ::testing::Values(diff)));
+    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size{ 320, 256 }, Size{ 720, 480 }), ::testing::Values(diff)));
 
 R1(UT_BGR2BGRA_float_aarch64, float, c3, c4, 1e-5)
 R1(UT_BGR2BGRA_uint8_t_aarch64, uint8_t, c3, c4, 1.01)
@@ -122,7 +123,7 @@ R1(UT_BGR2BGRA_uint8_t_aarch64, uint8_t, c3, c4, 1.01)
     {                                    \
         this->BGRA2BGRapply(GetParam()); \
     }                                    \
-    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size{320, 256}, Size{720, 480}), ::testing::Values(diff)));
+    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size{ 320, 256 }, Size{ 720, 480 }), ::testing::Values(diff)));
 
 R2(UT_BGRA2BGR_float_aarch64, float, c4, c3, 1e-5)
 R2(UT_BGRA2BGR_uint8_t_aarch64, uint8_t, c4, c3, 1.01)

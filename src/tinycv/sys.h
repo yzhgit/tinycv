@@ -33,7 +33,7 @@ struct CpuInfo {
     char vendor_id[64];
 };
 
-const CpuInfo* GetCpuInfo(int which = 0);
+const CpuInfo *GetCpuInfo(int which = 0);
 
 static inline uint64_t GetCpuCacheL1(int which = 0)
 {
@@ -47,7 +47,7 @@ static inline uint64_t GetCpuCacheL3(int which = 0)
 {
     return GetCpuInfo(which)->l3_cache_size;
 }
-static inline const char* GetCpuVendor(int which = 0)
+static inline const char *GetCpuVendor(int which = 0)
 {
     return GetCpuInfo(which)->vendor_id;
 }
@@ -62,11 +62,11 @@ static inline isa_t GetCpuISA(int which = 0)
     return GetCpuInfo(which)->isa;
 }
 
-void GetCPUInfoByCPUID(CpuInfo* info);
-void GetCPUInfoByRun(CpuInfo* info);
+void GetCPUInfoByCPUID(CpuInfo *info);
+void GetCPUInfoByRun(CpuInfo *info);
 
-void* AlignedAlloc(uint64_t size, uint32_t alignment);
-void AlignedFree(void* p);
+void *AlignedAlloc(uint64_t size, uint32_t alignment);
+void AlignedFree(void *p);
 
 } // namespace tinycv
 

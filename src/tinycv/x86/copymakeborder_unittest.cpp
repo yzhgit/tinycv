@@ -15,6 +15,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <random>
+#include <vector>
+
 #include "tinycv/copymakeborder.h"
 #include "tinycv/debug.h"
 #include "tinycv/types.h"
@@ -23,10 +26,7 @@
 #include <gtest/gtest.h>
 #include <opencv2/imgproc.hpp>
 
-#include <vector>
-#include <random>
-
-template <typename T, int32_t nc, tinycv::BorderType border_type>
+template<typename T, int32_t nc, tinycv::BorderType border_type>
 void CopymakeborderTest(int32_t height, int32_t width, int32_t padding, float diff)
 {
     int32_t input_height = height;

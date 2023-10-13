@@ -15,15 +15,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include <benchmark/benchmark.h>
-#include <opencv2/imgproc.hpp>
-
 #include "tinycv/cvtcolor.h"
 #include "tinycv/debug.h"
 
+#include <benchmark/benchmark.h>
+#include <opencv2/imgproc.hpp>
+
 namespace {
-template <typename T, int32_t input_channels, int32_t output_channels>
-class BGR_I420_Benchmark {
+template<typename T, int32_t input_channels, int32_t output_channels>
+class BGR_I420_Benchmark
+{
 public:
     T *dev_iImage;
     T *dev_oImage;
@@ -34,10 +35,7 @@ public:
     int32_t height;
 
     BGR_I420_Benchmark(int32_t width, int32_t height)
-        : dev_iImage(nullptr)
-        , dev_oImage(nullptr)
-        , width(width)
-        , height(height)
+            : dev_iImage(nullptr), dev_oImage(nullptr), width(width), height(height)
     {
         dev_iImage = (T *)malloc(sizeof(T) * width * height * 4); // max malloc
         dev_oImage = (T *)malloc(sizeof(T) * width * height * 4);
@@ -106,63 +104,63 @@ public:
     void BGR2I420_3channelsapply()
     {
         tinycv::BGR2I420<T>(
-            height,
-            width,
-            width * input_channels,
-            dev_iImage,
-            width * 1,
-            dev_Image_y,
-            width / 2,
-            dev_Image_u,
-            width / 2,
-            dev_Image_v);
+                height,
+                width,
+                width * input_channels,
+                dev_iImage,
+                width * 1,
+                dev_Image_y,
+                width / 2,
+                dev_Image_u,
+                width / 2,
+                dev_Image_v);
     }
     void I420_3channels2BGRapply()
     {
         tinycv::I4202BGR<T>(
-            height,
-            width,
-            width * 1,
-            dev_Image_y,
-            width / 2,
-            dev_Image_u,
-            width / 2,
-            dev_Image_v,
-            width * output_channels,
-            dev_oImage);
+                height,
+                width,
+                width * 1,
+                dev_Image_y,
+                width / 2,
+                dev_Image_u,
+                width / 2,
+                dev_Image_v,
+                width * output_channels,
+                dev_oImage);
     }
     void BGRA2I420_3channelsapply()
     {
         tinycv::BGRA2I420<T>(
-            height,
-            width,
-            width * input_channels,
-            dev_iImage,
-            width * 1,
-            dev_Image_y,
-            width / 2,
-            dev_Image_u,
-            width / 2,
-            dev_Image_v);
+                height,
+                width,
+                width * input_channels,
+                dev_iImage,
+                width * 1,
+                dev_Image_y,
+                width / 2,
+                dev_Image_u,
+                width / 2,
+                dev_Image_v);
     }
     void I420_3channels2BGRAapply()
     {
         tinycv::I4202BGRA<T>(
-            height,
-            width,
-            width * 1,
-            dev_Image_y,
-            width / 2,
-            dev_Image_u,
-            width / 2,
-            dev_Image_v,
-            width * output_channels,
-            dev_oImage);
+                height,
+                width,
+                width * 1,
+                dev_Image_y,
+                width / 2,
+                dev_Image_u,
+                width / 2,
+                dev_Image_v,
+                width * output_channels,
+                dev_oImage);
     }
 };
 } // namespace
 
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_BGR2I420_tinycv_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -171,7 +169,7 @@ void BM_BGR2I420_tinycv_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_BGR2I420_opencv_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -180,7 +178,7 @@ void BM_BGR2I420_opencv_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_I4202BGR_tinycv_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -189,7 +187,7 @@ void BM_I4202BGR_tinycv_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_I4202BGR_opencv_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -198,7 +196,7 @@ void BM_I4202BGR_opencv_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_BGRA2I420_tinycv_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -207,7 +205,7 @@ void BM_BGRA2I420_tinycv_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_BGRA2I420_opencv_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -216,7 +214,7 @@ void BM_BGRA2I420_opencv_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_I4202BGRA_tinycv_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -225,7 +223,7 @@ void BM_I4202BGRA_tinycv_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_I4202BGRA_opencv_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -235,7 +233,7 @@ void BM_I4202BGRA_opencv_aarch64(benchmark::State &state)
     state.SetItemsProcessed(state.iterations() * 1);
 }
 
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_BGR2I420_3channels_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -244,7 +242,7 @@ void BM_BGR2I420_3channels_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_I420_3channels2BGR_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -253,7 +251,7 @@ void BM_I420_3channels2BGR_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_BGRA2I420_3channels_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -262,7 +260,7 @@ void BM_BGRA2I420_3channels_aarch64(benchmark::State &state)
     }
     state.SetItemsProcessed(state.iterations() * 1);
 }
-template <typename T, int32_t input_channels, int32_t output_channels>
+template<typename T, int32_t input_channels, int32_t output_channels>
 void BM_I420_3channels2BGRA_aarch64(benchmark::State &state)
 {
     BGR_I420_Benchmark<T, input_channels, output_channels> bm(state.range(0), state.range(1));
@@ -276,11 +274,11 @@ constexpr int32_t c1 = 1;
 constexpr int32_t c3 = 3;
 constexpr int32_t c4 = 4;
 
-BENCHMARK_TEMPLATE(BM_BGR2I420_tinycv_aarch64, uint8_t, c3, c1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_BGR2I420_opencv_aarch64, uint8_t, c3, c1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_BGRA2I420_tinycv_aarch64, uint8_t, c4, c1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_BGRA2I420_opencv_aarch64, uint8_t, c4, c1)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_I4202BGR_tinycv_aarch64, uint8_t, c1, c3)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_I4202BGR_opencv_aarch64, uint8_t, c1, c3)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_I4202BGRA_tinycv_aarch64, uint8_t, c1, c4)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_I4202BGRA_opencv_aarch64, uint8_t, c1, c4)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_BGR2I420_tinycv_aarch64, uint8_t, c3, c1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_BGR2I420_opencv_aarch64, uint8_t, c3, c1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_BGRA2I420_tinycv_aarch64, uint8_t, c4, c1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_BGRA2I420_opencv_aarch64, uint8_t, c4, c1)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_I4202BGR_tinycv_aarch64, uint8_t, c1, c3)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_I4202BGR_opencv_aarch64, uint8_t, c1, c3)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_I4202BGRA_tinycv_aarch64, uint8_t, c1, c4)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_I4202BGRA_opencv_aarch64, uint8_t, c1, c4)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });

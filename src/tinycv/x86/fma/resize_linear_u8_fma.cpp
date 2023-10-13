@@ -15,11 +15,12 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/sys.h"
-#include "internal_fma.hpp"
-
 #include <immintrin.h>
 #include <math.h>
+
+#include "tinycv/sys.h"
+
+#include "internal_fma.hpp"
 
 namespace tinycv {
 namespace fma {
@@ -28,13 +29,13 @@ namespace fma {
     _mm_extract_epi32(_mm256_extractf128_si256((x), (n) >> 2), (n) % 4);
 
 int32_t resize_linear_w_oneline_c1_u8_fma(
-    int32_t in_width,
-    const uint8_t *in_data,
-    int32_t out_width,
-    const int32_t *w_offset,
-    const int16_t *w_coeff,
-    int16_t COEFF_SUM,
-    int32_t *row)
+        int32_t in_width,
+        const uint8_t *in_data,
+        int32_t out_width,
+        const int32_t *w_offset,
+        const int16_t *w_coeff,
+        int16_t COEFF_SUM,
+        int32_t *row)
 {
     int32_t last_w = out_width;
     while (last_w > 0 && w_offset[last_w - 1] >= in_width - 3) {
@@ -42,7 +43,7 @@ int32_t resize_linear_w_oneline_c1_u8_fma(
     }
 
     __m256i b0 = _mm256_setr_epi8(
-        0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13);
+            0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13);
     const int32_t b1 = (2 << 2) + 0;
 
     int32_t w = 0;
@@ -87,19 +88,19 @@ int32_t resize_linear_w_oneline_c1_u8_fma(
 }
 
 void resize_linear_kernel_c1_shrink_u8_fma(
-    int32_t in_height,
-    int32_t in_width,
-    int32_t in_stride,
-    const uint8_t *in_data,
-    int32_t out_height,
-    int32_t out_width,
-    int32_t out_stride,
-    const int32_t *h_offset,
-    const int32_t *w_offset,
-    int16_t *h_coeff,
-    int16_t *w_coeff,
-    int16_t INTER_RESIZE_COEF_SCALE,
-    uint8_t *out_data)
+        int32_t in_height,
+        int32_t in_width,
+        int32_t in_stride,
+        const uint8_t *in_data,
+        int32_t out_height,
+        int32_t out_width,
+        int32_t out_stride,
+        const int32_t *h_offset,
+        const int32_t *w_offset,
+        int16_t *h_coeff,
+        int16_t *w_coeff,
+        int16_t INTER_RESIZE_COEF_SCALE,
+        uint8_t *out_data)
 {
     int32_t last_w = out_width;
     while (last_w >= 0 && w_offset[last_w - 1] >= in_width - 3) {
@@ -107,7 +108,7 @@ void resize_linear_kernel_c1_shrink_u8_fma(
     }
 
     __m256i b0 = _mm256_setr_epi8(
-        0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13);
+            0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13, 0, 1, 4, 5, 8, 9, 12, 13);
     const int32_t b1 = (2 << 2) + 0;
 
     __m256i m_epi16_two = _mm256_set1_epi16(2);
@@ -130,10 +131,10 @@ void resize_linear_kernel_c1_shrink_u8_fma(
         for (int32_t i = 0; i < 4; ++i) {
             if (i % 2) { // 1 & 3
                 m_h_coeff[i] = _mm256_setr_epi16(
-                    h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1]);
+                        h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 - 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1], h_coeff_cur[i * 2 + 1]);
             } else { // 0 & 2
                 m_h_coeff[i] = _mm256_setr_epi16(
-                    h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2]);
+                        h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 0], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2], h_coeff_cur[i * 2 + 2]);
             }
         }
 
@@ -276,10 +277,10 @@ void resize_linear_kernel_c1_shrink_u8_fma(
 }
 
 int32_t resize_linear_shrink2_oneline_c1_kernel_u8_fma(
-    const uint8_t *in_ptr,
-    int32_t in_stride,
-    int32_t out_width,
-    uint8_t *out_ptr)
+        const uint8_t *in_ptr,
+        int32_t in_stride,
+        int32_t out_width,
+        uint8_t *out_ptr)
 {
     __m256i m_zero = _mm256_set1_epi8(0);
     __m256i m_epi16_two = _mm256_set1_epi16(2);
@@ -331,13 +332,13 @@ int32_t resize_linear_shrink2_oneline_c1_kernel_u8_fma(
 }
 
 int32_t resize_linear_w_oneline_c3_u8_fma(
-    int32_t in_width,
-    const uint8_t *in_data,
-    int32_t out_width,
-    const int32_t *w_offset,
-    const int16_t *w_coeff,
-    int16_t COEFF_SUM,
-    int32_t *row)
+        int32_t in_width,
+        const uint8_t *in_data,
+        int32_t out_width,
+        const int32_t *w_offset,
+        const int16_t *w_coeff,
+        int16_t COEFF_SUM,
+        int32_t *row)
 {
     const int32_t channels = 3;
 
@@ -347,17 +348,17 @@ int32_t resize_linear_w_oneline_c3_u8_fma(
     }
 
     __m256i b0 = _mm256_setr_epi8(
-        0, 3, 1, 4, 2, 5, 8, 11, 9, 12, 10, 13, 0, 0, 0, 0, 0, 3, 1, 4, 2, 5, 8, 11, 9, 12, 10, 13, 0, 0, 0, 0);
+            0, 3, 1, 4, 2, 5, 8, 11, 9, 12, 10, 13, 0, 0, 0, 0, 0, 3, 1, 4, 2, 5, 8, 11, 9, 12, 10, 13, 0, 0, 0, 0);
 
     const int32_t useless = 0;
     __m256i b1_0 = _mm256_setr_epi32(
-        0, 1, 2, 4, 5, 6, useless, useless);
+            0, 1, 2, 4, 5, 6, useless, useless);
     __m256i b1_1 = _mm256_setr_epi32(
-        2, 4, 5, 6, useless, useless, 0, 1);
+            2, 4, 5, 6, useless, useless, 0, 1);
     __m256i b1_2 = _mm256_setr_epi32(
-        5, 6, useless, useless, 0, 1, 2, 4);
+            5, 6, useless, useless, 0, 1, 2, 4);
     __m256i b1_3 = _mm256_setr_epi32(
-        useless, useless, 0, 1, 2, 4, 5, 6);
+            useless, useless, 0, 1, 2, 4, 5, 6);
 
     const int32_t blend_0_and_1 = 0b11000000;
     const int32_t blend_1_and_2 = 0b11110000;
@@ -420,13 +421,13 @@ int32_t resize_linear_w_oneline_c3_u8_fma(
 }
 
 int32_t resize_linear_w_oneline_c4_u8_fma(
-    int32_t in_width,
-    const uint8_t *in_data,
-    int32_t out_width,
-    const int32_t *w_offset,
-    const int16_t *w_coeff,
-    int16_t COEFF_SUM,
-    int32_t *row)
+        int32_t in_width,
+        const uint8_t *in_data,
+        int32_t out_width,
+        const int32_t *w_offset,
+        const int16_t *w_coeff,
+        int16_t COEFF_SUM,
+        int32_t *row)
 {
     const int32_t channels = 4;
 
@@ -436,7 +437,7 @@ int32_t resize_linear_w_oneline_c4_u8_fma(
     }
 
     __m256i b0 = _mm256_setr_epi8(
-        0, 4, 1, 5, 2, 6, 3, 7, 8, 12, 9, 13, 10, 14, 11, 15, 0, 4, 1, 5, 2, 6, 3, 7, 8, 12, 9, 13, 10, 14, 11, 15);
+            0, 4, 1, 5, 2, 6, 3, 7, 8, 12, 9, 13, 10, 14, 11, 15, 0, 4, 1, 5, 2, 6, 3, 7, 8, 12, 9, 13, 10, 14, 11, 15);
 
     int32_t w = 0;
     for (; w <= out_width - 16; w += 16) {
@@ -493,10 +494,10 @@ int32_t resize_linear_w_oneline_c4_u8_fma(
 }
 
 int32_t resize_linear_shrink2_oneline_c4_kernel_u8_fma(
-    const uint8_t *in_ptr,
-    int32_t in_stride,
-    int32_t out_width,
-    uint8_t *out_ptr)
+        const uint8_t *in_ptr,
+        int32_t in_stride,
+        int32_t out_width,
+        uint8_t *out_ptr)
 {
     const int32_t channels = 4;
     __m256i m_zero = _mm256_set1_epi8(0);
@@ -551,5 +552,5 @@ int32_t resize_linear_shrink2_oneline_c4_kernel_u8_fma(
     return w;
 }
 
-}
-} // namespace tinycv::fma
+} // namespace fma
+} // namespace tinycv

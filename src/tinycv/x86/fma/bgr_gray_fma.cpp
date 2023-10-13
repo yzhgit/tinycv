@@ -15,27 +15,29 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "internal_fma.hpp"
-#include "tinycv/x86/avx/intrinutils_avx.hpp"
-#include "tinycv/sys.h"
-
-#include <stdint.h>
-#include <immintrin.h>
-#include <vector>
 #include <algorithm>
 #include <cstring>
+#include <immintrin.h>
+#include <stdint.h>
+#include <vector>
+
+#include "tinycv/sys.h"
+
+#include "tinycv/x86/avx/intrinutils_avx.hpp"
+
+#include "internal_fma.hpp"
 
 namespace tinycv {
 namespace fma {
 
 void BGR2GRAY(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float* in,
-    int32_t outWidthStride,
-    float* out,
-    bool reverse_channel)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *in,
+        int32_t outWidthStride,
+        float *out,
+        bool reverse_channel)
 {
     float r_coeff = 0.299f;
     float g_coeff = 0.587f;
@@ -49,8 +51,8 @@ void BGR2GRAY(
     __m256 v_cr = _mm256_set1_ps(r_coeff);
 
     for (int32_t h = 0; h < height; ++h) {
-        const float* base_in = in + h * inWidthStride;
-        float* base_out = out + h * outWidthStride;
+        const float *base_in = in + h * inWidthStride;
+        float *base_out = out + h * outWidthStride;
         int32_t w = 0;
         for (; w <= width - 16; w += 16) {
             __m256 v_gray0, vr0, vb0, vg0;
@@ -72,5 +74,5 @@ void BGR2GRAY(
     }
 }
 
-}
-} // namespace tinycv::fma
+} // namespace fma
+} // namespace tinycv

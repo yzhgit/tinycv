@@ -18,13 +18,14 @@
 #ifndef __ST_TINYCV_ARM_COLOR_YUV_SIMD_HPP__
 #define __ST_TINYCV_ARM_COLOR_YUV_SIMD_HPP__
 
-#include "tinycv/types.h"
-#include "tinycv/arm/color_yuv.hpp"
-
 #include <algorithm>
+#include <arm_neon.h>
 #include <complex>
 #include <string.h>
-#include <arm_neon.h>
+
+#include "tinycv/types.h"
+
+#include "tinycv/arm/color_yuv.hpp"
 
 namespace tinycv {
 namespace arm {
@@ -41,7 +42,7 @@ enum YUV_TYPE {
 
 struct YUV4202RGB_u8_neon {
     YUV4202RGB_u8_neon(int32_t _bIdx)
-        : bIdx(_bIdx)
+            : bIdx(_bIdx)
     {
         v_c0 = vdupq_n_s32(ITUR_BT_601_CVR);
         v_c1 = vdupq_n_s32(ITUR_BT_601_CVG);
@@ -53,7 +54,7 @@ struct YUV4202RGB_u8_neon {
         v16 = vdupq_n_s32(16);
         v_shift = vdupq_n_s32(1 << (ITUR_BT_601_SHIFT - 1));
     }
-    inline void process(int32x4x2_t ruv_zip, int32x4x2_t guv_zip, int32x4x2_t buv_zip, int16x8_t vec_y_s16, uint8x8x3_t& v_dst) const
+    inline void process(int32x4x2_t ruv_zip, int32x4x2_t guv_zip, int32x4x2_t buv_zip, int16x8_t vec_y_s16, uint8x8x3_t &v_dst) const
     {
         int32x4_t vec_ylo_s32 = vmovl_s16(vget_low_s16(vec_y_s16));
         vec_ylo_s32 = vmulq_s32(vmaxq_s32(vsubq_s32(vec_ylo_s32, v16), v_zero), v_c4);
@@ -78,15 +79,15 @@ struct YUV4202RGB_u8_neon {
     }
 
     void convert_per_2rows(
-        int32_t width,
-        const uint8_t* y1,
-        const uint8_t* u1,
-        const uint8_t* v1,
-        uint8_t* row1,
-        uint8_t* row2,
-        int32_t stride) const
+            int32_t width,
+            const uint8_t *y1,
+            const uint8_t *u1,
+            const uint8_t *v1,
+            uint8_t *row1,
+            uint8_t *row2,
+            int32_t stride) const
     {
-        const uint8_t* y2 = y1 + stride;
+        const uint8_t *y2 = y1 + stride;
         int32_t i = 0;
         for (; i <= width / 2 - 8; i += 8, row1 += 6 * 8, row2 += 6 * 8) {
             uint8x8x3_t v_dst1;
@@ -181,22 +182,22 @@ struct YUV4202RGB_u8_neon {
 
     // nv12 or nv21 to bgr or rgb
     void convert_from_yuv420sp_layout(
-        int32_t height,
-        int32_t width,
-        int32_t yStride,
-        const uint8_t* y,
-        int32_t uvStride,
-        const uint8_t* uv,
-        int32_t outWidthStride,
-        uint8_t* dst,
-        bool isUV) const
+            int32_t height,
+            int32_t width,
+            int32_t yStride,
+            const uint8_t *y,
+            int32_t uvStride,
+            const uint8_t *uv,
+            int32_t outWidthStride,
+            uint8_t *dst,
+            bool isUV) const
     {
-        const uint8_t* y1 = y;
-        uint8_t* u1 = (uint8_t*)malloc(width / 2);
-        uint8_t* v1 = (uint8_t*)malloc(width / 2);
+        const uint8_t *y1 = y;
+        uint8_t *u1 = (uint8_t *)malloc(width / 2);
+        uint8_t *v1 = (uint8_t *)malloc(width / 2);
         for (int32_t j = 0; j < height; j += 2, y1 += yStride * 2, uv += uvStride) {
-            uint8_t* row1 = dst + j * outWidthStride;
-            uint8_t* row2 = dst + (j + 1) * outWidthStride;
+            uint8_t *row1 = dst + j * outWidthStride;
+            uint8_t *row2 = dst + (j + 1) * outWidthStride;
             if (isUV) {
                 for (int32_t i = 0; i < width / 2; i++) {
                     u1[i] = uv[2 * i];
@@ -217,43 +218,43 @@ struct YUV4202RGB_u8_neon {
 
     // i420 or yv12 to bgr or rgb
     void convert_from_yuv420_continuous_layout(
-        int32_t height,
-        int32_t width,
-        const uint8_t* y1,
-        const uint8_t* u1,
-        const uint8_t* v1,
-        uint8_t* dst,
-        int32_t stride,
-        int32_t ustepIdx,
-        int32_t vstepIdx,
-        int32_t outWidthStride) const
+            int32_t height,
+            int32_t width,
+            const uint8_t *y1,
+            const uint8_t *u1,
+            const uint8_t *v1,
+            uint8_t *dst,
+            int32_t stride,
+            int32_t ustepIdx,
+            int32_t vstepIdx,
+            int32_t outWidthStride) const
     {
-        int32_t uvsteps[2] = {width / 2, stride - width / 2};
+        int32_t uvsteps[2] = { width / 2, stride - width / 2 };
         int32_t usIdx = ustepIdx, vsIdx = vstepIdx;
 
         for (int32_t j = 0; j < height; j += 2, y1 += stride * 2, u1 += uvsteps[(usIdx++) & 1], v1 += uvsteps[(vsIdx++) & 1]) {
-            uint8_t* row1 = dst + j * outWidthStride;
-            uint8_t* row2 = dst + (j + 1) * outWidthStride;
+            uint8_t *row1 = dst + j * outWidthStride;
+            uint8_t *row2 = dst + (j + 1) * outWidthStride;
             convert_per_2rows(width, y1, u1, v1, row1, row2, stride);
         }
     }
 
     // i420 to bgr or rgb
     void convert_from_yuv420_seperate_layout(
-        int32_t height,
-        int32_t width,
-        const uint8_t* y1,
-        const uint8_t* u1,
-        const uint8_t* v1,
-        uint8_t* dst,
-        int32_t yStride,
-        int32_t ustride,
-        int32_t vstride,
-        int32_t outWidthStride) const
+            int32_t height,
+            int32_t width,
+            const uint8_t *y1,
+            const uint8_t *u1,
+            const uint8_t *v1,
+            uint8_t *dst,
+            int32_t yStride,
+            int32_t ustride,
+            int32_t vstride,
+            int32_t outWidthStride) const
     {
         for (int32_t j = 0; j < height; j += 2, y1 += 2 * yStride, u1 += ustride, v1 += vstride) {
-            uint8_t* row1 = dst + j * outWidthStride;
-            uint8_t* row2 = dst + (j + 1) * outWidthStride;
+            uint8_t *row1 = dst + j * outWidthStride;
+            uint8_t *row2 = dst + (j + 1) * outWidthStride;
             convert_per_2rows(width, y1, u1, v1, row1, row2, yStride);
         }
     }
@@ -265,7 +266,7 @@ struct YUV4202RGB_u8_neon {
 // convert bgr or rgb to yuv420
 struct RGBtoYUV420p_u8_neon {
     RGBtoYUV420p_u8_neon(int32_t _bIdx)
-        : bIdx(_bIdx)
+            : bIdx(_bIdx)
     {
         v_c0 = vdupq_n_s32(ITUR_BT_601_CRY);
         v_c1 = vdupq_n_s32(ITUR_BT_601_CGY);
@@ -277,7 +278,7 @@ struct RGBtoYUV420p_u8_neon {
         v_halfshift = vdupq_n_s32(1 << (ITUR_BT_601_SHIFT - 1));
     }
 
-    inline void getUV(int32x4_t r, int32x4_t g, int32x4_t b, int32x4_t& u, int32x4_t& v) const
+    inline void getUV(int32x4_t r, int32x4_t g, int32x4_t b, int32x4_t &u, int32x4_t &v) const
     {
         u = vaddq_s32(v_shift128, v_halfshift);
         u = vmlaq_s32(u, r, vdupq_n_s32(ITUR_BT_601_CRU));
@@ -291,7 +292,7 @@ struct RGBtoYUV420p_u8_neon {
         v = vmlaq_s32(v, b, vdupq_n_s32(ITUR_BT_601_CBV));
         v = vshrq_n_s32(v, ITUR_BT_601_SHIFT);
     }
-    inline void getY(int32x4_t r, int32x4_t g, int32x4_t b, int32x4_t& y) const
+    inline void getY(int32x4_t r, int32x4_t g, int32x4_t b, int32x4_t &y) const
     {
         y = vaddq_s32(v_shift16, v_halfshift);
         y = vmlaq_s32(y, r, v_c0);
@@ -299,7 +300,7 @@ struct RGBtoYUV420p_u8_neon {
         y = vmlaq_s32(y, b, v_c2);
         y = vshrq_n_s32(y, ITUR_BT_601_SHIFT);
     }
-    inline void process1(int16x8_t r00_s16, int16x8_t g00_s16, int16x8_t b00_s16, uint8x8_t& y00_u8) const
+    inline void process1(int16x8_t r00_s16, int16x8_t g00_s16, int16x8_t b00_s16, uint8x8_t &y00_u8) const
     {
         int32x4_t r00_lo_s32 = vmovl_s16(vget_low_s16(r00_s16));
         int32x4_t r00_hi_s32 = vmovl_s16(vget_high_s16(r00_s16));
@@ -315,7 +316,7 @@ struct RGBtoYUV420p_u8_neon {
         getY(r00_hi_s32, g00_hi_s32, b00_hi_s32, y1_s32);
         y00_u8 = vqmovun_s16(vcombine_s16(vqmovn_s32(y0_s32), vqmovn_s32(y1_s32)));
     }
-    inline void process(int16x8_t r00_s16, int16x8_t g00_s16, int16x8_t b00_s16, uint8x8_t& y00_u8, int32x4_t& u_s32, int32x4_t& v_s32) const
+    inline void process(int16x8_t r00_s16, int16x8_t g00_s16, int16x8_t b00_s16, uint8x8_t &y00_u8, int32x4_t &u_s32, int32x4_t &v_s32) const
     {
         int32x4_t r00_lo_s32 = vmovl_s16(vget_low_s16(r00_s16));
         int32x4_t r00_hi_s32 = vmovl_s16(vget_high_s16(r00_s16));
@@ -343,14 +344,14 @@ struct RGBtoYUV420p_u8_neon {
     }
 
     void convert_per_2rows(
-        int32_t width,
-        int32_t cn,
-        const uint8_t* row0,
-        const uint8_t* row1,
-        uint8_t* y,
-        uint8_t* u,
-        uint8_t* v,
-        int32_t yStride) const
+            int32_t width,
+            int32_t cn,
+            const uint8_t *row0,
+            const uint8_t *row1,
+            uint8_t *y,
+            uint8_t *u,
+            uint8_t *v,
+            int32_t yStride) const
     {
         int32_t w = width;
 
@@ -474,66 +475,66 @@ struct RGBtoYUV420p_u8_neon {
 
     // to I420 split
     void operator()(
-        int32_t height,
-        int32_t width,
-        int32_t scn,
-        const uint8_t* src,
-        uint8_t* y,
-        uint8_t* u,
-        uint8_t* v,
-        int32_t inWidthStride,
-        int32_t yStride,
-        int32_t uStride,
-        int32_t vStride) const
+            int32_t height,
+            int32_t width,
+            int32_t scn,
+            const uint8_t *src,
+            uint8_t *y,
+            uint8_t *u,
+            uint8_t *v,
+            int32_t inWidthStride,
+            int32_t yStride,
+            int32_t uStride,
+            int32_t vStride) const
     {
         int32_t h = height;
 
         for (int32_t i = 0; i < h / 2; i++) {
-            const uint8_t* row0 = src + i * 2 * inWidthStride;
-            const uint8_t* row1 = src + (i * 2 + 1) * inWidthStride;
+            const uint8_t *row0 = src + i * 2 * inWidthStride;
+            const uint8_t *row1 = src + (i * 2 + 1) * inWidthStride;
             convert_per_2rows(width, scn, row0, row1, y + i * 2 * yStride, u + i * uStride, v + i * vStride, yStride);
         }
     }
 
     // to I420  continuous
     void operator()(
-        int32_t height,
-        int32_t width,
-        int32_t scn,
-        const uint8_t* src,
-        uint8_t* y,
-        uint8_t* u,
-        uint8_t* v,
-        int32_t inWidthStride,
-        int32_t ystride) const
+            int32_t height,
+            int32_t width,
+            int32_t scn,
+            const uint8_t *src,
+            uint8_t *y,
+            uint8_t *u,
+            uint8_t *v,
+            int32_t inWidthStride,
+            int32_t ystride) const
     {
         int32_t w = width;
         int32_t h = height;
 
         for (int32_t i = 0; i < h / 2; i++) {
-            const uint8_t* row0 = src + i * 2 * inWidthStride;
-            const uint8_t* row1 = src + (i * 2 + 1) * inWidthStride;
+            const uint8_t *row0 = src + i * 2 * inWidthStride;
+            const uint8_t *row1 = src + (i * 2 + 1) * inWidthStride;
             convert_per_2rows(width, scn, row0, row1, y + i * 2 * ystride, u + i / 2 * ystride + (i % 2) * (w / 2), v + i / 2 * ystride + (i % 2) * (w / 2), ystride);
         }
     }
 
     // to NV12 or NV21
     void operator()(
-        int32_t height,
-        int32_t width,
-        int32_t scn,
-        int32_t inWidthStride,
-        const uint8_t* src,
-        int32_t yStride,
-        uint8_t* y,
-        int32_t uvStride,
-        uint8_t* uv,
-        bool isUV) const
+            int32_t height,
+            int32_t width,
+            int32_t scn,
+            int32_t inWidthStride,
+            const uint8_t *src,
+            int32_t yStride,
+            uint8_t *y,
+            int32_t uvStride,
+            uint8_t *uv,
+            bool isUV) const
     {
         int32_t h = height;
 
-        uint8_t* u = new uint8_t[width];
-        uint8_t* v = new uint8_t[width];
+        uint8_t *u = new uint8_t[width];
+        uint8_t *v = new uint8_t[width];
 
         for (int32_t i = 0; i < h / 2; i++, y += yStride * 2, uv += uvStride) {
             if (isUV) {
@@ -547,8 +548,8 @@ struct RGBtoYUV420p_u8_neon {
                     u[i] = uv[2 * i + 1];
                 }
             }
-            const uint8_t* row0 = src + i * 2 * inWidthStride;
-            const uint8_t* row1 = src + (i * 2 + 1) * inWidthStride;
+            const uint8_t *row0 = src + i * 2 * inWidthStride;
+            const uint8_t *row1 = src + (i * 2 + 1) * inWidthStride;
             convert_per_2rows(width, scn, row0, row1, y, u, v, yStride);
 
             if (isUV) {
@@ -573,34 +574,34 @@ struct RGBtoYUV420p_u8_neon {
 
 // video range
 // yv12,yu12,nv12,nv12 to rgb,rgba,bgr,bgra
-template <YUV_TYPE yuvType, int32_t dst_c, int32_t b_idx>
+template<YUV_TYPE yuvType, int32_t dst_c, int32_t b_idx>
 void yuv420_to_bgr_uchar_video_range(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 
 // bgr,rgb,bgra,rgba to i420,nv12,nv21
-template <int32_t b_idx, int32_t src_c, YUV_TYPE yuvType>
+template<int32_t b_idx, int32_t src_c, YUV_TYPE yuvType>
 void bgr_to_yuv420_uchar_video_range(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
-}
-} // namespace tinycv::arm
+} // namespace arm
+} // namespace tinycv
 
 #endif //__ST_TINYCV_ARM_COLOR_YUV_SIMD_HPP__

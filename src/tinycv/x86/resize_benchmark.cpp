@@ -15,32 +15,30 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/resize.h"
 #include "tinycv/debug.h"
+#include "tinycv/resize.h"
 #include "tinycv/types.h"
 
-#include <opencv2/imgproc.hpp>
 #include <benchmark/benchmark.h>
+#include <opencv2/imgproc.hpp>
 
 namespace {
 
-template <typename T, int32_t channels, int32_t mode>
-class ResizeBenchmark {
+template<typename T, int32_t channels, int32_t mode>
+class ResizeBenchmark
+{
 public:
-    T* dev_iImage = nullptr;
-    T* dev_oImage = nullptr;
+    T *dev_iImage = nullptr;
+    T *dev_oImage = nullptr;
     int32_t inWidth;
     int32_t inHeight;
     int32_t outWidth;
     int32_t outHeight;
     ResizeBenchmark(int32_t inWidth, int32_t inHeight, int32_t outWidth, int32_t outHeight)
-        : inWidth(inWidth)
-        , inHeight(inHeight)
-        , outWidth(outWidth)
-        , outHeight(outHeight)
+            : inWidth(inWidth), inHeight(inHeight), outWidth(outWidth), outHeight(outHeight)
     {
-        dev_iImage = (T*)malloc(inWidth * inHeight * channels * sizeof(T));
-        dev_oImage = (T*)malloc(outWidth * outHeight * channels * sizeof(T));
+        dev_iImage = (T *)malloc(inWidth * inHeight * channels * sizeof(T));
+        dev_oImage = (T *)malloc(outWidth * outHeight * channels * sizeof(T));
         memset(this->dev_iImage, 0, inWidth * inHeight * channels * sizeof(T));
         memset(this->dev_oImage, 0, outWidth * outHeight * channels * sizeof(T));
     }
@@ -92,8 +90,8 @@ public:
 
 } // namespace
 
-template <typename T, int32_t channels, int32_t mode>
-static void BM_Resize_tinycv_x86(benchmark::State& state)
+template<typename T, int32_t channels, int32_t mode>
+static void BM_Resize_tinycv_x86(benchmark::State &state)
 {
     ResizeBenchmark<T, channels, mode> bm(state.range(0), state.range(1), state.range(2), state.range(3));
     for (auto _ : state) {
@@ -102,8 +100,8 @@ static void BM_Resize_tinycv_x86(benchmark::State& state)
     state.SetItemsProcessed(state.iterations());
 }
 
-template <typename T, int32_t channels, int32_t mode>
-static void BM_Resize_opencv_x86(benchmark::State& state)
+template<typename T, int32_t channels, int32_t mode>
+static void BM_Resize_opencv_x86(benchmark::State &state)
 {
     ResizeBenchmark<T, channels, mode> bm(state.range(0), state.range(1), state.range(2), state.range(3));
     for (auto _ : state) {
@@ -115,28 +113,28 @@ static void BM_Resize_opencv_x86(benchmark::State& state)
 using namespace tinycv::debug;
 using tinycv::INTERPOLATION_LINEAR;
 using tinycv::INTERPOLATION_NEAREST_POINT;
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c1, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c1, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c3, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c3, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c4, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c4, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c1, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c1, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c3, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c3, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c4, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c4, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c1, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c1, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c3, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c3, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c4, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c4, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c1, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c1, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c3, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c3, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, float, c4, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, float, c4, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
 
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c1, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c1, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c3, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c3, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c4, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c4, INTERPOLATION_LINEAR)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c1, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c1, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c3, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c3, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c4, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
-BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c4, INTERPOLATION_NEAREST_POINT)->Args({320, 240, 640, 480})->Args({640, 480, 320, 240})->Args({1280, 720, 800, 600})->Args({800, 600, 1280, 720});
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c1, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c1, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c3, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c3, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c4, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c4, INTERPOLATION_LINEAR)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c1, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c1, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c3, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c3, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_tinycv_x86, uint8_t, c4, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });
+BENCHMARK_TEMPLATE(BM_Resize_opencv_x86, uint8_t, c4, INTERPOLATION_NEAREST_POINT)->Args({ 320, 240, 640, 480 })->Args({ 640, 480, 320, 240 })->Args({ 1280, 720, 800, 600 })->Args({ 800, 600, 1280, 720 });

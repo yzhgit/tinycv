@@ -16,28 +16,29 @@
 // under the License.
 
 #include "tinycv/arm/color_yuv_simd.hpp"
+
 #include "tinycv/arm/typetraits.hpp"
 
 namespace tinycv {
 namespace arm {
 
 // i420,nv12,nv21 to bgr,rgb,bgra,rgba
-template <YUV_TYPE yuvType, int32_t dst_c, int32_t b_idx>
+template<YUV_TYPE yuvType, int32_t dst_c, int32_t b_idx>
 void yuv420_to_bgr_uchar_video_range(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb)
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb)
 {
-    const uint8_t* yptr = y_ptr;
-    const uint8_t* uptr = u_ptr;
-    const uint8_t* vptr = v_ptr;
+    const uint8_t *yptr = y_ptr;
+    const uint8_t *uptr = u_ptr;
+    const uint8_t *vptr = v_ptr;
 
     int16x8_t _vCUB_s16 = vdupq_n_s16(ITUR_BT_601_CUB_6);
     int16x8_t _vCUG_s16 = vdupq_n_s16(ITUR_BT_601_CUG_6);
@@ -52,14 +53,14 @@ void yuv420_to_bgr_uchar_video_range(
     const uint8_t alpha = 255;
 
     for (int32_t y = 0; y < h; y += 2) {
-        const uint8_t* y0 = yptr;
-        const uint8_t* y1 = yptr + yStride;
-        uint8_t* rgb0 = rgb;
-        uint8_t* rgb1 = rgb + rgbStride;
-        const uint8_t* u0 = uptr; // for yu12 or yv12
-        const uint8_t* v0 = vptr;
-        const uint8_t* uv = uptr; // or nv12
-        const uint8_t* vu = vptr; // or nv21
+        const uint8_t *y0 = yptr;
+        const uint8_t *y1 = yptr + yStride;
+        uint8_t *rgb0 = rgb;
+        uint8_t *rgb1 = rgb + rgbStride;
+        const uint8_t *u0 = uptr; // for yu12 or yv12
+        const uint8_t *v0 = vptr;
+        const uint8_t *uv = uptr; // or nv12
+        const uint8_t *vu = vptr; // or nv21
         int32_t remain = w;
 
         for (; remain > 16; remain -= 16) {
@@ -387,206 +388,206 @@ void yuv420_to_bgr_uchar_video_range(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // to bgr
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_I420, 3, 0>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_YV12, 3, 0>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_NV12, 3, 0>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_NV21, 3, 0>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 
 // to bgra
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_I420, 4, 0>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_YV12, 4, 0>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_NV12, 4, 0>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_NV21, 4, 0>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 
 // to rgb
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_I420, 3, 2>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_YV12, 3, 2>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_NV12, 3, 2>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_NV21, 3, 2>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 
 // to rgba
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_I420, 4, 2>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_YV12, 4, 2>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_NV12, 4, 2>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 template void yuv420_to_bgr_uchar_video_range<YUV_TYPE::YUV_NV21, 4, 2>(
-    int32_t h,
-    int32_t w,
-    int32_t yStride,
-    const uint8_t* y_ptr,
-    int32_t uStride,
-    const uint8_t* u_ptr,
-    int32_t vStride,
-    const uint8_t* v_ptr,
-    int32_t rgbStride,
-    uint8_t* rgb);
+        int32_t h,
+        int32_t w,
+        int32_t yStride,
+        const uint8_t *y_ptr,
+        int32_t uStride,
+        const uint8_t *u_ptr,
+        int32_t vStride,
+        const uint8_t *v_ptr,
+        int32_t rgbStride,
+        uint8_t *rgb);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // bgr,rgb,bgra,rgba to i420,nv12,nv21
-template <int32_t b_idx, int32_t src_c, YUV_TYPE yuvType>
+template<int32_t b_idx, int32_t src_c, YUV_TYPE yuvType>
 void bgr_to_yuv420_uchar_video_range(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr)
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr)
 {
-    uint8_t* yptr = y_ptr;
-    uint8_t* uptr = u_ptr;
-    uint8_t* vptr = v_ptr;
+    uint8_t *yptr = y_ptr;
+    uint8_t *uptr = u_ptr;
+    uint8_t *vptr = v_ptr;
 
     int16x8_t _vCRY_s16 = vdupq_n_s16(ITUR_BT_601_CRY_7);
     int16x8_t _vCGY_s16 = vdupq_n_s16(ITUR_BT_601_CGY_7);
@@ -607,13 +608,13 @@ void bgr_to_yuv420_uchar_video_range(
     int16x8_t _vtail128_s16 = vdupq_n_s16(tail128); // halfShift + shifted128;
 
     for (int32_t i = 0; i < h; i += 2) {
-        uint8_t* y0 = yptr;
-        uint8_t* y1 = yptr + yStride;
-        const uint8_t* rgb0 = rgb;
-        const uint8_t* rgb1 = rgb + rgbStride;
-        uint8_t* u0 = uptr; // for yu12 or yv12
-        uint8_t* v0 = vptr;
-        uint8_t* uv = uptr; // or nv12
+        uint8_t *y0 = yptr;
+        uint8_t *y1 = yptr + yStride;
+        const uint8_t *rgb0 = rgb;
+        const uint8_t *rgb1 = rgb + rgbStride;
+        uint8_t *u0 = uptr; // for yu12 or yv12
+        uint8_t *v0 = vptr;
+        uint8_t *uv = uptr; // or nv12
         // uint8_t* vu = vptr; //or nv21
         int32_t remain = w;
 
@@ -841,192 +842,192 @@ void bgr_to_yuv420_uchar_video_range(
 }
 
 template void bgr_to_yuv420_uchar_video_range<0, 3, YUV_NV12>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<0, 4, YUV_NV12>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<2, 3, YUV_NV12>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 template void bgr_to_yuv420_uchar_video_range<2, 4, YUV_NV12>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<0, 3, YUV_NV21>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<0, 4, YUV_NV21>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<2, 3, YUV_NV21>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 template void bgr_to_yuv420_uchar_video_range<2, 4, YUV_NV21>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<0, 3, YUV_I420>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<0, 4, YUV_I420>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<2, 3, YUV_I420>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 template void bgr_to_yuv420_uchar_video_range<2, 4, YUV_I420>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<0, 3, YUV_YV12>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<0, 4, YUV_YV12>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
 template void bgr_to_yuv420_uchar_video_range<2, 3, YUV_YV12>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 template void bgr_to_yuv420_uchar_video_range<2, 4, YUV_YV12>(
-    int32_t h,
-    int32_t w,
-    int32_t rgbStride,
-    const uint8_t* rgb,
-    int32_t yStride,
-    uint8_t* y_ptr,
-    int32_t uStride,
-    uint8_t* u_ptr,
-    int32_t vStride,
-    uint8_t* v_ptr);
+        int32_t h,
+        int32_t w,
+        int32_t rgbStride,
+        const uint8_t *rgb,
+        int32_t yStride,
+        uint8_t *y_ptr,
+        int32_t uStride,
+        uint8_t *u_ptr,
+        int32_t vStride,
+        uint8_t *v_ptr);
 
-}
-} // namespace tinycv::arm
+} // namespace arm
+} // namespace tinycv

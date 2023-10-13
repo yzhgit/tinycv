@@ -15,16 +15,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/flip.h"
+#include <memory>
+
 #include "tinycv/arm/test.h"
 #include "tinycv/debug.h"
-
-#include <memory>
+#include "tinycv/flip.h"
 
 #include <gtest/gtest.h>
 #include <opencv2/imgproc.hpp>
 
-template <typename T, int32_t nc>
+template<typename T, int32_t nc>
 void FlipTest(int32_t height, int32_t width, int32_t flipCode)
 {
     std::unique_ptr<T[]> src(new T[width * height * nc]);

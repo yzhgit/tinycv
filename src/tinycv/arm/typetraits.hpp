@@ -18,146 +18,146 @@
 #ifndef __ST_TINYCV_ARM_TYPETRAITS_H_
 #define __ST_TINYCV_ARM_TYPETRAITS_H_
 
-#include <stdint.h>
 #include <arm_neon.h>
+#include <stdint.h>
 
 namespace tinycv {
 namespace arm {
 
-template <int nc, typename T>
+template<int nc, typename T>
 struct DT;
 
-template <>
+template<>
 struct DT<1, uint8_t> {
     typedef uint8x8_t vec_DT;
 };
-template <>
+template<>
 struct DT<2, uint8_t> {
     typedef uint8x8x2_t vec_DT;
 };
-template <>
+template<>
 struct DT<3, uint8_t> {
     typedef uint8x8x3_t vec_DT;
 };
-template <>
+template<>
 struct DT<4, uint8_t> {
     typedef uint8x8x4_t vec_DT;
 };
-template <>
+template<>
 struct DT<1, float> {
     typedef float32x4_t vec_DT;
 };
-template <>
+template<>
 struct DT<2, float> {
     typedef float32x4x2_t vec_DT;
 };
-template <>
+template<>
 struct DT<3, float> {
     typedef float32x4x3_t vec_DT;
 };
-template <>
+template<>
 struct DT<4, float> {
     typedef float32x4x4_t vec_DT;
 };
 
-template <int nc, typename Tptr, typename T>
+template<int nc, typename Tptr, typename T>
 inline void vstx_u8_f32(Tptr *ptr, T vec);
-template <int nc, typename Tptr, typename T>
+template<int nc, typename Tptr, typename T>
 inline T vldx_u8_f32(const Tptr *ptr);
 
-template <>
+template<>
 inline uint8x8_t vldx_u8_f32<1, uint8_t, uint8x8_t>(const uint8_t *ptr)
 {
     return vld1_u8(ptr);
 };
-template <>
+template<>
 inline uint8x8x2_t vldx_u8_f32<2, uint8_t, uint8x8x2_t>(const uint8_t *ptr)
 {
     return vld2_u8(ptr);
 };
-template <>
+template<>
 inline uint8x8x3_t vldx_u8_f32<3, uint8_t, uint8x8x3_t>(const uint8_t *ptr)
 {
     return vld3_u8(ptr);
 };
-template <>
+template<>
 inline uint8x8x4_t vldx_u8_f32<4, uint8_t, uint8x8x4_t>(const uint8_t *ptr)
 {
     return vld4_u8(ptr);
 };
-template <>
+template<>
 inline float32x4_t vldx_u8_f32<1, float, float32x4_t>(const float *ptr)
 {
     return vld1q_f32(ptr);
 };
-template <>
+template<>
 inline float32x4x2_t vldx_u8_f32<2, float, float32x4x2_t>(const float *ptr)
 {
     return vld2q_f32(ptr);
 };
-template <>
+template<>
 inline float32x4x3_t vldx_u8_f32<3, float, float32x4x3_t>(const float *ptr)
 {
     return vld3q_f32(ptr);
 };
-template <>
+template<>
 inline float32x4x4_t vldx_u8_f32<4, float, float32x4x4_t>(const float *ptr)
 {
     return vld4q_f32(ptr);
 };
 
-template <>
+template<>
 inline void vstx_u8_f32<1, uint8_t, uint8x8_t>(uint8_t *ptr, uint8x8_t vec)
 {
     vst1_u8(ptr, vec);
 }
-template <>
+template<>
 inline void vstx_u8_f32<2, uint8_t, uint8x8x2_t>(uint8_t *ptr, uint8x8x2_t vec)
 {
     vst2_u8(ptr, vec);
 }
-template <>
+template<>
 inline void vstx_u8_f32<3, uint8_t, uint8x8x3_t>(uint8_t *ptr, uint8x8x3_t vec)
 {
     vst3_u8(ptr, vec);
 }
-template <>
+template<>
 inline void vstx_u8_f32<4, uint8_t, uint8x8x4_t>(uint8_t *ptr, uint8x8x4_t vec)
 {
     vst4_u8(ptr, vec);
 }
-template <>
+template<>
 inline void vstx_u8_f32<1, float, float32x4_t>(float *ptr, float32x4_t vec)
 {
     vst1q_f32(ptr, vec);
 }
-template <>
+template<>
 inline void vstx_u8_f32<2, float, float32x4x2_t>(float *ptr, float32x4x2_t vec)
 {
     vst2q_f32(ptr, vec);
 }
-template <>
+template<>
 inline void vstx_u8_f32<3, float, float32x4x3_t>(float *ptr, float32x4x3_t vec)
 {
     vst3q_f32(ptr, vec);
 }
-template <>
+template<>
 inline void vstx_u8_f32<4, float, float32x4x4_t>(float *ptr, float32x4x4_t vec)
 {
     vst4q_f32(ptr, vec);
 }
-template <>
+template<>
 inline void vstx_u8_f32<3, uint8_t, uint8x16x3_t>(uint8_t *ptr, uint8x16x3_t vec)
 {
     vst3q_u8(ptr, vec);
 }
-template <>
+template<>
 inline void vstx_u8_f32<4, uint8_t, uint8x16x4_t>(uint8_t *ptr, uint8x16x4_t vec)
 {
     vst4q_u8(ptr, vec);
 }
 
-}
-} // namespace tinycv::arm
+} // namespace arm
+} // namespace tinycv
 
 #endif //! __ST_TINYCV_ARM_TYPETRAITS_H_

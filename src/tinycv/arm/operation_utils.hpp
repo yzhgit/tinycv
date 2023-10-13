@@ -1,22 +1,23 @@
 #ifndef OP_UTILS_HPP
 #define OP_UTILS_HPP
 
+#include <limits.h>
+#include <math.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stddef.h>
-#include <limits.h>
-#include <stdint.h>
-#include <math.h>
 
-namespace tinycv { namespace utils {
+namespace tinycv {
+namespace utils {
 
-template <typename T>
+template<typename T>
 static inline T min(T x, T y)
 {
     return (x < y) ? x : y;
 }
 
-template <typename T>
+template<typename T>
 static inline T max(T x, T y)
 {
     return (x > y) ? x : y;
@@ -37,220 +38,220 @@ static inline int round(double v)
     return (int)(v + 0.5);
 }
 
-template <typename _Tp>
+template<typename _Tp>
 static inline _Tp saturate_cast(uint8_t v)
 {
     return _Tp(v);
 }
-template <typename _Tp>
+template<typename _Tp>
 static inline _Tp saturate_cast(int8_t v)
 {
     return _Tp(v);
 }
-template <typename _Tp>
+template<typename _Tp>
 static inline _Tp saturate_cast(uint16_t v)
 {
     return _Tp(v);
 }
-template <typename _Tp>
+template<typename _Tp>
 static inline _Tp saturate_cast(int16_t v)
 {
     return _Tp(v);
 }
-template <typename _Tp>
+template<typename _Tp>
 static inline _Tp saturate_cast(unsigned v)
 {
     return _Tp(v);
 }
-template <typename _Tp>
+template<typename _Tp>
 static inline _Tp saturate_cast(int v)
 {
     return _Tp(v);
 }
-template <typename _Tp>
+template<typename _Tp>
 static inline _Tp saturate_cast(float v)
 {
     return _Tp(v);
 }
-template <typename _Tp>
+template<typename _Tp>
 static inline _Tp saturate_cast(double v)
 {
     return _Tp(v);
 }
 
-template <>
+template<>
 inline uint8_t saturate_cast<uint8_t>(int8_t v)
 {
     return (uint8_t)utils::max((int)v, 0);
 }
-template <>
+template<>
 inline uint8_t saturate_cast<uint8_t>(uint16_t v)
 {
     return (uint8_t)utils::min((unsigned)v, (unsigned)UCHAR_MAX);
 }
-template <>
+template<>
 inline uint8_t saturate_cast<uint8_t>(int v)
 {
     return (uint8_t)((unsigned)v <= UCHAR_MAX ? v : v > 0 ? UCHAR_MAX
                                                           : 0);
 }
-template <>
+template<>
 inline uint8_t saturate_cast<uint8_t>(int16_t v)
 {
     return v >= UCHAR_MAX ? UCHAR_MAX : v < 0 ? 0
                                               : v;
 }
-template <>
+template<>
 inline uint8_t saturate_cast<uint8_t>(unsigned v)
 {
     return (uint8_t)utils::min(v, (unsigned)UCHAR_MAX);
 }
-template <>
+template<>
 inline uint8_t saturate_cast<uint8_t>(float v)
 {
     int iv = utils::round(v);
     return saturate_cast<uint8_t>(iv);
 }
-template <>
+template<>
 inline uint8_t saturate_cast<uint8_t>(double v)
 {
     int iv = utils::round(v);
     return saturate_cast<uint8_t>(iv);
 }
 
-template <>
+template<>
 inline int8_t saturate_cast<int8_t>(uint8_t v)
 {
     return (int8_t)utils::min((int)v, SCHAR_MAX);
 }
-template <>
+template<>
 inline int8_t saturate_cast<int8_t>(uint16_t v)
 {
     return (int8_t)utils::min((unsigned)v, (unsigned)SCHAR_MAX);
 }
-template <>
+template<>
 inline int8_t saturate_cast<int8_t>(int v)
 {
     return (int8_t)((unsigned)(v - SCHAR_MIN) <= (unsigned)UCHAR_MAX ? v : v > 0 ? SCHAR_MAX
                                                                                  : SCHAR_MIN);
 }
-template <>
+template<>
 inline int8_t saturate_cast<int8_t>(int16_t v)
 {
     return saturate_cast<int8_t>((int)v);
 }
-template <>
+template<>
 inline int8_t saturate_cast<int8_t>(unsigned v)
 {
     return (int8_t)utils::min(v, (unsigned)SCHAR_MAX);
 }
 
-template <>
+template<>
 inline int8_t saturate_cast<int8_t>(float v)
 {
     int iv = utils::round(v);
     return saturate_cast<int8_t>(iv);
 }
-template <>
+template<>
 inline int8_t saturate_cast<int8_t>(double v)
 {
     int iv = utils::round(v);
     return saturate_cast<int8_t>(iv);
 }
 
-template <>
+template<>
 inline uint16_t saturate_cast<uint16_t>(int8_t v)
 {
     return (uint16_t)utils::max((int)v, 0);
 }
-template <>
+template<>
 inline uint16_t saturate_cast<uint16_t>(int16_t v)
 {
     return (uint16_t)utils::max((int)v, 0);
 }
-template <>
+template<>
 inline uint16_t saturate_cast<uint16_t>(int v)
 {
     return (uint16_t)((unsigned)v <= (unsigned)USHRT_MAX ? v : v > 0 ? USHRT_MAX
                                                                      : 0);
 }
-template <>
+template<>
 inline uint16_t saturate_cast<uint16_t>(unsigned v)
 {
     return (uint16_t)utils::min(v, (unsigned)USHRT_MAX);
 }
-template <>
+template<>
 inline uint16_t saturate_cast<uint16_t>(float v)
 {
     int iv = utils::round(v);
     return saturate_cast<uint16_t>(iv);
 }
-template <>
+template<>
 inline uint16_t saturate_cast<uint16_t>(double v)
 {
     int iv = utils::round(v);
     return saturate_cast<uint16_t>(iv);
 }
 
-template <>
+template<>
 inline int16_t saturate_cast<int16_t>(uint16_t v)
 {
     return (int16_t)utils::min((int)v, SHRT_MAX);
 }
-template <>
+template<>
 inline int16_t saturate_cast<int16_t>(int v)
 {
     return (int16_t)((unsigned)(v - SHRT_MIN) <= (unsigned)USHRT_MAX ? v : v > 0 ? SHRT_MAX
                                                                                  : SHRT_MIN);
 }
-template <>
+template<>
 inline int16_t saturate_cast<int16_t>(unsigned v)
 {
     return (int16_t)utils::min(v, (unsigned)SHRT_MAX);
 }
-template <>
+template<>
 inline int16_t saturate_cast<int16_t>(float v)
 {
     int iv = utils::round(v);
     return saturate_cast<int16_t>(iv);
 }
-template <>
+template<>
 inline int16_t saturate_cast<int16_t>(double v)
 {
     int iv = utils::round(v);
     return saturate_cast<int16_t>(iv);
 }
 
-template <>
+template<>
 inline int saturate_cast<int>(float v)
 {
     return utils::round(v);
 }
-template <>
+template<>
 inline int saturate_cast<int>(double v)
 {
     return utils::round(v);
 }
 
 // we intentionally do not clip negative numbers, to make -1 become 0xffffffff etc.
-template <>
+template<>
 inline unsigned saturate_cast<unsigned>(float v)
 {
     return utils::round(v);
 }
-template <>
+template<>
 inline unsigned saturate_cast<unsigned>(double v)
 {
     return utils::round(v);
 }
-}
-} // namespace tinycv::utils
+} // namespace utils
+} // namespace tinycv
 
-#define INTER_RESIZE_COEF_BITS  (11)
+#define INTER_RESIZE_COEF_BITS (11)
 #define INTER_RESIZE_COEF_SCALE (1 << INTER_RESIZE_COEF_BITS)
-#define MAX_ESIZE               16
-#define FUNC_MIN(a, b)          ((a) > (b) ? (b) : (a))
-#define FUNC_MAX(a, b)          ((a) < (b) ? (b) : (a))
+#define MAX_ESIZE 16
+#define FUNC_MIN(a, b) ((a) > (b) ? (b) : (a))
+#define FUNC_MAX(a, b) ((a) < (b) ? (b) : (a))
 #ifndef SHRT_MIN
 #define SHRT_MIN -32768
 #endif
@@ -266,10 +267,10 @@ inline void prefetch(const void *ptr, size_t offset = 32 * 10)
 inline void prefetch_l1(const void *ptr, size_t offset)
 {
     asm volatile(
-        "prfm pldl1keep, [%0, %1]\n\t"
-        :
-        : "r"(ptr), "r"(offset)
-        : "cc", "memory");
+            "prfm pldl1keep, [%0, %1]\n\t"
+            :
+            : "r"(ptr), "r"(offset)
+            : "cc", "memory");
 }
 
 static inline uint32_t align_size(int32_t sz, int32_t n)

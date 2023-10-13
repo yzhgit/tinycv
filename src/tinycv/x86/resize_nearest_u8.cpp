@@ -15,16 +15,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/resize.h"
-#include "tinycv/types.h"
-#include "tinycv/sys.h"
-
-#include <string.h>
-#include <limits.h>
-#include <immintrin.h>
 #include <float.h>
-#include <stdint.h>
+#include <immintrin.h>
+#include <limits.h>
 #include <math.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "tinycv/resize.h"
+#include "tinycv/sys.h"
+#include "tinycv/types.h"
 
 namespace tinycv {
 
@@ -34,12 +34,12 @@ static inline int32_t resize_img_floor(float a)
 }
 
 static void resize_nearest_calc_offset_u8(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t *h_offset,
-    int32_t *w_offset)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t *h_offset,
+        int32_t *w_offset)
 {
     double inv_scale_h = (double)outHeight / inHeight;
     double scale_h = 1.0 / inv_scale_h;
@@ -65,16 +65,16 @@ static void resize_nearest_calc_offset_u8(
 }
 
 static void resize_nearest_c1_w_fourline_kernel_u8(
-    const uint8_t *inData_0,
-    const uint8_t *inData_1,
-    const uint8_t *inData_2,
-    const uint8_t *inData_3,
-    int32_t outWidth,
-    int32_t *w_offset,
-    uint8_t *outData_0,
-    uint8_t *outData_1,
-    uint8_t *outData_2,
-    uint8_t *outData_3)
+        const uint8_t *inData_0,
+        const uint8_t *inData_1,
+        const uint8_t *inData_2,
+        const uint8_t *inData_3,
+        int32_t outWidth,
+        int32_t *w_offset,
+        uint8_t *outData_0,
+        uint8_t *outData_1,
+        uint8_t *outData_2,
+        uint8_t *outData_3)
 {
     int32_t i = 0;
     for (; i <= outWidth - 16; i += 16) {
@@ -100,16 +100,16 @@ static void resize_nearest_c1_w_fourline_kernel_u8(
 }
 
 static void resize_nearest_c3_w_fourline_kernel_u8(
-    const uint8_t *inData_0,
-    const uint8_t *inData_1,
-    const uint8_t *inData_2,
-    const uint8_t *inData_3,
-    int32_t outWidth,
-    int32_t *w_offset,
-    uint8_t *outData_0,
-    uint8_t *outData_1,
-    uint8_t *outData_2,
-    uint8_t *outData_3)
+        const uint8_t *inData_0,
+        const uint8_t *inData_1,
+        const uint8_t *inData_2,
+        const uint8_t *inData_3,
+        int32_t outWidth,
+        int32_t *w_offset,
+        uint8_t *outData_0,
+        uint8_t *outData_1,
+        uint8_t *outData_2,
+        uint8_t *outData_3)
 {
     int32_t i = 0;
     for (; i < outWidth; ++i) {
@@ -129,16 +129,16 @@ static void resize_nearest_c3_w_fourline_kernel_u8(
 }
 
 static void resize_nearest_c4_w_fourline_kernel_u8(
-    const uint8_t *inData_0,
-    const uint8_t *inData_1,
-    const uint8_t *inData_2,
-    const uint8_t *inData_3,
-    int32_t outWidth,
-    int32_t *w_offset,
-    uint8_t *outData_0,
-    uint8_t *outData_1,
-    uint8_t *outData_2,
-    uint8_t *outData_3)
+        const uint8_t *inData_0,
+        const uint8_t *inData_1,
+        const uint8_t *inData_2,
+        const uint8_t *inData_3,
+        int32_t outWidth,
+        int32_t *w_offset,
+        uint8_t *outData_0,
+        uint8_t *outData_1,
+        uint8_t *outData_2,
+        uint8_t *outData_3)
 {
     int32_t i = 0;
     for (; i <= outWidth - 4; i += 4) {
@@ -173,10 +173,10 @@ static void resize_nearest_c4_w_fourline_kernel_u8(
 }
 
 static void resize_nearest_c1_w_oneline_kernel_u8(
-    const uint8_t *inData,
-    int32_t outWidth,
-    int32_t *w_offset,
-    uint8_t *outData)
+        const uint8_t *inData,
+        int32_t outWidth,
+        int32_t *w_offset,
+        uint8_t *outData)
 {
     int32_t i = 0;
     for (; i <= outWidth - 4; i += 4) {
@@ -191,10 +191,10 @@ static void resize_nearest_c1_w_oneline_kernel_u8(
 }
 
 static void resize_nearest_c3_w_oneline_kernel_u8(
-    const uint8_t *inData,
-    int32_t outWidth,
-    int32_t *w_offset,
-    uint8_t *outData)
+        const uint8_t *inData,
+        int32_t outWidth,
+        int32_t *w_offset,
+        uint8_t *outData)
 {
     int32_t i = 0;
     for (; i < outWidth; ++i) {
@@ -205,10 +205,10 @@ static void resize_nearest_c3_w_oneline_kernel_u8(
 }
 
 static void resize_nearest_c4_w_oneline_kernel_u8(
-    const uint8_t *inData,
-    int32_t outWidth,
-    int32_t *w_offset,
-    uint8_t *outData)
+        const uint8_t *inData,
+        int32_t outWidth,
+        int32_t *w_offset,
+        uint8_t *outData)
 {
     for (int32_t i = 0; i < outWidth; ++i) {
         *(int32_t *)(outData + i * 4) = *(const int32_t *)(inData + w_offset[i] * 4);
@@ -216,15 +216,15 @@ static void resize_nearest_c4_w_oneline_kernel_u8(
 }
 
 static void resize_nearest_kernel_u8(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t channels,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t channels,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     uint64_t size_for_h_offset = (outHeight * sizeof(int32_t) + 128 - 1) / 128 * 128;
     uint64_t size_for_w_offset = (outWidth * sizeof(int32_t) + 128 - 1) / 128 * 128;
@@ -241,42 +241,42 @@ static void resize_nearest_kernel_u8(
     for (; i <= outHeight - 4; i += 4) {
         if (channels == 1) {
             resize_nearest_c1_w_fourline_kernel_u8(
-                inData + h_offset[i + 0] * inWidthStride,
-                inData + h_offset[i + 1] * inWidthStride,
-                inData + h_offset[i + 2] * inWidthStride,
-                inData + h_offset[i + 3] * inWidthStride,
-                outWidth,
-                w_offset,
-                outData + (i + 0) * outWidthStride,
-                outData + (i + 1) * outWidthStride,
-                outData + (i + 2) * outWidthStride,
-                outData + (i + 3) * outWidthStride);
+                    inData + h_offset[i + 0] * inWidthStride,
+                    inData + h_offset[i + 1] * inWidthStride,
+                    inData + h_offset[i + 2] * inWidthStride,
+                    inData + h_offset[i + 3] * inWidthStride,
+                    outWidth,
+                    w_offset,
+                    outData + (i + 0) * outWidthStride,
+                    outData + (i + 1) * outWidthStride,
+                    outData + (i + 2) * outWidthStride,
+                    outData + (i + 3) * outWidthStride);
         }
         if (channels == 3) {
             resize_nearest_c3_w_fourline_kernel_u8(
-                inData + h_offset[i + 0] * inWidthStride,
-                inData + h_offset[i + 1] * inWidthStride,
-                inData + h_offset[i + 2] * inWidthStride,
-                inData + h_offset[i + 3] * inWidthStride,
-                outWidth,
-                w_offset,
-                outData + (i + 0) * outWidthStride,
-                outData + (i + 1) * outWidthStride,
-                outData + (i + 2) * outWidthStride,
-                outData + (i + 3) * outWidthStride);
+                    inData + h_offset[i + 0] * inWidthStride,
+                    inData + h_offset[i + 1] * inWidthStride,
+                    inData + h_offset[i + 2] * inWidthStride,
+                    inData + h_offset[i + 3] * inWidthStride,
+                    outWidth,
+                    w_offset,
+                    outData + (i + 0) * outWidthStride,
+                    outData + (i + 1) * outWidthStride,
+                    outData + (i + 2) * outWidthStride,
+                    outData + (i + 3) * outWidthStride);
         }
         if (channels == 4) {
             resize_nearest_c4_w_fourline_kernel_u8(
-                inData + h_offset[i + 0] * inWidthStride,
-                inData + h_offset[i + 1] * inWidthStride,
-                inData + h_offset[i + 2] * inWidthStride,
-                inData + h_offset[i + 3] * inWidthStride,
-                outWidth,
-                w_offset,
-                outData + (i + 0) * outWidthStride,
-                outData + (i + 1) * outWidthStride,
-                outData + (i + 2) * outWidthStride,
-                outData + (i + 3) * outWidthStride);
+                    inData + h_offset[i + 0] * inWidthStride,
+                    inData + h_offset[i + 1] * inWidthStride,
+                    inData + h_offset[i + 2] * inWidthStride,
+                    inData + h_offset[i + 3] * inWidthStride,
+                    outWidth,
+                    w_offset,
+                    outData + (i + 0) * outWidthStride,
+                    outData + (i + 1) * outWidthStride,
+                    outData + (i + 2) * outWidthStride,
+                    outData + (i + 3) * outWidthStride);
         }
     }
     for (; i < outHeight; ++i) {
@@ -304,16 +304,16 @@ static void resize_nearest_kernel_u8(
     tinycv::AlignedFree(temp_buffer);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<uint8_t, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -323,19 +323,19 @@ void ResizeNearestPoint<uint8_t, 1>(
     }
 
     resize_nearest_kernel_u8(
-        inHeight, inWidth, inWidthStride, inData, 1, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 1, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<uint8_t, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -345,19 +345,19 @@ void ResizeNearestPoint<uint8_t, 3>(
     }
 
     resize_nearest_kernel_u8(
-        inHeight, inWidth, inWidthStride, inData, 3, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 3, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<uint8_t, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -367,7 +367,7 @@ void ResizeNearestPoint<uint8_t, 4>(
     }
 
     resize_nearest_kernel_u8(
-        inHeight, inWidth, inWidthStride, inData, 4, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 4, outHeight, outWidth, outWidthStride, outData);
 }
 
 } // namespace tinycv

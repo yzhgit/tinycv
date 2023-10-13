@@ -15,13 +15,13 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <algorithm>
+#include <immintrin.h>
+#include <stdint.h>
+#include <vector>
+
 #include "tinycv/x86/intrinutils.hpp"
 #include "tinycv/x86/util.hpp"
-#include <stdint.h>
-#include <immintrin.h>
-
-#include <vector>
-#include <algorithm>
 
 namespace tinycv {
 
@@ -36,7 +36,7 @@ const int32_t SHIFT = 20;
 
 struct YUV420p2RGB_u8_avx128 {
     YUV420p2RGB_u8_avx128(int32_t _bIdx)
-        : bIdx(_bIdx)
+            : bIdx(_bIdx)
     {
         v_c0 = _mm_set1_epi32(CVR_coeff);
         v_c1 = _mm_set1_epi32(CVG_coeff);
@@ -213,7 +213,7 @@ struct YUV420p2RGB_u8_avx128 {
 
 struct YUV420p2RGBA_u8_avx128 {
     YUV420p2RGBA_u8_avx128(int32_t _bIdx)
-        : bIdx(_bIdx)
+            : bIdx(_bIdx)
     {
         v_c0 = _mm_set1_epi32(CVR_coeff);
         v_c1 = _mm_set1_epi32(CVG_coeff);
@@ -263,16 +263,16 @@ struct YUV420p2RGBA_u8_avx128 {
     }
 
     void operator()(
-        int32_t height,
-        int32_t width,
-        int32_t yStride,
-        const uint8_t *y1,
-        int32_t uStride,
-        const uint8_t *u1,
-        int32_t vStride,
-        const uint8_t *v1,
-        int32_t outWidthStride,
-        uint8_t *dst) const
+            int32_t height,
+            int32_t width,
+            int32_t yStride,
+            const uint8_t *y1,
+            int32_t uStride,
+            const uint8_t *u1,
+            int32_t vStride,
+            const uint8_t *v1,
+            int32_t outWidthStride,
+            uint8_t *dst) const
     {
         for (int32_t j = 0; j < height; j += 2, y1 += 2 * yStride, u1 += uStride, v1 += vStride) {
             uint8_t *row1 = dst + j * outWidthStride;
@@ -408,18 +408,18 @@ struct YUV420p2RGBA_u8_avx128 {
 };
 
 // Simplify interface
-template <int32_t dcn, int32_t bIdx>
+template<int32_t dcn, int32_t bIdx>
 void YUV420ptoRGB_avx(
-    int32_t height,
-    int32_t width,
-    int32_t yStride,
-    const uint8_t *inDataY,
-    int32_t uStride,
-    const uint8_t *inDataU,
-    int32_t vStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t yStride,
+        const uint8_t *inDataY,
+        int32_t uStride,
+        const uint8_t *inDataU,
+        int32_t vStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if ((width % 2 != 0) || (height % 2 != 0)) {
         return;
@@ -434,48 +434,48 @@ void YUV420ptoRGB_avx(
 }
 
 template void YUV420ptoRGB_avx<3, 0>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData);
 template void YUV420ptoRGB_avx<4, 0>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData);
 template void YUV420ptoRGB_avx<3, 2>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData);
 template void YUV420ptoRGB_avx<4, 2>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData);
 
 } // namespace tinycv

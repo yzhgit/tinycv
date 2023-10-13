@@ -15,13 +15,13 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <memory>
+
 #include "tinycv/cvtcolor.h"
 #include "tinycv/debug.h"
 
-#include <opencv2/imgproc.hpp>
 #include <benchmark/benchmark.h>
-
-#include <memory>
+#include <opencv2/imgproc.hpp>
 
 namespace {
 
@@ -30,7 +30,7 @@ enum Color2YUV420Mode { RGB2I420_MODE,
                         RGB2YV12_MODE,
                         BGR2YV12_MODE };
 
-template <typename T, Color2YUV420Mode mode>
+template<typename T, Color2YUV420Mode mode>
 void BM_Color2YUV420_tinycv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -57,7 +57,7 @@ enum YUV4202ColorMode { I4202RGB_MODE,
                         YV122RGB_MODE,
                         YV122BGR_MODE };
 
-template <typename T, YUV4202ColorMode mode>
+template<typename T, YUV4202ColorMode mode>
 void BM_YUV4202Color_tinycv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -81,19 +81,19 @@ void BM_YUV4202Color_tinycv_x86(benchmark::State &state)
 
 using namespace tinycv::debug;
 
-BENCHMARK_TEMPLATE(BM_Color2YUV420_tinycv_x86, uint8_t, RGB2I420_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Color2YUV420_tinycv_x86, uint8_t, BGR2I420_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Color2YUV420_tinycv_x86, uint8_t, RGB2YV12_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Color2YUV420_tinycv_x86, uint8_t, BGR2YV12_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Color2YUV420_tinycv_x86, uint8_t, RGB2I420_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Color2YUV420_tinycv_x86, uint8_t, BGR2I420_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Color2YUV420_tinycv_x86, uint8_t, RGB2YV12_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Color2YUV420_tinycv_x86, uint8_t, BGR2YV12_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
-BENCHMARK_TEMPLATE(BM_YUV4202Color_tinycv_x86, uint8_t, I4202RGB_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_YUV4202Color_tinycv_x86, uint8_t, I4202BGR_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_YUV4202Color_tinycv_x86, uint8_t, YV122RGB_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_YUV4202Color_tinycv_x86, uint8_t, YV122BGR_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_YUV4202Color_tinycv_x86, uint8_t, I4202RGB_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_YUV4202Color_tinycv_x86, uint8_t, I4202BGR_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_YUV4202Color_tinycv_x86, uint8_t, YV122RGB_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_YUV4202Color_tinycv_x86, uint8_t, YV122BGR_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
 #ifdef TINYCV_BENCHMARK_OPENCV
 
-template <typename T, Color2YUV420Mode mode>
+template<typename T, Color2YUV420Mode mode>
 void BM_Color2YUV420_opencv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -117,7 +117,7 @@ void BM_Color2YUV420_opencv_x86(benchmark::State &state)
     state.SetItemsProcessed(state.iterations() * 1);
 }
 
-template <typename T, YUV4202ColorMode mode>
+template<typename T, YUV4202ColorMode mode>
 void BM_YUV4202Color_opencv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -141,15 +141,15 @@ void BM_YUV4202Color_opencv_x86(benchmark::State &state)
     state.SetItemsProcessed(state.iterations() * 1);
 }
 
-BENCHMARK_TEMPLATE(BM_Color2YUV420_opencv_x86, uint8_t, RGB2I420_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Color2YUV420_opencv_x86, uint8_t, BGR2I420_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Color2YUV420_opencv_x86, uint8_t, RGB2YV12_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Color2YUV420_opencv_x86, uint8_t, BGR2YV12_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Color2YUV420_opencv_x86, uint8_t, RGB2I420_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Color2YUV420_opencv_x86, uint8_t, BGR2I420_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Color2YUV420_opencv_x86, uint8_t, RGB2YV12_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Color2YUV420_opencv_x86, uint8_t, BGR2YV12_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
-BENCHMARK_TEMPLATE(BM_YUV4202Color_opencv_x86, uint8_t, I4202RGB_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_YUV4202Color_opencv_x86, uint8_t, I4202BGR_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_YUV4202Color_opencv_x86, uint8_t, YV122RGB_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_YUV4202Color_opencv_x86, uint8_t, YV122BGR_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_YUV4202Color_opencv_x86, uint8_t, I4202RGB_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_YUV4202Color_opencv_x86, uint8_t, I4202BGR_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_YUV4202Color_opencv_x86, uint8_t, YV122RGB_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_YUV4202Color_opencv_x86, uint8_t, YV122BGR_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
 #endif //! TINYCV_BENCHMARK_OPENCV
 

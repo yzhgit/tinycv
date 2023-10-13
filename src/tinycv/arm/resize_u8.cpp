@@ -15,34 +15,35 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/resize.h"
-#include "tinycv/types.h"
-#include "operation_utils.hpp"
-
-#include <vector>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include <arm_neon.h>
 #include <float.h>
 #include <limits.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <vector>
+
+#include "tinycv/resize.h"
+#include "tinycv/types.h"
+
+#include "operation_utils.hpp"
 
 namespace tinycv {
 
-template <typename Tsrc, typename Tdst, int32_t nc>
+template<typename Tsrc, typename Tdst, int32_t nc>
 void resizeNearestPoint(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const Tsrc* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    Tdst* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const Tsrc *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        Tdst *outData)
 {
     int32_t x, y;
-    int32_t* x_ofs = (int32_t*)malloc(outWidth * sizeof(int32_t));
+    int32_t *x_ofs = (int32_t *)malloc(outWidth * sizeof(int32_t));
     double fx = (double)outWidth / inWidth;
     double fy = (double)outHeight / inHeight;
     double ifx = 1. / fx;
@@ -53,9 +54,9 @@ void resizeNearestPoint(
         x_ofs[x] = std::min(sx, inWidth - 1) * pix_size;
     }
     for (y = 0; y < outHeight; y++) {
-        Tdst* D = outData + y * outWidthStride;
+        Tdst *D = outData + y * outWidthStride;
         int32_t sy = std::min(int32_t(y * ify), inHeight - 1);
-        const Tsrc* S = inData + sy * inWidthStride;
+        const Tsrc *S = inData + sy * inWidthStride;
         for (x = 0; x < outWidth; x++) {
             for (int32_t i = 0; i < nc; i++) {
                 Tsrc t0 = S[x_ofs[x] + i];
@@ -66,19 +67,19 @@ void resizeNearestPoint(
     free(x_ofs);
 }
 
-template <>
+template<>
 void resizeNearestPoint<uint8_t, uint8_t, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData) // resize_nearest_u8c1
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData) // resize_nearest_u8c1
 {
     int32_t x, y;
-    int32_t* x_ofs = (int32_t*)malloc(outWidth * sizeof(int32_t));
+    int32_t *x_ofs = (int32_t *)malloc(outWidth * sizeof(int32_t));
     double fx = (double)outWidth / inWidth;
     double fy = (double)outHeight / inHeight;
     double ifx = 1.0f / fx;
@@ -88,18 +89,18 @@ void resizeNearestPoint<uint8_t, uint8_t, 1>(
         x_ofs[x] = std::min(sx, inWidth - 1);
     }
     for (y = 0; y + 4 <= outHeight; y += 4) {
-        uint8_t* D0 = outData + y * outWidthStride;
-        uint8_t* D1 = outData + (y + 1) * outWidthStride;
-        uint8_t* D2 = outData + (y + 2) * outWidthStride;
-        uint8_t* D3 = outData + (y + 3) * outWidthStride;
+        uint8_t *D0 = outData + y * outWidthStride;
+        uint8_t *D1 = outData + (y + 1) * outWidthStride;
+        uint8_t *D2 = outData + (y + 2) * outWidthStride;
+        uint8_t *D3 = outData + (y + 3) * outWidthStride;
         int32_t sy0 = std::min(int32_t(y * ify), inHeight - 1);
         int32_t sy1 = std::min(int32_t((y + 1) * ify), inHeight - 1);
         int32_t sy2 = std::min(int32_t((y + 2) * ify), inHeight - 1);
         int32_t sy3 = std::min(int32_t((y + 3) * ify), inHeight - 1);
-        const uint8_t* S0 = inData + sy0 * inWidthStride;
-        const uint8_t* S1 = inData + sy1 * inWidthStride;
-        const uint8_t* S2 = inData + sy2 * inWidthStride;
-        const uint8_t* S3 = inData + sy3 * inWidthStride;
+        const uint8_t *S0 = inData + sy0 * inWidthStride;
+        const uint8_t *S1 = inData + sy1 * inWidthStride;
+        const uint8_t *S2 = inData + sy2 * inWidthStride;
+        const uint8_t *S3 = inData + sy3 * inWidthStride;
         for (x = 0; x + 4 <= outWidth; x += 4) {
             int32_t x0 = x_ofs[x];
             int32_t x1 = x_ofs[x + 1];
@@ -116,9 +117,9 @@ void resizeNearestPoint<uint8_t, uint8_t, 1>(
         }
     }
     for (; y < outHeight; y++) {
-        uint8_t* D = outData + y * outWidthStride;
+        uint8_t *D = outData + y * outWidthStride;
         int32_t sy = std::min(int32_t(y * ify), inHeight - 1);
-        const uint8_t* S = inData + sy * inWidthStride;
+        const uint8_t *S = inData + sy * inWidthStride;
         for (x = 0; x + 4 <= outWidth; x += 4) {
             int32_t x0 = x_ofs[x];
             int32_t x1 = x_ofs[x + 1];
@@ -134,19 +135,19 @@ void resizeNearestPoint<uint8_t, uint8_t, 1>(
     free(x_ofs);
 }
 
-template <>
+template<>
 void resizeNearestPoint<uint8_t, uint8_t, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData) // resize_nearest_u8c3
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData) // resize_nearest_u8c3
 {
     int32_t x, y;
-    int32_t* x_ofs = (int32_t*)malloc(outWidth * sizeof(int32_t));
+    int32_t *x_ofs = (int32_t *)malloc(outWidth * sizeof(int32_t));
     double fx = (double)outWidth / inWidth;
     double fy = (double)outHeight / inHeight;
     double ifx = 1.0f / fx;
@@ -157,9 +158,9 @@ void resizeNearestPoint<uint8_t, uint8_t, 3>(
         x_ofs[x] = std::min(sx, inWidth - 1) * nc;
     }
     for (y = 0; y < outHeight; y++) {
-        uint8_t* D = outData + y * outWidthStride;
+        uint8_t *D = outData + y * outWidthStride;
         int32_t sy = std::min(int32_t(y * ify), inHeight - 1);
-        const uint8_t* S = inData + sy * inWidthStride;
+        const uint8_t *S = inData + sy * inWidthStride;
         for (x = 0; x + 4 <= outWidth; x += 4) {
             int32_t x0 = x_ofs[x];
             int32_t x1 = x_ofs[x + 1];
@@ -169,10 +170,10 @@ void resizeNearestPoint<uint8_t, uint8_t, 3>(
             if (x3 + 4 >= inWidth || xd + 12 >= outWidth) { // to avoid segment fault
                 break;
             }
-            *((int32_t*)(D + xd)) = *((int32_t*)(S + x0));
-            *((int32_t*)(D + xd + 3)) = *((int32_t*)(S + x1));
-            *((int32_t*)(D + xd + 6)) = *((int32_t*)(S + x2));
-            *((int32_t*)(D + xd + 9)) = *((int32_t*)(S + x3));
+            *((int32_t *)(D + xd)) = *((int32_t *)(S + x0));
+            *((int32_t *)(D + xd + 3)) = *((int32_t *)(S + x1));
+            *((int32_t *)(D + xd + 6)) = *((int32_t *)(S + x2));
+            *((int32_t *)(D + xd + 9)) = *((int32_t *)(S + x3));
         }
         for (; x < outWidth; x++) {
             int32_t x0 = x_ofs[x];
@@ -183,19 +184,19 @@ void resizeNearestPoint<uint8_t, uint8_t, 3>(
     free(x_ofs);
 }
 
-template <>
+template<>
 void resizeNearestPoint<uint8_t, uint8_t, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData) // resize_nearest_u8c4
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData) // resize_nearest_u8c4
 {
     int32_t x, y;
-    int32_t* x_ofs = (int32_t*)malloc(outWidth * sizeof(int32_t));
+    int32_t *x_ofs = (int32_t *)malloc(outWidth * sizeof(int32_t));
     double fx = (double)outWidth / inWidth;
     double fy = (double)outHeight / inHeight;
     double ifx = 1.0f / fx;
@@ -206,39 +207,39 @@ void resizeNearestPoint<uint8_t, uint8_t, 4>(
         x_ofs[x] = std::min(sx, inWidth - 1) * nc;
     }
     for (y = 0; y < outHeight; y++) {
-        uint8_t* D = outData + y * outWidthStride;
+        uint8_t *D = outData + y * outWidthStride;
         int32_t sy = std::min(int32_t(y * ify), inHeight - 1);
-        const uint8_t* S = inData + sy * inWidthStride;
+        const uint8_t *S = inData + sy * inWidthStride;
         for (x = 0; x + 4 <= outWidth; x += 4) {
             int32_t x0 = x_ofs[x];
             int32_t x1 = x_ofs[x + 1];
             int32_t x2 = x_ofs[x + 2];
             int32_t x3 = x_ofs[x + 3];
             int32_t xd = x * nc;
-            *((int32_t*)(D + xd)) = *((int32_t*)(S + x0));
-            *((int32_t*)(D + xd + 4)) = *((int32_t*)(S + x1));
-            *((int32_t*)(D + xd + 8)) = *((int32_t*)(S + x2));
-            *((int32_t*)(D + xd + 12)) = *((int32_t*)(S + x3));
+            *((int32_t *)(D + xd)) = *((int32_t *)(S + x0));
+            *((int32_t *)(D + xd + 4)) = *((int32_t *)(S + x1));
+            *((int32_t *)(D + xd + 8)) = *((int32_t *)(S + x2));
+            *((int32_t *)(D + xd + 12)) = *((int32_t *)(S + x3));
         }
         for (; x < outWidth; x++) {
             int32_t x0 = x_ofs[x];
             int32_t xd = x * nc;
-            *((int32_t*)(D + xd)) = *((int32_t*)(S + x0));
+            *((int32_t *)(D + xd)) = *((int32_t *)(S + x0));
         }
     }
     free(x_ofs);
 }
 
 bool img_resize_bilinear_neon_shrink2_u8(
-    uint8_t* dst,
-    uint32_t dst_width,
-    uint32_t dst_height,
-    uint32_t dst_stride,
-    const uint8_t* src,
-    uint32_t src_width,
-    uint32_t src_height,
-    uint32_t src_stride,
-    uint32_t channels)
+        uint8_t *dst,
+        uint32_t dst_width,
+        uint32_t dst_height,
+        uint32_t dst_stride,
+        const uint8_t *src,
+        uint32_t src_width,
+        uint32_t src_height,
+        uint32_t src_stride,
+        uint32_t channels)
 {
     if (src_width % 2 != 0 || dst_width != src_width / 2 ||
         src_height % 2 != 0 || dst_height != src_height / 2) {
@@ -250,8 +251,8 @@ bool img_resize_bilinear_neon_shrink2_u8(
     int32_t cn = channels;
     if (channels == 1) {
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (2 * i) * src_stride;
-            const uint8_t* row2 = src + (2 * i + 1) * src_stride;
+            const uint8_t *row1 = src + (2 * i) * src_stride;
+            const uint8_t *row2 = src + (2 * i + 1) * src_stride;
             int32_t j = 0;
             for (; j <= dstw - 8; j += 8) {
                 uint8x8x2_t q0 = vld2_u8(row1 + 2 * j);
@@ -273,13 +274,14 @@ bool img_resize_bilinear_neon_shrink2_u8(
             }
         }
     } else if (cn == 3) {
-        uint8x8_t tbl = {0, 1, 2, 4, 5, 6, 0, 0};
+        uint8x8_t tbl = { 0, 1, 2, 4, 5, 6, 0, 0 };
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (2 * i) * src_stride;
-            const uint8_t* row2 = src + (2 * i + 1) * src_stride;
+            const uint8_t *row1 = src + (2 * i) * src_stride;
+            const uint8_t *row2 = src + (2 * i + 1) * src_stride;
             int32_t j = 0;
             int32_t dstw_not_cross_boundary = dstw;
-            if (i == dsth - 1) dstw_not_cross_boundary = dstw - 1;
+            if (i == dsth - 1)
+                dstw_not_cross_boundary = dstw - 1;
             for (; j <= dstw_not_cross_boundary - 2; j += 2) {
                 uint8x8_t q0 = vld1_u8(row1 + j * 6);
                 prefetch_l1(row1, j * 6 + 256);
@@ -306,11 +308,11 @@ bool img_resize_bilinear_neon_shrink2_u8(
                 uint8x8_t res_u8 = vqmovn_u16(vcombine_u16(vshr_n_u16(res0_u16, 2), vshr_n_u16(res1_u16, 2)));
                 uint8x8_t ans = vtbl1_u8(res_u8, tbl);
                 asm volatile(
-                    "st1 {%2.s}[0], [%0]\n\t"
-                    "st1 {%2.h}[2], [%1]\n\t"
-                    :
-                    : "r"(dst + i * dst_stride + j * 3), "r"(dst + i * dst_stride + j * 3 + 4), "w"(ans)
-                    : "cc", "memory");
+                        "st1 {%2.s}[0], [%0]\n\t"
+                        "st1 {%2.h}[2], [%1]\n\t"
+                        :
+                        : "r"(dst + i * dst_stride + j * 3), "r"(dst + i * dst_stride + j * 3 + 4), "w"(ans)
+                        : "cc", "memory");
             }
             for (; j < dstw; j++) {
                 for (int32_t c = 0; c < cn; c++) {
@@ -322,8 +324,8 @@ bool img_resize_bilinear_neon_shrink2_u8(
         }
     } else if (cn == 4) {
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (2 * i) * src_stride;
-            const uint8_t* row2 = src + (2 * i + 1) * src_stride;
+            const uint8_t *row1 = src + (2 * i) * src_stride;
+            const uint8_t *row2 = src + (2 * i + 1) * src_stride;
             int32_t j = 0;
             for (; j <= dstw - 2; j += 2) {
                 uint8x8_t q0 = vld1_u8(row1 + j * 8);
@@ -361,8 +363,8 @@ bool img_resize_bilinear_neon_shrink2_u8(
         }
     } else {
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (2 * i) * src_stride;
-            const uint8_t* row2 = src + (2 * i + 1) * src_stride;
+            const uint8_t *row1 = src + (2 * i) * src_stride;
+            const uint8_t *row2 = src + (2 * i + 1) * src_stride;
             int32_t j = 0;
             for (; j < dstw; j++) {
                 for (int32_t c = 0; c < cn; c++) {
@@ -376,15 +378,15 @@ bool img_resize_bilinear_neon_shrink2_u8(
     return true;
 }
 bool img_resize_bilinear_neon_shrink4_u8(
-    uint8_t* dst,
-    uint32_t dst_width,
-    uint32_t dst_height,
-    uint32_t dst_stride,
-    const uint8_t* src,
-    uint32_t src_width,
-    uint32_t src_height,
-    uint32_t src_stride,
-    uint32_t channels)
+        uint8_t *dst,
+        uint32_t dst_width,
+        uint32_t dst_height,
+        uint32_t dst_stride,
+        const uint8_t *src,
+        uint32_t src_width,
+        uint32_t src_height,
+        uint32_t src_stride,
+        uint32_t channels)
 {
     if (src_width % 4 != 0 || dst_width != src_width / 4 ||
         src_height % 4 != 0 || dst_height != src_height / 4) {
@@ -396,25 +398,25 @@ bool img_resize_bilinear_neon_shrink4_u8(
     int32_t cn = channels;
 
     if (cn == 1) {
-        uint8_t* temp_buffer = (uint8_t*)malloc(dst_width * 2 * 2 * sizeof(uint8_t));
+        uint8_t *temp_buffer = (uint8_t *)malloc(dst_width * 2 * 2 * sizeof(uint8_t));
 
-        uint16_t* row1_buffer = (uint16_t*)temp_buffer;
-        uint16_t* row2_buffer = (uint16_t*)(temp_buffer + dst_width * 2);
+        uint16_t *row1_buffer = (uint16_t *)temp_buffer;
+        uint16_t *row2_buffer = (uint16_t *)(temp_buffer + dst_width * 2);
 
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (4 * i + 1) * src_stride;
-            const uint8_t* row2 = src + (4 * i + 2) * src_stride;
+            const uint8_t *row1 = src + (4 * i + 1) * src_stride;
+            const uint8_t *row2 = src + (4 * i + 2) * src_stride;
             int32_t j = 0;
             // gather
             for (; j < dstw; j++) {
-                row1_buffer[j] = *((uint16_t*)(row1 + j * 4 + 1));
+                row1_buffer[j] = *((uint16_t *)(row1 + j * 4 + 1));
                 prefetch_l1(row1, j * 4 + 1 + 256);
-                row2_buffer[j] = *((uint16_t*)(row2 + j * 4 + 1));
+                row2_buffer[j] = *((uint16_t *)(row2 + j * 4 + 1));
                 prefetch_l1(row2, j * 4 + 1 + 256);
             }
             j = 0;
-            uint8_t* row1_buffer_ptr = (uint8_t*)row1_buffer;
-            uint8_t* row2_buffer_ptr = (uint8_t*)row2_buffer;
+            uint8_t *row1_buffer_ptr = (uint8_t *)row1_buffer;
+            uint8_t *row2_buffer_ptr = (uint8_t *)row2_buffer;
             for (; j <= dstw - 8; j += 8) {
                 uint8x8x2_t q0 = vld2_u8(row1_buffer_ptr + 2 * j);
                 uint8x8x2_t q1 = vld2_u8(row2_buffer_ptr + 2 * j);
@@ -436,13 +438,14 @@ bool img_resize_bilinear_neon_shrink4_u8(
         }
         free(temp_buffer);
     } else if (cn == 3) {
-        uint8x8_t tbl = {0, 1, 2, 4, 5, 6, 0, 0};
+        uint8x8_t tbl = { 0, 1, 2, 4, 5, 6, 0, 0 };
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (4 * i + 1) * src_stride;
-            const uint8_t* row2 = src + (4 * i + 2) * src_stride;
+            const uint8_t *row1 = src + (4 * i + 1) * src_stride;
+            const uint8_t *row2 = src + (4 * i + 2) * src_stride;
             int32_t j = 0;
             int32_t dstw_not_cross_boundary = dstw;
-            if (i == dsth - 1) dstw_not_cross_boundary = dstw - 1;
+            if (i == dsth - 1)
+                dstw_not_cross_boundary = dstw - 1;
             for (; j <= dstw_not_cross_boundary - 2; j += 2) {
                 uint8x8_t q0 = vld1_u8(row1 + j * 12 + 3);
                 prefetch_l1(row1, j * 12 + 3 + 256);
@@ -469,11 +472,11 @@ bool img_resize_bilinear_neon_shrink4_u8(
                 uint8x8_t res_u8 = vqmovn_u16(vcombine_u16(vshr_n_u16(res0_u16, 2), vshr_n_u16(res1_u16, 2)));
                 uint8x8_t ans = vtbl1_u8(res_u8, tbl);
                 asm volatile(
-                    "st1 {%2.s}[0], [%0]\n\t"
-                    "st1 {%2.h}[2], [%1]\n\t"
-                    :
-                    : "r"(dst + i * dst_stride + j * 3), "r"(dst + i * dst_stride + j * 3 + 4), "w"(ans)
-                    : "cc", "memory");
+                        "st1 {%2.s}[0], [%0]\n\t"
+                        "st1 {%2.h}[2], [%1]\n\t"
+                        :
+                        : "r"(dst + i * dst_stride + j * 3), "r"(dst + i * dst_stride + j * 3 + 4), "w"(ans)
+                        : "cc", "memory");
             }
             for (; j < dstw; j++) {
                 for (int32_t c = 0; c < cn; c++) {
@@ -485,8 +488,8 @@ bool img_resize_bilinear_neon_shrink4_u8(
         }
     } else if (cn == 4) {
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (4 * i + 1) * src_stride;
-            const uint8_t* row2 = src + (4 * i + 2) * src_stride;
+            const uint8_t *row1 = src + (4 * i + 1) * src_stride;
+            const uint8_t *row2 = src + (4 * i + 2) * src_stride;
             int32_t j = 0;
             for (; j <= dstw - 2; j += 2) {
                 uint8x8_t q0 = vld1_u8(row1 + j * 16 + 4);
@@ -524,8 +527,8 @@ bool img_resize_bilinear_neon_shrink4_u8(
         }
     } else {
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (4 * i + 1) * src_stride;
-            const uint8_t* row2 = src + (4 * i + 2) * src_stride;
+            const uint8_t *row1 = src + (4 * i + 1) * src_stride;
+            const uint8_t *row2 = src + (4 * i + 2) * src_stride;
             int32_t j = 0;
             for (; j < dstw; j++) {
                 for (int32_t c = 0; c < cn; c++) {
@@ -541,15 +544,15 @@ bool img_resize_bilinear_neon_shrink4_u8(
 }
 
 bool img_resize_bilinear_neon_shrink6_u8(
-    uint8_t* dst,
-    uint32_t dst_width,
-    uint32_t dst_height,
-    uint32_t dst_stride,
-    const uint8_t* src,
-    uint32_t src_width,
-    uint32_t src_height,
-    uint32_t src_stride,
-    uint32_t channels)
+        uint8_t *dst,
+        uint32_t dst_width,
+        uint32_t dst_height,
+        uint32_t dst_stride,
+        const uint8_t *src,
+        uint32_t src_width,
+        uint32_t src_height,
+        uint32_t src_stride,
+        uint32_t channels)
 {
     if (src_width % 6 != 0 || dst_width != src_width / 6 ||
         src_height % 6 != 0 || dst_height != src_height / 6) {
@@ -561,25 +564,25 @@ bool img_resize_bilinear_neon_shrink6_u8(
     int32_t cn = channels;
 
     if (cn == 1) {
-        uint8_t* temp_buffer = (uint8_t*)malloc(dst_width * 2 * 2 * sizeof(uint8_t));
+        uint8_t *temp_buffer = (uint8_t *)malloc(dst_width * 2 * 2 * sizeof(uint8_t));
 
-        uint16_t* row1_buffer = (uint16_t*)temp_buffer;
-        uint16_t* row2_buffer = (uint16_t*)(temp_buffer + dst_width * 2);
+        uint16_t *row1_buffer = (uint16_t *)temp_buffer;
+        uint16_t *row2_buffer = (uint16_t *)(temp_buffer + dst_width * 2);
 
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (6 * i + 2) * src_stride;
-            const uint8_t* row2 = src + (6 * i + 3) * src_stride;
+            const uint8_t *row1 = src + (6 * i + 2) * src_stride;
+            const uint8_t *row2 = src + (6 * i + 3) * src_stride;
             int32_t j = 0;
             // gather
             for (; j < dstw; j++) {
-                row1_buffer[j] = *((uint16_t*)(row1 + j * 6 + 2));
+                row1_buffer[j] = *((uint16_t *)(row1 + j * 6 + 2));
                 prefetch_l1(row1, j * 6 + 2 + 256);
-                row2_buffer[j] = *((uint16_t*)(row2 + j * 6 + 2));
+                row2_buffer[j] = *((uint16_t *)(row2 + j * 6 + 2));
                 prefetch_l1(row2, j * 6 + 2 + 256);
             }
             j = 0;
-            uint8_t* row1_buffer_ptr = (uint8_t*)row1_buffer;
-            uint8_t* row2_buffer_ptr = (uint8_t*)row2_buffer;
+            uint8_t *row1_buffer_ptr = (uint8_t *)row1_buffer;
+            uint8_t *row2_buffer_ptr = (uint8_t *)row2_buffer;
             for (; j <= dstw - 8; j += 8) {
                 uint8x8x2_t q0 = vld2_u8(row1_buffer_ptr + 2 * j);
                 uint8x8x2_t q1 = vld2_u8(row2_buffer_ptr + 2 * j);
@@ -601,13 +604,14 @@ bool img_resize_bilinear_neon_shrink6_u8(
         }
         free(temp_buffer);
     } else if (cn == 3) {
-        uint8x8_t tbl = {0, 1, 2, 4, 5, 6, 0, 0};
+        uint8x8_t tbl = { 0, 1, 2, 4, 5, 6, 0, 0 };
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (6 * i + 2) * src_stride;
-            const uint8_t* row2 = src + (6 * i + 3) * src_stride;
+            const uint8_t *row1 = src + (6 * i + 2) * src_stride;
+            const uint8_t *row2 = src + (6 * i + 3) * src_stride;
             int32_t j = 0;
             int32_t dstw_not_cross_boundary = dstw;
-            if (i == dsth - 1) dstw_not_cross_boundary = dstw - 1;
+            if (i == dsth - 1)
+                dstw_not_cross_boundary = dstw - 1;
             for (; j <= dstw_not_cross_boundary - 2; j += 2) {
                 uint8x8_t q0 = vld1_u8(row1 + j * 18 + 6);
                 prefetch_l1(row1, j * 18 + 6 + 256);
@@ -634,11 +638,11 @@ bool img_resize_bilinear_neon_shrink6_u8(
                 uint8x8_t res_u8 = vqmovn_u16(vcombine_u16(vshr_n_u16(res0_u16, 2), vshr_n_u16(res1_u16, 2)));
                 uint8x8_t ans = vtbl1_u8(res_u8, tbl);
                 asm volatile(
-                    "st1 {%2.s}[0], [%0]\n\t"
-                    "st1 {%2.h}[2], [%1]\n\t"
-                    :
-                    : "r"(dst + i * dst_stride + j * 3), "r"(dst + i * dst_stride + j * 3 + 4), "w"(ans)
-                    : "cc", "memory");
+                        "st1 {%2.s}[0], [%0]\n\t"
+                        "st1 {%2.h}[2], [%1]\n\t"
+                        :
+                        : "r"(dst + i * dst_stride + j * 3), "r"(dst + i * dst_stride + j * 3 + 4), "w"(ans)
+                        : "cc", "memory");
             }
             for (; j < dstw; j++) {
                 for (int32_t c = 0; c < cn; c++) {
@@ -651,8 +655,8 @@ bool img_resize_bilinear_neon_shrink6_u8(
     } else if (cn == 4) {
         // std::cerr << "running here" << std::endl;
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (6 * i + 2) * src_stride;
-            const uint8_t* row2 = src + (6 * i + 3) * src_stride;
+            const uint8_t *row1 = src + (6 * i + 2) * src_stride;
+            const uint8_t *row2 = src + (6 * i + 3) * src_stride;
             int32_t j = 0;
             for (; j <= dstw - 2; j += 2) {
                 uint8x8_t q0 = vld1_u8(row1 + j * 24 + 8);
@@ -690,8 +694,8 @@ bool img_resize_bilinear_neon_shrink6_u8(
         }
     } else {
         for (int32_t i = 0; i < dsth; i++) {
-            const uint8_t* row1 = src + (6 * i + 2) * src_stride;
-            const uint8_t* row2 = src + (6 * i + 3) * src_stride;
+            const uint8_t *row1 = src + (6 * i + 2) * src_stride;
+            const uint8_t *row2 = src + (6 * i + 3) * src_stride;
             int32_t j = 0;
             for (; j < dstw; j++) {
                 for (int32_t c = 0; c < cn; c++) {
@@ -709,26 +713,26 @@ bool img_resize_bilinear_neon_shrink6_u8(
 #define offset_precompute 1
 
 void resize_generic_8UC3(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcStride,
-    const uint8_t* src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstStride,
-    uint8_t* dst,
-    int32_t* xofs,
-    int32_t* yofs,
-    int16_t* ialpha,
-    int16_t* ibeta,
-    int32_t num_threads)
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcStride,
+        const uint8_t *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstStride,
+        uint8_t *dst,
+        int32_t *xofs,
+        int32_t *yofs,
+        int16_t *ialpha,
+        int16_t *ibeta,
+        int32_t num_threads)
 {
     int32_t w = dstWidth;
     int32_t h = dstHeight;
 
     int32x4_t _v2 = vdupq_n_s32(2);
     int16x4_t INTER_RESIZE_COEF_SCALE_vec = vdup_n_s16(INTER_RESIZE_COEF_SCALE);
-    int8x8_t _tb = {0, 1, 2, 4, 5, 6, 0, 0};
+    int8x8_t _tb = { 0, 1, 2, 4, 5, 6, 0, 0 };
 
     int32_t w_not_cross_boundary = w;
     for (int32_t dw = w - 1; dw >= 0; dw--) {
@@ -740,15 +744,15 @@ void resize_generic_8UC3(
 
     for (int32_t dy = 0; dy < h; dy++) {
         int32_t sy = yofs[dy];
-        const uint8_t* S0 = src + sy * srcStride; // src.ptr(sy);
-        const uint8_t* S1 = src + (sy + 1) * srcStride; // src.ptr(sy+1);
+        const uint8_t *S0 = src + sy * srcStride; // src.ptr(sy);
+        const uint8_t *S1 = src + (sy + 1) * srcStride; // src.ptr(sy+1);
 
-        uint8_t* Dp = dst + dy * dstStride; // dst.ptr(dy);
-        const int16_t* ialphap = ialpha;
+        uint8_t *Dp = dst + dy * dstStride; // dst.ptr(dy);
+        const int16_t *ialphap = ialpha;
 
         int16x4_t _b1 = vdup_n_s16(ibeta[dy]);
         int16x4_t _b0 = vdup_n_s16(INTER_RESIZE_COEF_SCALE - ibeta[dy]);
-        int32_t* tmp_xofs = xofs;
+        int32_t *tmp_xofs = xofs;
 
         int32_t remain = (w >> 2) << 2;
         if (sy >= srcHeight - 2) {
@@ -757,148 +761,148 @@ void resize_generic_8UC3(
         int32_t nn = w - remain;
         if (remain > 0) {
             asm volatile(
-                "ldpsw x10, x11, [%1], #8\n\t"
-                "ldpsw x12, x13, [%1], #8\n\t"
-                "ldpsw x19, x20, [%1], #8\n\t"
-                "ldpsw x21, x22, [%1], #8\n\t"
-                "ldr d2, [%8, x10]\n\t"
-                "prfm pldl1keep, [%8, x19]\n\t"
-                "ldr d3, [%8, x11]\n\t"
-                "prfm pldl1keep, [%8, x20]\n\t"
-                "ldr d4, [%8, x12]\n\t"
-                "prfm pldl1keep, [%8, x21]\n\t"
-                "ldr d5, [%8, x13]\n\t"
-                "prfm pldl1keep, [%8, x22]\n\t"
-                "ld1 {v1.4h}, [%2], #8\n\t"
+                    "ldpsw x10, x11, [%1], #8\n\t"
+                    "ldpsw x12, x13, [%1], #8\n\t"
+                    "ldpsw x19, x20, [%1], #8\n\t"
+                    "ldpsw x21, x22, [%1], #8\n\t"
+                    "ldr d2, [%8, x10]\n\t"
+                    "prfm pldl1keep, [%8, x19]\n\t"
+                    "ldr d3, [%8, x11]\n\t"
+                    "prfm pldl1keep, [%8, x20]\n\t"
+                    "ldr d4, [%8, x12]\n\t"
+                    "prfm pldl1keep, [%8, x21]\n\t"
+                    "ldr d5, [%8, x13]\n\t"
+                    "prfm pldl1keep, [%8, x22]\n\t"
+                    "ld1 {v1.4h}, [%2], #8\n\t"
 
-                "0:\n\t"
-                "#start dx*v0+(1-dx)*v1\n\t"
-                "#shift 8bit to 16bit and construct vectors\n\t"
-                "ushll v10.8h, v2.8b, #0\n\t"
-                "ldr d6, [%9, x10]\n\t"
-                "prfm pldl1keep, [%9, x19]\n\t"
-                "ushll v11.8h, v3.8b, #0\n\t"
-                "ldr d7, [%9, x11]\n\t"
-                "prfm pldl1keep, [%9, x20]\n\t"
-                "ushll v12.8h, v4.8b, #0\n\t"
-                "ldr d8, [%9, x12]\n\t"
-                "prfm pldl1keep, [%9, x21]\n\t"
-                "ushll v13.8h, v5.8b, #0\n\t"
-                "ldr d9, [%9, x13]\n\t"
-                "prfm pldl1keep, [%9, x22]\n\t"
-                "sub v0.4h, %14.4h, v1.4h\n\t"
-                "mov v14.d[0], v10.d[1]\n\t"
-                "mov x10, x19\n\t"
-                "mov x11, x20\n\t"
-                "mov x12, x21\n\t"
-                "mov x13, x22\n\t"
-                "ldpsw x19, x20, [%1], #8\n\t"
-                "mov v15.d[0], v11.d[1]\n\t"
-                "ldpsw x21, x22, [%1], #8\n\t"
-                "mov v16.d[0], v12.d[1]\n\t"
-                "mov v17.d[0], v13.d[1]\n\t"
-                "ext v14.8b, v10.8b, v14.8b, #6\n\t"
-                "ext v15.8b, v11.8b, v15.8b, #6\n\t"
-                "ext v16.8b, v12.8b, v16.8b, #6\n\t"
-                "ext v17.8b, v13.8b, v17.8b, #6\n\t"
-                "#calculate\n\t"
-                "smull v10.4s, v10.4h, v0.h[0]\n\t"
-                "ldr d2, [%8, x10]\n\t"
-                "prfm pldl1keep, [%8, x19]\n\t"
-                "smull v11.4s, v11.4h, v0.h[1]\n\t"
-                "ldr d3, [%8, x11]\n\t"
-                "prfm pldl1keep, [%8, x20]\n\t"
-                "smull v12.4s, v12.4h, v0.h[2]\n\t"
-                "ldr d4, [%8, x12]\n\t"
-                "prfm pldl1keep, [%8, x21]\n\t"
-                "smull v13.4s, v13.4h, v0.h[3]\n\t"
-                "ldr d5, [%8, x13]\n\t"
-                "prfm pldl1keep, [%8, x22]\n\t"
-                "smlal v10.4s, v14.4h, v1.h[0]\n\t"
-                "ushll v18.8h, v6.8b, #0\n\t"
-                "smlal v11.4s, v15.4h, v1.h[1]\n\t"
-                "ushll v19.8h, v7.8b, #0\n\t"
-                "smlal v12.4s, v16.4h, v1.h[2]\n\t"
-                "ushll v20.8h, v8.8b, #0\n\t"
-                "smlal v13.4s, v17.4h, v1.h[3]\n\t"
-                "ushll v21.8h, v9.8b, #0\n\t"
-                "shrn v10.4h, v10.4s, #4\n\t"
-                "mov v22.d[0], v18.d[1]\n\t"
-                "shrn v11.4h, v11.4s, #4\n\t"
-                "mov v23.d[0], v19.d[1]\n\t"
-                "shrn v12.4h, v12.4s, #4\n\t"
-                "mov v24.d[0], v20.d[1]\n\t"
-                "shrn v13.4h, v13.4s, #4\n\t"
-                "mov v25.d[0], v21.d[1]\n\t"
-                "#start dy*v0+(1-dy)*v1\n\t"
-                "ext v22.8b, v18.8b, v22.8b, #6\n\t"
-                "ext v23.8b, v19.8b, v23.8b, #6\n\t"
-                "ext v24.8b, v20.8b, v24.8b, #6\n\t"
-                "ext v25.8b, v21.8b, v25.8b, #6\n\t"
-                "smull v18.4s, v18.4h, v0.h[0]\n\t"
-                "smull v19.4s, v19.4h, v0.h[1]\n\t"
-                "smull v20.4s, v20.4h, v0.h[2]\n\t"
-                "smull v21.4s, v21.4h, v0.h[3]\n\t"
-                "smlal v18.4s, v22.4h, v1.h[0]\n\t"
-                "mov v14.16b, %12.16b\n\t"
-                "smlal v19.4s, v23.4h, v1.h[1]\n\t"
-                "mov v15.16b, %12.16b\n\t"
-                "smlal v20.4s, v24.4h, v1.h[2]\n\t"
-                "mov v16.16b, %12.16b\n\t"
-                "smlal v21.4s, v25.4h, v1.h[3]\n\t"
-                "mov v17.16b, %12.16b\n\t"
-                "ld1 {v1.4h}, [%2], #8\n\t"
-                "shrn v18.4h, v18.4s, #4\n\t"
-                "smull v10.4s, v10.4h, %10.4h\n\t"
-                "shrn v19.4h, v19.4s, #4\n\t"
-                "smull v11.4s, v11.4h, %10.4h\n\t"
-                "shrn v20.4h, v20.4s, #4\n\t"
-                "smull v12.4s, v12.4h, %10.4h\n\t"
-                "shrn v21.4h, v21.4s, #4\n\t"
-                "smull v13.4s, v13.4h, %10.4h\n\t"
-                "ssra v14.4s, v10.4s, #16\n\t"
-                "smull v18.4s, v18.4h, %11.4h\n\t"
-                "ssra v15.4s, v11.4s, #16\n\t"
-                "smull v19.4s, v19.4h, %11.4h\n\t"
-                "ssra v16.4s, v12.4s, #16\n\t"
-                "smull v20.4s, v20.4h, %11.4h\n\t"
-                "ssra v17.4s, v13.4s, #16\n\t"
-                "smull v21.4s, v21.4h, %11.4h\n\t"
-                "subs %0, %0, #4\n\t"
-                "ssra v14.4s, v18.4s, #16\n\t"
-                "ssra v15.4s, v19.4s, #16\n\t"
-                "ssra v16.4s, v20.4s, #16\n\t"
-                "ssra v17.4s, v21.4s, #16\n\t"
-                "shrn v14.4h, v14.4s, #2\n\t"
-                "shrn v15.4h, v15.4s, #2\n\t"
-                "shrn v16.4h, v16.4s, #2\n\t"
-                "shrn v17.4h, v17.4s, #2\n\t"
+                    "0:\n\t"
+                    "#start dx*v0+(1-dx)*v1\n\t"
+                    "#shift 8bit to 16bit and construct vectors\n\t"
+                    "ushll v10.8h, v2.8b, #0\n\t"
+                    "ldr d6, [%9, x10]\n\t"
+                    "prfm pldl1keep, [%9, x19]\n\t"
+                    "ushll v11.8h, v3.8b, #0\n\t"
+                    "ldr d7, [%9, x11]\n\t"
+                    "prfm pldl1keep, [%9, x20]\n\t"
+                    "ushll v12.8h, v4.8b, #0\n\t"
+                    "ldr d8, [%9, x12]\n\t"
+                    "prfm pldl1keep, [%9, x21]\n\t"
+                    "ushll v13.8h, v5.8b, #0\n\t"
+                    "ldr d9, [%9, x13]\n\t"
+                    "prfm pldl1keep, [%9, x22]\n\t"
+                    "sub v0.4h, %14.4h, v1.4h\n\t"
+                    "mov v14.d[0], v10.d[1]\n\t"
+                    "mov x10, x19\n\t"
+                    "mov x11, x20\n\t"
+                    "mov x12, x21\n\t"
+                    "mov x13, x22\n\t"
+                    "ldpsw x19, x20, [%1], #8\n\t"
+                    "mov v15.d[0], v11.d[1]\n\t"
+                    "ldpsw x21, x22, [%1], #8\n\t"
+                    "mov v16.d[0], v12.d[1]\n\t"
+                    "mov v17.d[0], v13.d[1]\n\t"
+                    "ext v14.8b, v10.8b, v14.8b, #6\n\t"
+                    "ext v15.8b, v11.8b, v15.8b, #6\n\t"
+                    "ext v16.8b, v12.8b, v16.8b, #6\n\t"
+                    "ext v17.8b, v13.8b, v17.8b, #6\n\t"
+                    "#calculate\n\t"
+                    "smull v10.4s, v10.4h, v0.h[0]\n\t"
+                    "ldr d2, [%8, x10]\n\t"
+                    "prfm pldl1keep, [%8, x19]\n\t"
+                    "smull v11.4s, v11.4h, v0.h[1]\n\t"
+                    "ldr d3, [%8, x11]\n\t"
+                    "prfm pldl1keep, [%8, x20]\n\t"
+                    "smull v12.4s, v12.4h, v0.h[2]\n\t"
+                    "ldr d4, [%8, x12]\n\t"
+                    "prfm pldl1keep, [%8, x21]\n\t"
+                    "smull v13.4s, v13.4h, v0.h[3]\n\t"
+                    "ldr d5, [%8, x13]\n\t"
+                    "prfm pldl1keep, [%8, x22]\n\t"
+                    "smlal v10.4s, v14.4h, v1.h[0]\n\t"
+                    "ushll v18.8h, v6.8b, #0\n\t"
+                    "smlal v11.4s, v15.4h, v1.h[1]\n\t"
+                    "ushll v19.8h, v7.8b, #0\n\t"
+                    "smlal v12.4s, v16.4h, v1.h[2]\n\t"
+                    "ushll v20.8h, v8.8b, #0\n\t"
+                    "smlal v13.4s, v17.4h, v1.h[3]\n\t"
+                    "ushll v21.8h, v9.8b, #0\n\t"
+                    "shrn v10.4h, v10.4s, #4\n\t"
+                    "mov v22.d[0], v18.d[1]\n\t"
+                    "shrn v11.4h, v11.4s, #4\n\t"
+                    "mov v23.d[0], v19.d[1]\n\t"
+                    "shrn v12.4h, v12.4s, #4\n\t"
+                    "mov v24.d[0], v20.d[1]\n\t"
+                    "shrn v13.4h, v13.4s, #4\n\t"
+                    "mov v25.d[0], v21.d[1]\n\t"
+                    "#start dy*v0+(1-dy)*v1\n\t"
+                    "ext v22.8b, v18.8b, v22.8b, #6\n\t"
+                    "ext v23.8b, v19.8b, v23.8b, #6\n\t"
+                    "ext v24.8b, v20.8b, v24.8b, #6\n\t"
+                    "ext v25.8b, v21.8b, v25.8b, #6\n\t"
+                    "smull v18.4s, v18.4h, v0.h[0]\n\t"
+                    "smull v19.4s, v19.4h, v0.h[1]\n\t"
+                    "smull v20.4s, v20.4h, v0.h[2]\n\t"
+                    "smull v21.4s, v21.4h, v0.h[3]\n\t"
+                    "smlal v18.4s, v22.4h, v1.h[0]\n\t"
+                    "mov v14.16b, %12.16b\n\t"
+                    "smlal v19.4s, v23.4h, v1.h[1]\n\t"
+                    "mov v15.16b, %12.16b\n\t"
+                    "smlal v20.4s, v24.4h, v1.h[2]\n\t"
+                    "mov v16.16b, %12.16b\n\t"
+                    "smlal v21.4s, v25.4h, v1.h[3]\n\t"
+                    "mov v17.16b, %12.16b\n\t"
+                    "ld1 {v1.4h}, [%2], #8\n\t"
+                    "shrn v18.4h, v18.4s, #4\n\t"
+                    "smull v10.4s, v10.4h, %10.4h\n\t"
+                    "shrn v19.4h, v19.4s, #4\n\t"
+                    "smull v11.4s, v11.4h, %10.4h\n\t"
+                    "shrn v20.4h, v20.4s, #4\n\t"
+                    "smull v12.4s, v12.4h, %10.4h\n\t"
+                    "shrn v21.4h, v21.4s, #4\n\t"
+                    "smull v13.4s, v13.4h, %10.4h\n\t"
+                    "ssra v14.4s, v10.4s, #16\n\t"
+                    "smull v18.4s, v18.4h, %11.4h\n\t"
+                    "ssra v15.4s, v11.4s, #16\n\t"
+                    "smull v19.4s, v19.4h, %11.4h\n\t"
+                    "ssra v16.4s, v12.4s, #16\n\t"
+                    "smull v20.4s, v20.4h, %11.4h\n\t"
+                    "ssra v17.4s, v13.4s, #16\n\t"
+                    "smull v21.4s, v21.4h, %11.4h\n\t"
+                    "subs %0, %0, #4\n\t"
+                    "ssra v14.4s, v18.4s, #16\n\t"
+                    "ssra v15.4s, v19.4s, #16\n\t"
+                    "ssra v16.4s, v20.4s, #16\n\t"
+                    "ssra v17.4s, v21.4s, #16\n\t"
+                    "shrn v14.4h, v14.4s, #2\n\t"
+                    "shrn v15.4h, v15.4s, #2\n\t"
+                    "shrn v16.4h, v16.4s, #2\n\t"
+                    "shrn v17.4h, v17.4s, #2\n\t"
 
-                "#start merge and TBL\n\t"
-                "ins v14.d[1], v15.d[0]\n\t"
-                "ins v16.d[1], v17.d[0]\n\t"
-                "sqxtun v14.8b, v14.8h\n\t"
-                "sqxtun v15.8b, v16.8h\n\t"
-                "tbl v14.8b, {v14.16b}, %13.8b\n\t"
-                "tbl v15.8b, {v15.16b}, %13.8b\n\t"
+                    "#start merge and TBL\n\t"
+                    "ins v14.d[1], v15.d[0]\n\t"
+                    "ins v16.d[1], v17.d[0]\n\t"
+                    "sqxtun v14.8b, v14.8h\n\t"
+                    "sqxtun v15.8b, v16.8h\n\t"
+                    "tbl v14.8b, {v14.16b}, %13.8b\n\t"
+                    "tbl v15.8b, {v15.16b}, %13.8b\n\t"
 
-                "st1 {v14.s}[0], [%3], #4\n\t"
-                "st1 {v14.h}[2], [%3], #2\n\t"
-                "st1 {v15.s}[0], [%3], #4\n\t"
-                "st1 {v15.h}[2], [%3], #2\n\t"
+                    "st1 {v14.s}[0], [%3], #4\n\t"
+                    "st1 {v14.h}[2], [%3], #2\n\t"
+                    "st1 {v15.s}[0], [%3], #4\n\t"
+                    "st1 {v15.h}[2], [%3], #2\n\t"
 
-                "bne 0b\n\t"
-                "sub %2, %2, #8\n\t"
+                    "bne 0b\n\t"
+                    "sub %2, %2, #8\n\t"
 
-                : "=r"(remain), "=r"(tmp_xofs), "=r"(ialphap), "=r"(Dp)
-                : "0"(remain), "1"(tmp_xofs), "2"(ialphap), "3"(Dp), "r"(S0), "r"(S1), "w"(_b0), "w"(_b1), "w"(_v2), "w"(_tb), "w"(INTER_RESIZE_COEF_SCALE_vec)
-                : "cc", "memory", "x10", "x11", "x12", "x13", "x19", "x20", "x21", "x22", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24", "v25");
+                    : "=r"(remain), "=r"(tmp_xofs), "=r"(ialphap), "=r"(Dp)
+                    : "0"(remain), "1"(tmp_xofs), "2"(ialphap), "3"(Dp), "r"(S0), "r"(S1), "w"(_b0), "w"(_b1), "w"(_v2), "w"(_tb), "w"(INTER_RESIZE_COEF_SCALE_vec)
+                    : "cc", "memory", "x10", "x11", "x12", "x13", "x19", "x20", "x21", "x22", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24", "v25");
         }
         // Corner Case
         for (; nn > 0; nn--) {
             int32_t ofs = xofs[w - nn];
-            const uint8_t* pS0 = S0 + ofs;
-            const uint8_t* pS1 = S1 + ofs;
+            const uint8_t *pS0 = S0 + ofs;
+            const uint8_t *pS1 = S1 + ofs;
             int16_t a1 = ialphap[0];
             int16_t a0 = INTER_RESIZE_COEF_SCALE - a1;
             int16_t b1 = ibeta[dy];
@@ -917,19 +921,19 @@ void resize_generic_8UC3(
 }
 
 void resize_generic_8UC4(
-    int32_t srcHeight,
-    int32_t srcWidth,
-    int32_t srcStride,
-    const uint8_t* src,
-    int32_t dstHeight,
-    int32_t dstWidth,
-    int32_t dstStride,
-    uint8_t* dst,
-    int32_t* xofs,
-    int32_t* yofs,
-    int16_t* ialpha,
-    int16_t* ibeta,
-    int32_t num_threads)
+        int32_t srcHeight,
+        int32_t srcWidth,
+        int32_t srcStride,
+        const uint8_t *src,
+        int32_t dstHeight,
+        int32_t dstWidth,
+        int32_t dstStride,
+        uint8_t *dst,
+        int32_t *xofs,
+        int32_t *yofs,
+        int16_t *ialpha,
+        int16_t *ibeta,
+        int32_t num_threads)
 {
     int32_t w = dstWidth;
     int32_t h = dstHeight;
@@ -939,149 +943,149 @@ void resize_generic_8UC4(
 
     for (int32_t dy = 0; dy < h; dy++) {
         int32_t sy = yofs[dy];
-        const uint8_t* S0 = src + sy * srcStride; // src.ptr(sy);
-        const uint8_t* S1 = src + (sy + 1) * srcStride; // src.ptr(sy+1);
-        uint8_t* Dp = dst + dy * dstStride; // dst.ptr(dy);
-        const int16_t* ialphap = ialpha;
+        const uint8_t *S0 = src + sy * srcStride; // src.ptr(sy);
+        const uint8_t *S1 = src + (sy + 1) * srcStride; // src.ptr(sy+1);
+        uint8_t *Dp = dst + dy * dstStride; // dst.ptr(dy);
+        const int16_t *ialphap = ialpha;
 
         int16x4_t _b1 = vdup_n_s16(ibeta[dy]);
         int16x4_t _b0 = vdup_n_s16(INTER_RESIZE_COEF_SCALE - ibeta[dy]);
-        int32_t* tmp_xofs = xofs;
+        int32_t *tmp_xofs = xofs;
 
         int32_t remain = (w >> 2) << 2;
         int32_t nn = w - remain;
         if (remain > 0) {
             asm volatile(
-                "ldpsw x10, x11, [%1], #8\n\t"
-                "ldpsw x12, x13, [%1], #8\n\t"
-                "ldpsw x19, x20, [%1], #8\n\t"
-                "ldpsw x21, x22, [%1], #8\n\t"
-                "ldr d2, [%8, x10]\n\t"
-                "prfm pldl1keep, [%8, x19]\n\t"
-                "ldr d3, [%8, x11]\n\t"
-                "prfm pldl1keep, [%8, x20]\n\t"
-                "ldr d4, [%8, x12]\n\t"
-                "prfm pldl1keep, [%8, x21]\n\t"
-                "ldr d5, [%8, x13]\n\t"
-                "prfm pldl1keep, [%8, x22]\n\t"
-                "ld1 {v1.4h}, [%2], #8\n\t"
+                    "ldpsw x10, x11, [%1], #8\n\t"
+                    "ldpsw x12, x13, [%1], #8\n\t"
+                    "ldpsw x19, x20, [%1], #8\n\t"
+                    "ldpsw x21, x22, [%1], #8\n\t"
+                    "ldr d2, [%8, x10]\n\t"
+                    "prfm pldl1keep, [%8, x19]\n\t"
+                    "ldr d3, [%8, x11]\n\t"
+                    "prfm pldl1keep, [%8, x20]\n\t"
+                    "ldr d4, [%8, x12]\n\t"
+                    "prfm pldl1keep, [%8, x21]\n\t"
+                    "ldr d5, [%8, x13]\n\t"
+                    "prfm pldl1keep, [%8, x22]\n\t"
+                    "ld1 {v1.4h}, [%2], #8\n\t"
 
-                "0:\n\t"
-                "#start dx*v0+(1-dx)*v1\n\t"
-                "#shift 8bit to 16bit and construct vectors\n\t"
-                "ushll v10.8h, v2.8b, #0\n\t"
-                "ldr d6, [%9, x10]\n\t"
-                "prfm pldl1keep, [%9, x19]\n\t"
-                "ushll v11.8h, v3.8b, #0\n\t"
-                "ldr d7, [%9, x11]\n\t"
-                "prfm pldl1keep, [%9, x20]\n\t"
-                "ushll v12.8h, v4.8b, #0\n\t"
-                "ldr d8, [%9, x12]\n\t"
-                "prfm pldl1keep, [%9, x21]\n\t"
-                "ushll v13.8h, v5.8b, #0\n\t"
-                "ldr d9, [%9, x13]\n\t"
-                "prfm pldl1keep, [%9, x22]\n\t"
-                "sub v0.4h, %13.4h, v1.4h\n\t"
-                "mov v14.d[0], v10.d[1]\n\t"
-                "mov x10, x19\n\t"
-                "mov x11, x20\n\t"
-                "mov x12, x21\n\t"
-                "mov x13, x22\n\t"
-                "ldpsw x19, x20, [%1], #8\n\t"
-                "mov v15.d[0], v11.d[1]\n\t"
-                "ldpsw x21, x22, [%1], #8\n\t"
-                "mov v16.d[0], v12.d[1]\n\t"
-                "mov v17.d[0], v13.d[1]\n\t"
-                "#calculate\n\t"
-                "smull v10.4s, v10.4h, v0.h[0]\n\t"
-                "ldr d2, [%8, x10]\n\t"
-                "prfm pldl1keep, [%8, x19]\n\t"
-                "smull v11.4s, v11.4h, v0.h[1]\n\t"
-                "ldr d3, [%8, x11]\n\t"
-                "prfm pldl1keep, [%8, x20]\n\t"
-                "smull v12.4s, v12.4h, v0.h[2]\n\t"
-                "ldr d4, [%8, x12]\n\t"
-                "prfm pldl1keep, [%8, x21]\n\t"
-                "smull v13.4s, v13.4h, v0.h[3]\n\t"
-                "ldr d5, [%8, x13]\n\t"
-                "prfm pldl1keep, [%8, x22]\n\t"
-                "smlal v10.4s, v14.4h, v1.h[0]\n\t"
-                "ushll v18.8h, v6.8b, #0\n\t"
-                "smlal v11.4s, v15.4h, v1.h[1]\n\t"
-                "ushll v19.8h, v7.8b, #0\n\t"
-                "smlal v12.4s, v16.4h, v1.h[2]\n\t"
-                "ushll v20.8h, v8.8b, #0\n\t"
-                "smlal v13.4s, v17.4h, v1.h[3]\n\t"
-                "ushll v21.8h, v9.8b, #0\n\t"
-                "shrn v10.4h, v10.4s, #4\n\t"
-                "mov v22.d[0], v18.d[1]\n\t"
-                "shrn v11.4h, v11.4s, #4\n\t"
-                "mov v23.d[0], v19.d[1]\n\t"
-                "shrn v12.4h, v12.4s, #4\n\t"
-                "mov v24.d[0], v20.d[1]\n\t"
-                "shrn v13.4h, v13.4s, #4\n\t"
-                "mov v25.d[0], v21.d[1]\n\t"
-                "#start dy*v0+(1-dy)*v1\n\t"
-                "smull v18.4s, v18.4h, v0.h[0]\n\t"
-                "smull v19.4s, v19.4h, v0.h[1]\n\t"
-                "smull v20.4s, v20.4h, v0.h[2]\n\t"
-                "smull v21.4s, v21.4h, v0.h[3]\n\t"
-                "smlal v18.4s, v22.4h, v1.h[0]\n\t"
-                "mov v14.16b, %12.16b\n\t"
-                "smlal v19.4s, v23.4h, v1.h[1]\n\t"
-                "mov v15.16b, %12.16b\n\t"
-                "smlal v20.4s, v24.4h, v1.h[2]\n\t"
-                "mov v16.16b, %12.16b\n\t"
-                "smlal v21.4s, v25.4h, v1.h[3]\n\t"
-                "mov v17.16b, %12.16b\n\t"
-                "ld1 {v1.4h}, [%2], #8\n\t"
-                "shrn v18.4h, v18.4s, #4\n\t"
-                "smull v10.4s, v10.4h, %10.4h\n\t"
-                "shrn v19.4h, v19.4s, #4\n\t"
-                "smull v11.4s, v11.4h, %10.4h\n\t"
-                "shrn v20.4h, v20.4s, #4\n\t"
-                "smull v12.4s, v12.4h, %10.4h\n\t"
-                "shrn v21.4h, v21.4s, #4\n\t"
-                "smull v13.4s, v13.4h, %10.4h\n\t"
-                "ssra v14.4s, v10.4s, #16\n\t"
-                "smull v18.4s, v18.4h, %11.4h\n\t"
-                "ssra v15.4s, v11.4s, #16\n\t"
-                "smull v19.4s, v19.4h, %11.4h\n\t"
-                "ssra v16.4s, v12.4s, #16\n\t"
-                "smull v20.4s, v20.4h, %11.4h\n\t"
-                "ssra v17.4s, v13.4s, #16\n\t"
-                "smull v21.4s, v21.4h, %11.4h\n\t"
-                "subs %0, %0, #4\n\t"
-                "ssra v14.4s, v18.4s, #16\n\t"
-                "ssra v15.4s, v19.4s, #16\n\t"
-                "ssra v16.4s, v20.4s, #16\n\t"
-                "ssra v17.4s, v21.4s, #16\n\t"
-                "shrn v14.4h, v14.4s, #2\n\t"
-                "shrn v15.4h, v15.4s, #2\n\t"
-                "shrn v16.4h, v16.4s, #2\n\t"
-                "shrn v17.4h, v17.4s, #2\n\t"
+                    "0:\n\t"
+                    "#start dx*v0+(1-dx)*v1\n\t"
+                    "#shift 8bit to 16bit and construct vectors\n\t"
+                    "ushll v10.8h, v2.8b, #0\n\t"
+                    "ldr d6, [%9, x10]\n\t"
+                    "prfm pldl1keep, [%9, x19]\n\t"
+                    "ushll v11.8h, v3.8b, #0\n\t"
+                    "ldr d7, [%9, x11]\n\t"
+                    "prfm pldl1keep, [%9, x20]\n\t"
+                    "ushll v12.8h, v4.8b, #0\n\t"
+                    "ldr d8, [%9, x12]\n\t"
+                    "prfm pldl1keep, [%9, x21]\n\t"
+                    "ushll v13.8h, v5.8b, #0\n\t"
+                    "ldr d9, [%9, x13]\n\t"
+                    "prfm pldl1keep, [%9, x22]\n\t"
+                    "sub v0.4h, %13.4h, v1.4h\n\t"
+                    "mov v14.d[0], v10.d[1]\n\t"
+                    "mov x10, x19\n\t"
+                    "mov x11, x20\n\t"
+                    "mov x12, x21\n\t"
+                    "mov x13, x22\n\t"
+                    "ldpsw x19, x20, [%1], #8\n\t"
+                    "mov v15.d[0], v11.d[1]\n\t"
+                    "ldpsw x21, x22, [%1], #8\n\t"
+                    "mov v16.d[0], v12.d[1]\n\t"
+                    "mov v17.d[0], v13.d[1]\n\t"
+                    "#calculate\n\t"
+                    "smull v10.4s, v10.4h, v0.h[0]\n\t"
+                    "ldr d2, [%8, x10]\n\t"
+                    "prfm pldl1keep, [%8, x19]\n\t"
+                    "smull v11.4s, v11.4h, v0.h[1]\n\t"
+                    "ldr d3, [%8, x11]\n\t"
+                    "prfm pldl1keep, [%8, x20]\n\t"
+                    "smull v12.4s, v12.4h, v0.h[2]\n\t"
+                    "ldr d4, [%8, x12]\n\t"
+                    "prfm pldl1keep, [%8, x21]\n\t"
+                    "smull v13.4s, v13.4h, v0.h[3]\n\t"
+                    "ldr d5, [%8, x13]\n\t"
+                    "prfm pldl1keep, [%8, x22]\n\t"
+                    "smlal v10.4s, v14.4h, v1.h[0]\n\t"
+                    "ushll v18.8h, v6.8b, #0\n\t"
+                    "smlal v11.4s, v15.4h, v1.h[1]\n\t"
+                    "ushll v19.8h, v7.8b, #0\n\t"
+                    "smlal v12.4s, v16.4h, v1.h[2]\n\t"
+                    "ushll v20.8h, v8.8b, #0\n\t"
+                    "smlal v13.4s, v17.4h, v1.h[3]\n\t"
+                    "ushll v21.8h, v9.8b, #0\n\t"
+                    "shrn v10.4h, v10.4s, #4\n\t"
+                    "mov v22.d[0], v18.d[1]\n\t"
+                    "shrn v11.4h, v11.4s, #4\n\t"
+                    "mov v23.d[0], v19.d[1]\n\t"
+                    "shrn v12.4h, v12.4s, #4\n\t"
+                    "mov v24.d[0], v20.d[1]\n\t"
+                    "shrn v13.4h, v13.4s, #4\n\t"
+                    "mov v25.d[0], v21.d[1]\n\t"
+                    "#start dy*v0+(1-dy)*v1\n\t"
+                    "smull v18.4s, v18.4h, v0.h[0]\n\t"
+                    "smull v19.4s, v19.4h, v0.h[1]\n\t"
+                    "smull v20.4s, v20.4h, v0.h[2]\n\t"
+                    "smull v21.4s, v21.4h, v0.h[3]\n\t"
+                    "smlal v18.4s, v22.4h, v1.h[0]\n\t"
+                    "mov v14.16b, %12.16b\n\t"
+                    "smlal v19.4s, v23.4h, v1.h[1]\n\t"
+                    "mov v15.16b, %12.16b\n\t"
+                    "smlal v20.4s, v24.4h, v1.h[2]\n\t"
+                    "mov v16.16b, %12.16b\n\t"
+                    "smlal v21.4s, v25.4h, v1.h[3]\n\t"
+                    "mov v17.16b, %12.16b\n\t"
+                    "ld1 {v1.4h}, [%2], #8\n\t"
+                    "shrn v18.4h, v18.4s, #4\n\t"
+                    "smull v10.4s, v10.4h, %10.4h\n\t"
+                    "shrn v19.4h, v19.4s, #4\n\t"
+                    "smull v11.4s, v11.4h, %10.4h\n\t"
+                    "shrn v20.4h, v20.4s, #4\n\t"
+                    "smull v12.4s, v12.4h, %10.4h\n\t"
+                    "shrn v21.4h, v21.4s, #4\n\t"
+                    "smull v13.4s, v13.4h, %10.4h\n\t"
+                    "ssra v14.4s, v10.4s, #16\n\t"
+                    "smull v18.4s, v18.4h, %11.4h\n\t"
+                    "ssra v15.4s, v11.4s, #16\n\t"
+                    "smull v19.4s, v19.4h, %11.4h\n\t"
+                    "ssra v16.4s, v12.4s, #16\n\t"
+                    "smull v20.4s, v20.4h, %11.4h\n\t"
+                    "ssra v17.4s, v13.4s, #16\n\t"
+                    "smull v21.4s, v21.4h, %11.4h\n\t"
+                    "subs %0, %0, #4\n\t"
+                    "ssra v14.4s, v18.4s, #16\n\t"
+                    "ssra v15.4s, v19.4s, #16\n\t"
+                    "ssra v16.4s, v20.4s, #16\n\t"
+                    "ssra v17.4s, v21.4s, #16\n\t"
+                    "shrn v14.4h, v14.4s, #2\n\t"
+                    "shrn v15.4h, v15.4s, #2\n\t"
+                    "shrn v16.4h, v16.4s, #2\n\t"
+                    "shrn v17.4h, v17.4s, #2\n\t"
 
-                "#start merge and TBL\n\t"
-                "ins v14.d[1], v15.d[0]\n\t"
-                "ins v16.d[1], v17.d[0]\n\t"
-                "sqxtun v14.8b, v14.8h\n\t"
-                "sqxtun v15.8b, v16.8h\n\t"
+                    "#start merge and TBL\n\t"
+                    "ins v14.d[1], v15.d[0]\n\t"
+                    "ins v16.d[1], v17.d[0]\n\t"
+                    "sqxtun v14.8b, v14.8h\n\t"
+                    "sqxtun v15.8b, v16.8h\n\t"
 
-                "st1 {v14.8b}, [%3], #8\n\t"
-                "st1 {v15.8b}, [%3], #8\n\t"
+                    "st1 {v14.8b}, [%3], #8\n\t"
+                    "st1 {v15.8b}, [%3], #8\n\t"
 
-                "bne 0b\n\t"
-                "sub %2, %2, #8\n\t"
+                    "bne 0b\n\t"
+                    "sub %2, %2, #8\n\t"
 
-                : "=r"(remain), "=r"(tmp_xofs), "=r"(ialphap), "=r"(Dp)
-                : "0"(remain), "1"(tmp_xofs), "2"(ialphap), "3"(Dp), "r"(S0), "r"(S1), "w"(_b0), "w"(_b1), "w"(_v2), "w"(INTER_RESIZE_COEF_SCALE_vec)
-                : "cc", "memory", "x10", "x11", "x12", "x13", "x19", "x20", "x21", "x22", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24", "v25");
+                    : "=r"(remain), "=r"(tmp_xofs), "=r"(ialphap), "=r"(Dp)
+                    : "0"(remain), "1"(tmp_xofs), "2"(ialphap), "3"(Dp), "r"(S0), "r"(S1), "w"(_b0), "w"(_b1), "w"(_v2), "w"(INTER_RESIZE_COEF_SCALE_vec)
+                    : "cc", "memory", "x10", "x11", "x12", "x13", "x19", "x20", "x21", "x22", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24", "v25");
         }
         // Corner Case
         for (; nn > 0; nn--) {
             int32_t ofs = xofs[w - nn];
-            const uint8_t* pS0 = S0 + ofs;
-            const uint8_t* pS1 = S1 + ofs;
+            const uint8_t *pS0 = S0 + ofs;
+            const uint8_t *pS1 = S1 + ofs;
             int16_t a1 = ialphap[0];
             int16_t a0 = INTER_RESIZE_COEF_SCALE - a1;
             int16_t b1 = ibeta[dy];
@@ -1100,15 +1104,15 @@ void resize_generic_8UC4(
 }
 
 void resize_linear_generic(
-    int32_t channels,
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inStride,
-    const uint8_t* in,
-    int32_t outHeight,
-    int32_t outWdith,
-    int32_t outStride,
-    uint8_t* out)
+        int32_t channels,
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inStride,
+        const uint8_t *in,
+        int32_t outHeight,
+        int32_t outWdith,
+        int32_t outStride,
+        uint8_t *out)
 {
     int32_t w = outWdith;
     int32_t h = outHeight;
@@ -1116,17 +1120,17 @@ void resize_linear_generic(
     double scale_x = (double)inWidth / outWdith;
     double scale_y = (double)inHeight / outHeight;
 
-    int32_t* buf = new int32_t[w + 8 + h + w + h];
+    int32_t *buf = new int32_t[w + 8 + h + w + h];
 
-    int32_t* xofs = buf;
+    int32_t *xofs = buf;
     // preload offset
     for (int32_t i = 0; i < 8; i++) {
         xofs[w + i] = 0;
     }
-    int32_t* yofs = buf + w + 8;
+    int32_t *yofs = buf + w + 8;
 
-    int16_t* ialpha = (int16_t*)(buf + w + 8 + h);
-    int16_t* ibeta = (int16_t*)(buf + w + 8 + h + w);
+    int16_t *ialpha = (int16_t *)(buf + w + 8 + h);
+    int16_t *ibeta = (int16_t *)(buf + w + 8 + h + w);
 
     float fx;
     float fy;
@@ -1135,7 +1139,7 @@ void resize_linear_generic(
     int32_t srcw = inWidth;
     int32_t srch = inHeight;
 
-    int16_t* ialphap = ialpha;
+    int16_t *ialphap = ialpha;
     for (int32_t dx = 0; dx < w; dx++) {
         fx = (float)((dx + 0.5) * scale_x - 0.5);
         sx = Floor(fx);
@@ -1161,7 +1165,7 @@ void resize_linear_generic(
         ialphap++;
     }
 
-    int16_t* ibetap = ibeta;
+    int16_t *ibetap = ibeta;
     for (int32_t dy = 0; dy < h; dy++) {
         fy = (float)((dy + 0.5) * scale_y - 0.5);
         sy = Floor(fy);
@@ -1193,16 +1197,16 @@ void resize_linear_generic(
 }
 
 void resize_bilinear_rows(
-    const Size& ssize,
-    const Size& dsize,
-    const uint8_t* srcBase,
-    ptrdiff_t srcStride,
-    uint8_t* dstBase,
-    ptrdiff_t dstStride,
-    float hr,
-    const uint8_t** gcols,
-    uint8_t* gcweight,
-    uint8_t* buf)
+        const Size &ssize,
+        const Size &dsize,
+        const uint8_t *srcBase,
+        ptrdiff_t srcStride,
+        uint8_t *dstBase,
+        ptrdiff_t dstStride,
+        float hr,
+        const uint8_t **gcols,
+        uint8_t *gcweight,
+        uint8_t *buf)
 {
     float scale_y_offset = 0.5f * hr - 0.5f;
 
@@ -1213,7 +1217,7 @@ void resize_bilinear_rows(
     int32_t r = 0;
     for (; r < dst_h8; r += 8) {
     resize8u_xystretch:
-        const uint8_t* rows[16];
+        const uint8_t *rows[16];
         uint8_t rweight[8];
 
         for (uint32_t i = 0; i < 8; ++i) {
@@ -1373,9 +1377,9 @@ void resize_bilinear_rows(
             goto resize8u_ystretch;
         }
 
-        uint8_t* dst_data = dstBase + r * dstStride;
-        const uint8_t** cols = gcols;
-        uint8_t* cweight = gcweight;
+        uint8_t *dst_data = dstBase + r * dstStride;
+        const uint8_t **cols = gcols;
+        uint8_t *cweight = gcweight;
 
         int32_t dcol = 0;
         for (; dcol < dst_w8; dcol += 8, cols += 16, cweight += 8) {
@@ -1483,24 +1487,24 @@ void resize_bilinear_rows(
     }
 }
 
-template <int32_t channels>
+template<int32_t channels>
 struct resizeLinearInternals;
-template <>
+template<>
 struct resizeLinearInternals<1> {
     int32x4_t vc_upd;
     int32x4_t vc0;
     int32x4_t vcmax;
 
-    inline resizeLinearInternals(int32x4_t& vi, uint32_t srccols)
+    inline resizeLinearInternals(int32x4_t &vi, uint32_t srccols)
     {
         vc_upd = vdupq_n_s32(4);
         vc0 = vdupq_n_s32(0);
         vcmax = vdupq_n_s32(srccols - 1);
 
-        int32_t tmp0123[] = {0, 1, 2, 3};
+        int32_t tmp0123[] = { 0, 1, 2, 3 };
         vi = vld1q_s32(tmp0123);
     }
-    inline void updateIndexes(int32x4_t& vi, int32x4_t& vsrch, int32x4_t& vsrcl)
+    inline void updateIndexes(int32x4_t &vi, int32x4_t &vsrch, int32x4_t &vsrcl)
     {
         vsrch = vminq_s32(vsrch, vcmax);
         vsrcl = vmaxq_s32(vsrcl, vc0);
@@ -1510,24 +1514,24 @@ struct resizeLinearInternals<1> {
         vi = vaddq_s32(vi, vc_upd);
     }
 };
-template <>
+template<>
 struct resizeLinearInternals<4> {
     int32x4_t vc_upd;
     int32x4_t vc0;
     int32x4_t vcmax;
     int32x4_t v0123x8;
 
-    inline resizeLinearInternals(int32x4_t& vi, uint32_t srccols)
+    inline resizeLinearInternals(int32x4_t &vi, uint32_t srccols)
     {
         vc_upd = vdupq_n_s32(1);
         vc0 = vdupq_n_s32(0);
         vcmax = vdupq_n_s32(srccols - 1);
-        int32_t tmp0123x8[] = {0, 8, 16, 24};
+        int32_t tmp0123x8[] = { 0, 8, 16, 24 };
         v0123x8 = vld1q_s32(tmp0123x8);
 
         vi = vc0;
     }
-    inline void updateIndexes(int32x4_t& vi, int32x4_t& vsrch, int32x4_t& vsrcl)
+    inline void updateIndexes(int32x4_t &vi, int32x4_t &vsrch, int32x4_t &vsrcl)
     {
         vsrch = vminq_s32(vsrch, vcmax);
         vsrcl = vmaxq_s32(vsrcl, vc0);
@@ -1539,16 +1543,16 @@ struct resizeLinearInternals<4> {
     }
 };
 
-template <int32_t channels>
+template<int32_t channels>
 void resize_linear_u8c1orc4(
-    uint32_t srcHeight,
-    uint32_t srcWidth,
-    uint32_t srcStride,
-    const uint8_t* srcBase,
-    uint32_t dstHeight,
-    uint32_t dstWidth,
-    uint32_t dstStride,
-    uint8_t* dstBase)
+        uint32_t srcHeight,
+        uint32_t srcWidth,
+        uint32_t srcStride,
+        const uint8_t *srcBase,
+        uint32_t dstHeight,
+        uint32_t dstWidth,
+        uint32_t dstStride,
+        uint8_t *dstBase)
 {
     float wr = (float)srcWidth / dstWidth;
     float hr = (float)srcHeight / dstHeight;
@@ -1561,7 +1565,7 @@ void resize_linear_u8c1orc4(
     dsize.height = dstHeight;
 
     std::vector<uint8_t> gcweight((dsize.width + 7) & ~7);
-    std::vector<const uint8_t*> gcols(((dsize.width + 7) & ~7) * 2);
+    std::vector<const uint8_t *> gcols(((dsize.width + 7) & ~7) * 2);
     std::vector<uint8_t> buf(((ssize.width + 7) & ~7) * 8); // (8 rows) x (width of src)
 
     float32x4_t vscale_x = vdupq_n_f32(wr);
@@ -1571,7 +1575,7 @@ void resize_linear_u8c1orc4(
 
     int32x4_t vi;
     resizeLinearInternals<channels> indexes(vi, srcWidth); // uint32_t is used to store indexes
-                                                           // so we could get issues on src image dimensions greater than (2^32-1)
+            // so we could get issues on src image dimensions greater than (2^32-1)
 
     for (int32_t dcol = 0; dcol < dsize.width; dcol += 8) {
         int32_t idx[16];
@@ -1627,19 +1631,19 @@ void resize_linear_u8c1orc4(
 }
 
 static void img_resize_cal_offset_linear_uchar(
-    int32_t* xofs,
-    int16_t* ialpha,
-    int32_t* yofs,
-    int16_t* ibeta,
-    int32_t* xmin,
-    int32_t* xmax,
-    int32_t ksize,
-    int32_t ksize2,
-    int32_t srcw,
-    int32_t srch,
-    int32_t dstw,
-    int32_t dsth,
-    int32_t channels)
+        int32_t *xofs,
+        int16_t *ialpha,
+        int32_t *yofs,
+        int16_t *ibeta,
+        int32_t *xmin,
+        int32_t *xmax,
+        int32_t ksize,
+        int32_t ksize2,
+        int32_t srcw,
+        int32_t srch,
+        int32_t dstw,
+        int32_t dsth,
+        int32_t channels)
 {
     float inv_scale_x = (float)dstw / srcw;
     float inv_scale_y = (float)dsth / srch;
@@ -1698,16 +1702,16 @@ static void img_resize_cal_offset_linear_uchar(
 }
 
 void img_hresize_4channels_linear_neon_uchar(
-    const uint8_t** src,
-    int32_t** dst,
-    int32_t count,
-    const int32_t* xofs,
-    const int16_t* alpha,
-    int32_t swidth,
-    int32_t dwidth,
-    int32_t cn,
-    int32_t xmin,
-    int32_t xmax)
+        const uint8_t **src,
+        int32_t **dst,
+        int32_t count,
+        const int32_t *xofs,
+        const int16_t *alpha,
+        int32_t swidth,
+        int32_t dwidth,
+        int32_t cn,
+        int32_t xmin,
+        int32_t xmax)
 {
     int32_t dx, k;
     int32_t dx0 = 0;
@@ -1777,8 +1781,8 @@ void img_hresize_4channels_linear_neon_uchar(
     // for (; k < count; k++)
     if (count == 1) {
         k = 0;
-        const uint8_t* S = src[k];
-        int32_t* D = dst[k];
+        const uint8_t *S = src[k];
+        int32_t *D = dst[k];
         for (dx = 0; dx < xmax; dx += 4) {
             int32_t sx = xofs[dx];
 
@@ -1799,7 +1803,7 @@ void img_hresize_4channels_linear_neon_uchar(
         for (; dx < dwidth; dx += 4) {
             int32_t sx = xofs[dx];
 
-            int32_t value = *(int32_t*)(S + sx);
+            int32_t value = *(int32_t *)(S + sx);
             int32x2_t int32_S0_vec;
             int32_S0_vec = vset_lane_s32(value, int32_S0_vec, 0);
             // uint8x8_t u8_S0_vec = vreinterpret_u8_s32(int32_S0_vec);
@@ -1816,16 +1820,16 @@ void img_hresize_4channels_linear_neon_uchar(
 }
 
 static void img_hresize_linear_c_uchar(
-    const uint8_t** src,
-    int32_t** dst,
-    int32_t count,
-    const int32_t* xofs,
-    const int16_t* alpha,
-    int32_t swidth,
-    int32_t dwidth,
-    int32_t cn,
-    int32_t xmin,
-    int32_t xmax)
+        const uint8_t **src,
+        int32_t **dst,
+        int32_t count,
+        const int32_t *xofs,
+        const int16_t *alpha,
+        int32_t swidth,
+        int32_t dwidth,
+        int32_t cn,
+        int32_t xmin,
+        int32_t xmax)
 {
     int32_t dx, k;
 
@@ -1854,8 +1858,8 @@ static void img_hresize_linear_c_uchar(
     // for (; k < count; k++)
     if (count == 1) {
         k = 0;
-        const uint8_t* S = src[k];
-        int32_t* D = dst[k];
+        const uint8_t *S = src[k];
+        int32_t *D = dst[k];
         for (dx = k0; dx < xmax; dx++) {
             int32_t sx = xofs[dx];
             D[dx] = S[sx] * alpha[dx * 2] + S[sx + cn] * alpha[dx * 2 + 1];
@@ -1866,7 +1870,7 @@ static void img_hresize_linear_c_uchar(
     }
 }
 
-void img_vresize_linear_neon_uchar(const int32_t** src, uint8_t* dst, const int16_t* beta, int32_t width)
+void img_vresize_linear_neon_uchar(const int32_t **src, uint8_t *dst, const int16_t *beta, int32_t width)
 {
     const int32_t *S0 = src[0], *S1 = src[1];
 
@@ -1912,25 +1916,25 @@ void img_vresize_linear_neon_uchar(const int32_t** src, uint8_t* dst, const int1
 }
 
 static void img_resize_generic_linear_neon_uchar(
-    const uint8_t* src,
-    uint8_t* dst,
-    const int32_t* xofs,
-    const int16_t* _alpha,
-    const int32_t* yofs,
-    const int16_t* _beta,
-    int32_t xmin,
-    int32_t xmax,
-    int32_t ksize,
-    int32_t srcw,
-    int32_t srch,
-    int32_t srcstep,
-    int32_t dstw,
-    int32_t dsth,
-    int32_t dststep,
-    int32_t channels)
+        const uint8_t *src,
+        uint8_t *dst,
+        const int32_t *xofs,
+        const int16_t *_alpha,
+        const int32_t *yofs,
+        const int16_t *_beta,
+        int32_t xmin,
+        int32_t xmax,
+        int32_t ksize,
+        int32_t srcw,
+        int32_t srch,
+        int32_t srcstep,
+        int32_t dstw,
+        int32_t dsth,
+        int32_t dststep,
+        int32_t channels)
 {
-    const int16_t* alpha = _alpha;
-    const int16_t* beta = _beta;
+    const int16_t *alpha = _alpha;
+    const int16_t *beta = _beta;
     int32_t cn = channels;
     srcw *= cn;
     dstw *= cn;
@@ -1939,10 +1943,10 @@ static void img_resize_generic_linear_neon_uchar(
     // int32_t dststep = (int32_t) align_size (dstw, 4);
     //  int32_t dststep = dstw;
 
-    int32_t* buffer_ = (int32_t*)malloc(bufstep * ksize * sizeof(int32_t));
+    int32_t *buffer_ = (int32_t *)malloc(bufstep * ksize * sizeof(int32_t));
 
-    const uint8_t* srows[MAX_ESIZE];
-    int32_t* rows[MAX_ESIZE];
+    const uint8_t *srows[MAX_ESIZE];
+    int32_t *rows[MAX_ESIZE];
     int32_t prev_sy[MAX_ESIZE];
     int32_t k, dy;
     xmin *= cn;
@@ -1950,7 +1954,7 @@ static void img_resize_generic_linear_neon_uchar(
 
     for (k = 0; k < ksize; k++) {
         prev_sy[k] = -1;
-        rows[k] = (int32_t*)buffer_ + bufstep * k;
+        rows[k] = (int32_t *)buffer_ + bufstep * k;
     }
 
     // image resize is a separable operation. In case of not too strong
@@ -1969,7 +1973,7 @@ static void img_resize_generic_linear_neon_uchar(
             }
             if (k1 == ksize)
                 k0 = FUNC_MIN(k0, k); // remember the first row that needs to be computed
-            srows[k] = (const uint8_t*)(src + srcstep * sy);
+            srows[k] = (const uint8_t *)(src + srcstep * sy);
             prev_sy[k] = sy;
         }
 
@@ -1979,7 +1983,7 @@ static void img_resize_generic_linear_neon_uchar(
             else
                 img_hresize_linear_c_uchar(srows + k0, rows + k0, ksize - k0, xofs, alpha, srcw, dstw, cn, xmin, xmax);
         }
-        img_vresize_linear_neon_uchar((const int32_t**)rows, (uint8_t*)(dst + dststep * dy), beta, dstw);
+        img_vresize_linear_neon_uchar((const int32_t **)rows, (uint8_t *)(dst + dststep * dy), beta, dstw);
     }
 
     free(buffer_);
@@ -1987,15 +1991,15 @@ static void img_resize_generic_linear_neon_uchar(
 }
 
 void img_resize_bilinear_neon_uchar(
-    uint8_t* dst,
-    uint32_t dst_width,
-    uint32_t dst_height,
-    uint32_t dst_stride,
-    const uint8_t* src,
-    uint32_t src_width,
-    uint32_t src_height,
-    uint32_t src_stride,
-    uint32_t channels)
+        uint8_t *dst,
+        uint32_t dst_width,
+        uint32_t dst_height,
+        uint32_t dst_stride,
+        const uint8_t *src,
+        uint32_t src_width,
+        uint32_t src_height,
+        uint32_t src_stride,
+        uint32_t channels)
 {
     if (src_width % 2 == 0 && dst_width == src_width / 2 &&
         src_height % 2 == 0 && dst_height == src_height / 2) {
@@ -2041,12 +2045,12 @@ void img_resize_bilinear_neon_uchar(
     ksize = 2;
     ksize2 = ksize / 2;
 
-    uint8_t* buffer_ = (uint8_t*)malloc((width + dsth) * (sizeof(int32_t) + sizeof(float) * ksize));
+    uint8_t *buffer_ = (uint8_t *)malloc((width + dsth) * (sizeof(int32_t) + sizeof(float) * ksize));
 
-    int32_t* xofs = (int32_t*)buffer_;
-    int32_t* yofs = xofs + width;
-    int16_t* ialpha = (int16_t*)(yofs + dsth);
-    int16_t* ibeta = ialpha + width * ksize;
+    int32_t *xofs = (int32_t *)buffer_;
+    int32_t *yofs = xofs + width;
+    int16_t *ialpha = (int16_t *)(yofs + dsth);
+    int16_t *ibeta = ialpha + width * ksize;
 
     img_resize_cal_offset_linear_uchar(xofs, ialpha, yofs, ibeta, &xmin, &xmax, ksize, ksize2, srcw, srch, dstw, dsth, cn);
 
@@ -2061,34 +2065,34 @@ struct DecimateAlpha {
     float alpha;
 };
 
-template <typename T>
+template<typename T>
 T img_saturate_cast(float x);
 
-template <>
+template<>
 inline float img_saturate_cast<float>(float x)
 {
     return (x > FLT_MIN ? (x < FLT_MAX ? x : FLT_MAX) : FLT_MIN);
 }
-template <>
+template<>
 inline uint8_t img_saturate_cast<uint8_t>(float x)
 {
     return (x > 0 ? (x < 255 ? x : 255) : 0);
 }
 
 static void img_resize_cal_offset_area_uchar(
-    int32_t* xofs,
-    short* ialpha,
-    int32_t* yofs,
-    short* ibeta,
-    int32_t* xmin,
-    int32_t* xmax,
-    int32_t ksize,
-    int32_t ksize2,
-    int32_t srcw,
-    int32_t srch,
-    int32_t dstw,
-    int32_t dsth,
-    int32_t channels)
+        int32_t *xofs,
+        short *ialpha,
+        int32_t *yofs,
+        short *ibeta,
+        int32_t *xmin,
+        int32_t *xmax,
+        int32_t ksize,
+        int32_t ksize2,
+        int32_t srcw,
+        int32_t srch,
+        int32_t dstw,
+        int32_t dsth,
+        int32_t channels)
 {
     double inv_scale_x = (double)dstw / srcw;
     double inv_scale_y = (double)dsth / srch;
@@ -2153,15 +2157,15 @@ static void img_resize_cal_offset_area_uchar(
 }
 
 void img_resize_area_neon_uchar(
-    uint8_t* dst,
-    uint32_t dst_width,
-    uint32_t dst_height,
-    uint32_t dst_stride,
-    const uint8_t* src,
-    uint32_t src_width,
-    uint32_t src_height,
-    uint32_t src_stride,
-    uint32_t channels)
+        uint8_t *dst,
+        uint32_t dst_width,
+        uint32_t dst_height,
+        uint32_t dst_stride,
+        const uint8_t *src,
+        uint32_t src_width,
+        uint32_t src_height,
+        uint32_t src_stride,
+        uint32_t channels)
 {
     int32_t dstw = dst_width;
     int32_t dsth = dst_height;
@@ -2180,12 +2184,12 @@ void img_resize_area_neon_uchar(
     ksize = 2;
     ksize2 = ksize / 2;
 
-    uint8_t* buffer_ = (uint8_t*)malloc((width + dsth) * (sizeof(int32_t) + sizeof(float) * ksize));
+    uint8_t *buffer_ = (uint8_t *)malloc((width + dsth) * (sizeof(int32_t) + sizeof(float) * ksize));
 
-    int32_t* xofs = (int32_t*)buffer_;
-    int32_t* yofs = xofs + width;
-    short* ialpha = (short*)(yofs + dsth);
-    short* ibeta = ialpha + width * ksize;
+    int32_t *xofs = (int32_t *)buffer_;
+    int32_t *yofs = xofs + width;
+    short *ialpha = (short *)(yofs + dsth);
+    short *ibeta = ialpha + width * ksize;
 
     img_resize_cal_offset_area_uchar(xofs, ialpha, yofs, ibeta, &xmin, &xmax, ksize, ksize2, srcw, srch, dstw, dsth, cn);
 
@@ -2194,22 +2198,22 @@ void img_resize_area_neon_uchar(
     buffer_ = NULL;
 }
 
-template <typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
+template<typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
 void resizeAreaFast(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const Tsrc* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    Tdst* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const Tsrc *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        Tdst *outData)
 {
     int32_t scale_x = inWidth / outWidth;
     int32_t scale_y = inHeight / outHeight;
     int32_t area = scale_x * scale_y;
     // size_t srcstep = inWidthStride / (sizeof(Tsrc));
-    int32_t* _ofs = (int32_t*)malloc((area + outWidth * nc) * sizeof(int32_t));
+    int32_t *_ofs = (int32_t *)malloc((area + outWidth * nc) * sizeof(int32_t));
     int32_t *ofs = _ofs, *xofs = ofs + area;
     for (int32_t sy = 0, k = 0; sy < scale_y; ++sy) {
         for (int32_t sx = 0; sx < scale_x; ++sx) {
@@ -2229,7 +2233,7 @@ void resizeAreaFast(
     outWidth *= nc;
     int32_t dy, dx, k = 0;
     for (dy = 0; dy < outHeight; ++dy) {
-        Tdst* D = (Tdst*)(outData + outWidthStride * dy);
+        Tdst *D = (Tdst *)(outData + outWidthStride * dy);
         int32_t sy0 = dy * scale_y;
         int32_t w = sy0 + scale_y <= inHeight ? dwidth : 0;
         if (sy0 >= inHeight) {
@@ -2238,7 +2242,7 @@ void resizeAreaFast(
             continue;
         }
         for (dx = 0; dx < w; ++dx) {
-            const Tsrc* S = (const Tsrc*)(inData + inWidthStride * sy0) + xofs[dx];
+            const Tsrc *S = (const Tsrc *)(inData + inWidthStride * sy0) + xofs[dx];
             float sum = 0;
             for (k = 0; k < area; ++k) {
                 sum += S[ofs[k]];
@@ -2251,10 +2255,12 @@ void resizeAreaFast(
             if (sx0 >= inWidth)
                 D[dx] = 0;
             for (int32_t sy = 0; sy < scale_y; ++sy) {
-                if (sy0 + sy <= inHeight) break;
-                const Tsrc* S = (const Tsrc*)(inData + inWidthStride * (sy0 + sy)) + sx0;
+                if (sy0 + sy <= inHeight)
+                    break;
+                const Tsrc *S = (const Tsrc *)(inData + inWidthStride * (sy0 + sy)) + sx0;
                 for (int32_t sx = 0; sx < scale_x * nc; sx += nc) {
-                    if (sx0 + sx >= inWidth) break;
+                    if (sx0 + sx >= inWidth)
+                        break;
                     sum += S[sx];
                     ++count;
                 }
@@ -2265,7 +2271,7 @@ void resizeAreaFast(
     free(_ofs);
 }
 
-static int32_t computeResizeAreaTab(int32_t src_size, int32_t dst_size, int32_t cn, double scale, DecimateAlpha* tab)
+static int32_t computeResizeAreaTab(int32_t src_size, int32_t dst_size, int32_t cn, double scale, DecimateAlpha *tab)
 {
     int32_t k = 0;
     for (int32_t dx = 0; dx < dst_size; ++dx) {
@@ -2297,31 +2303,31 @@ static int32_t computeResizeAreaTab(int32_t src_size, int32_t dst_size, int32_t 
     return k;
 }
 
-template <typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
+template<typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
 void resizeAreaShrinkx8(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const Tsrc* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    Tdst* outData);
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const Tsrc *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        Tdst *outData);
 
-template <>
+template<>
 void resizeAreaShrinkx8<uint8_t, 3, uint8_t, 3, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     const int32_t nc = 3;
 
-    DecimateAlpha* _xytab = (DecimateAlpha*)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
+    DecimateAlpha *_xytab = (DecimateAlpha *)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
     DecimateAlpha *xtab = _xytab, *ytab = xtab + inWidth * 2;
 
     int32_t xtab_size = computeResizeAreaTab(inWidth, outWidth, nc, double(inWidth) / outWidth, xtab);
@@ -2329,7 +2335,7 @@ void resizeAreaShrinkx8<uint8_t, 3, uint8_t, 3, 3>(
 
     // create x direction histgram
     int32_t xtab_hist_num = 0;
-    int32_t* xtab_hist = (int32_t*)malloc(xtab_size * sizeof(int32_t));
+    int32_t *xtab_hist = (int32_t *)malloc(xtab_size * sizeof(int32_t));
     for (int32_t i = 1; i < xtab_size; ++i) {
         if (xtab[i].di != xtab[i - 1].di) {
             xtab_hist[xtab_hist_num] = i;
@@ -2339,7 +2345,7 @@ void resizeAreaShrinkx8<uint8_t, 3, uint8_t, 3, 3>(
     xtab_hist[xtab_hist_num] = xtab_size;
     ++xtab_hist_num;
 
-    int32_t* tabofs = (int32_t*)malloc((outHeight + 1) * sizeof(int32_t));
+    int32_t *tabofs = (int32_t *)malloc((outHeight + 1) * sizeof(int32_t));
     int32_t k, dy;
     int32_t h;
     for (k = 0, dy = 0; k < ytab_size; ++k) {
@@ -2350,7 +2356,7 @@ void resizeAreaShrinkx8<uint8_t, 3, uint8_t, 3, 3>(
     tabofs[dy] = ytab_size;
 
     outWidth *= nc;
-    float* _buffer = (float*)malloc(outWidth * 2 * sizeof(float));
+    float *_buffer = (float *)malloc(outWidth * 2 * sizeof(float));
     float *buf = _buffer, *sum = buf + outWidth;
     int32_t j_start = tabofs[0], j_end = tabofs[outHeight], j, dx, prev_dy = ytab[j_start].di;
 
@@ -2362,7 +2368,7 @@ void resizeAreaShrinkx8<uint8_t, 3, uint8_t, 3, 3>(
         int32_t dy = ytab[j].di;
         int32_t sy = ytab[j].si;
 
-        const uint8_t* S = (const uint8_t*)(inData + inWidthStride * sy);
+        const uint8_t *S = (const uint8_t *)(inData + inWidthStride * sy);
         for (dx = 0; dx < outWidth; ++dx)
             buf[dx] = (uint8_t)0;
         int32_t start_k = 0;
@@ -2378,7 +2384,7 @@ void resizeAreaShrinkx8<uint8_t, 3, uint8_t, 3, 3>(
             start_k = xtab_hist[h];
         }
         if (dy != prev_dy) {
-            uint8_t* D = (uint8_t*)(outData + outWidthStride * prev_dy);
+            uint8_t *D = (uint8_t *)(outData + outWidthStride * prev_dy);
             for (dx = 0; dx < outWidth; ++dx) {
                 D[dx] = img_saturate_cast<uint8_t>(sum[dx]);
                 sum[dx] = beta * buf[dx];
@@ -2390,7 +2396,7 @@ void resizeAreaShrinkx8<uint8_t, 3, uint8_t, 3, 3>(
         }
     }
 
-    uint8_t* D = (uint8_t*)(outData + outWidthStride * prev_dy);
+    uint8_t *D = (uint8_t *)(outData + outWidthStride * prev_dy);
     for (dx = 0; dx < outWidth; ++dx) {
         D[dx] = (uint8_t)sum[dx];
     }
@@ -2405,20 +2411,20 @@ void resizeAreaShrinkx8<uint8_t, 3, uint8_t, 3, 3>(
     _buffer = NULL;
 }
 
-template <>
+template<>
 void resizeAreaShrinkx8<uint8_t, 4, uint8_t, 4, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     const int32_t nc = 4;
 
-    DecimateAlpha* _xytab = (DecimateAlpha*)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
+    DecimateAlpha *_xytab = (DecimateAlpha *)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
     DecimateAlpha *xtab = _xytab, *ytab = xtab + inWidth * 2;
 
     int32_t xtab_size = computeResizeAreaTab(inWidth, outWidth, nc, double(inWidth) / outWidth, xtab);
@@ -2426,7 +2432,7 @@ void resizeAreaShrinkx8<uint8_t, 4, uint8_t, 4, 4>(
 
     // create x direction histgram
     int32_t xtab_hist_num = 0;
-    int32_t* xtab_hist = (int32_t*)malloc(xtab_size * sizeof(int32_t));
+    int32_t *xtab_hist = (int32_t *)malloc(xtab_size * sizeof(int32_t));
     for (int32_t i = 1; i < xtab_size; ++i) {
         if (xtab[i].di != xtab[i - 1].di) {
             xtab_hist[xtab_hist_num] = i;
@@ -2436,7 +2442,7 @@ void resizeAreaShrinkx8<uint8_t, 4, uint8_t, 4, 4>(
     xtab_hist[xtab_hist_num] = xtab_size;
     ++xtab_hist_num;
 
-    int32_t* tabofs = (int32_t*)malloc((outHeight + 1) * sizeof(int32_t));
+    int32_t *tabofs = (int32_t *)malloc((outHeight + 1) * sizeof(int32_t));
     int32_t k, dy;
     int32_t h;
     for (k = 0, dy = 0; k < ytab_size; ++k) {
@@ -2447,7 +2453,7 @@ void resizeAreaShrinkx8<uint8_t, 4, uint8_t, 4, 4>(
     tabofs[dy] = ytab_size;
 
     outWidth *= nc;
-    float* _buffer = (float*)malloc(outWidth * 2 * sizeof(float));
+    float *_buffer = (float *)malloc(outWidth * 2 * sizeof(float));
     float *buf = _buffer, *sum = buf + outWidth;
     int32_t j_start = tabofs[0], j_end = tabofs[outHeight], j, dx, prev_dy = ytab[j_start].di;
 
@@ -2459,59 +2465,59 @@ void resizeAreaShrinkx8<uint8_t, 4, uint8_t, 4, 4>(
         int32_t dy = ytab[j].di;
         int32_t sy = ytab[j].si;
 
-        const uint8_t* S = (const uint8_t*)(inData + inWidthStride * sy);
+        const uint8_t *S = (const uint8_t *)(inData + inWidthStride * sy);
         for (dx = 0; dx < outWidth; ++dx)
             buf[dx] = (uint8_t)0;
         int32_t start_k = 0;
         for (h = 0; h < xtab_hist_num; ++h) {
             int32_t dxn = xtab[start_k].di;
             for (k = start_k; k < start_k + (xtab_hist[h] - start_k) / 4 * 4; k += 4) {
-                DecimateAlpha* cur_xtab = &(xtab[k]);
+                DecimateAlpha *cur_xtab = &(xtab[k]);
                 __asm__ __volatile__(
-                    "ldrsw x1, [%0, #4]\n"
-                    "add x9, %0, #8\n"
-                    "ld1 {v0.s}[0], [x9]\n"
-                    "ldrsw x3, [%0, #16]\n"
-                    "add x9, %0, #20\n"
-                    "ld1 {v0.s}[1], [x9]\n"
-                    "ldrsw x5, [%0, #28]\n"
-                    "add x9, %0, #32\n"
-                    "ld1 {v0.s}[2], [x9]\n"
-                    "ldrsw x7, [%0, #40]\n"
-                    "add x9, %0, #44\n"
-                    "ld1 {v0.s}[3], [x9]\n"
-                    "add x1, %2, x1\n"
-                    "add x3, %2, x3\n"
-                    "add x5, %2, x5\n"
-                    "add x7, %2, x7\n"
-                    "ld1 {v1.s}[0], [x1]\n"
-                    "ld1 {v2.s}[0], [x3]\n"
-                    "ld1 {v3.s}[0], [x5]\n"
-                    "ld1 {v4.s}[0], [x7]\n"
-                    "ld1 {v5.4s}, [%1]\n"
-                    "uxtl v1.8h, v1.8b\n"
-                    "uxtl v2.8h, v2.8b\n"
-                    "uxtl v3.8h, v3.8b\n"
-                    "uxtl v4.8h, v4.8b\n"
-                    "uxtl v1.4s, v1.4h\n"
-                    "uxtl v2.4s, v2.4h\n"
-                    "uxtl v3.4s, v3.4h\n"
-                    "uxtl v4.4s, v4.4h\n"
-                    "ucvtf v1.4s, v1.4s\n"
-                    "ucvtf v2.4s, v2.4s\n"
-                    "ucvtf v3.4s, v3.4s\n"
-                    "ucvtf v4.4s, v4.4s\n"
-                    "fmla v5.4s, v1.4s, v0.s[0]\n"
-                    "fmul v6.4s, v2.4s, v0.s[1]\n"
-                    "fmul v7.4s, v3.4s, v0.s[2]\n"
-                    "fmul v8.4s, v4.4s, v0.s[3]\n"
-                    "fadd v5.4s, v5.4s, v6.4s\n"
-                    "fadd v5.4s, v5.4s, v7.4s\n"
-                    "fadd v5.4s, v5.4s, v8.4s\n"
-                    "st1 {v5.4s}, [%1]\n"
-                    :
-                    : "r"(cur_xtab), "r"(buf + dxn), "r"(S)
-                    : "cc", "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x9", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "memory");
+                        "ldrsw x1, [%0, #4]\n"
+                        "add x9, %0, #8\n"
+                        "ld1 {v0.s}[0], [x9]\n"
+                        "ldrsw x3, [%0, #16]\n"
+                        "add x9, %0, #20\n"
+                        "ld1 {v0.s}[1], [x9]\n"
+                        "ldrsw x5, [%0, #28]\n"
+                        "add x9, %0, #32\n"
+                        "ld1 {v0.s}[2], [x9]\n"
+                        "ldrsw x7, [%0, #40]\n"
+                        "add x9, %0, #44\n"
+                        "ld1 {v0.s}[3], [x9]\n"
+                        "add x1, %2, x1\n"
+                        "add x3, %2, x3\n"
+                        "add x5, %2, x5\n"
+                        "add x7, %2, x7\n"
+                        "ld1 {v1.s}[0], [x1]\n"
+                        "ld1 {v2.s}[0], [x3]\n"
+                        "ld1 {v3.s}[0], [x5]\n"
+                        "ld1 {v4.s}[0], [x7]\n"
+                        "ld1 {v5.4s}, [%1]\n"
+                        "uxtl v1.8h, v1.8b\n"
+                        "uxtl v2.8h, v2.8b\n"
+                        "uxtl v3.8h, v3.8b\n"
+                        "uxtl v4.8h, v4.8b\n"
+                        "uxtl v1.4s, v1.4h\n"
+                        "uxtl v2.4s, v2.4h\n"
+                        "uxtl v3.4s, v3.4h\n"
+                        "uxtl v4.4s, v4.4h\n"
+                        "ucvtf v1.4s, v1.4s\n"
+                        "ucvtf v2.4s, v2.4s\n"
+                        "ucvtf v3.4s, v3.4s\n"
+                        "ucvtf v4.4s, v4.4s\n"
+                        "fmla v5.4s, v1.4s, v0.s[0]\n"
+                        "fmul v6.4s, v2.4s, v0.s[1]\n"
+                        "fmul v7.4s, v3.4s, v0.s[2]\n"
+                        "fmul v8.4s, v4.4s, v0.s[3]\n"
+                        "fadd v5.4s, v5.4s, v6.4s\n"
+                        "fadd v5.4s, v5.4s, v7.4s\n"
+                        "fadd v5.4s, v5.4s, v8.4s\n"
+                        "st1 {v5.4s}, [%1]\n"
+                        :
+                        : "r"(cur_xtab), "r"(buf + dxn), "r"(S)
+                        : "cc", "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x9", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "memory");
             }
             for (k = start_k + (xtab_hist[h] - start_k) / 4 * 4; k < xtab_hist[h]; ++k) {
                 int32_t sxn = xtab[k].si;
@@ -2523,7 +2529,7 @@ void resizeAreaShrinkx8<uint8_t, 4, uint8_t, 4, 4>(
             start_k = xtab_hist[h];
         }
         if (dy != prev_dy) {
-            uint8_t* D = (uint8_t*)(outData + outWidthStride * prev_dy);
+            uint8_t *D = (uint8_t *)(outData + outWidthStride * prev_dy);
             for (dx = 0; dx < outWidth; ++dx) {
                 D[dx] = img_saturate_cast<uint8_t>(sum[dx]);
                 sum[dx] = beta * buf[dx];
@@ -2535,7 +2541,7 @@ void resizeAreaShrinkx8<uint8_t, 4, uint8_t, 4, 4>(
         }
     }
 
-    uint8_t* D = (uint8_t*)(outData + outWidthStride * prev_dy);
+    uint8_t *D = (uint8_t *)(outData + outWidthStride * prev_dy);
     for (dx = 0; dx < outWidth; ++dx) {
         D[dx] = (uint8_t)sum[dx];
     }
@@ -2550,16 +2556,16 @@ void resizeAreaShrinkx8<uint8_t, 4, uint8_t, 4, 4>(
     _buffer = NULL;
 }
 
-template <typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
+template<typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
 void resizeArea(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const Tsrc* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    Tdst* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const Tsrc *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        Tdst *outData)
 {
     if (inWidth % 2 == 0 && outWidth == inWidth / 2 &&
         inHeight % 2 == 0 && outHeight == inHeight / 2) {
@@ -2571,13 +2577,13 @@ void resizeArea(
         return;
     }
 
-    DecimateAlpha* _xytab = (DecimateAlpha*)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
+    DecimateAlpha *_xytab = (DecimateAlpha *)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
     DecimateAlpha *xtab = _xytab, *ytab = xtab + inWidth * 2;
 
     int32_t xtab_size = computeResizeAreaTab(inWidth, outWidth, nc, double(inWidth) / outWidth, xtab);
     int32_t ytab_size = computeResizeAreaTab(inHeight, outHeight, 1, double(inHeight) / outHeight, ytab);
 
-    int32_t* tabofs = (int32_t*)malloc((outHeight + 1) * sizeof(int32_t));
+    int32_t *tabofs = (int32_t *)malloc((outHeight + 1) * sizeof(int32_t));
     int32_t k, dy;
     for (k = 0, dy = 0; k < ytab_size; ++k) {
         if (k == 0 || ytab[k].di != ytab[k - 1].di) {
@@ -2587,7 +2593,7 @@ void resizeArea(
     tabofs[dy] = ytab_size;
 
     outWidth *= nc;
-    float* _buffer = (float*)malloc(outWidth * 2 * sizeof(float));
+    float *_buffer = (float *)malloc(outWidth * 2 * sizeof(float));
     float *buf = _buffer, *sum = buf + outWidth;
     int32_t j_start = tabofs[0], j_end = tabofs[outHeight], j, dx, prev_dy = ytab[j_start].di;
 
@@ -2599,7 +2605,7 @@ void resizeArea(
         int32_t dy = ytab[j].di;
         int32_t sy = ytab[j].si;
 
-        const Tsrc* S = (const Tsrc*)(inData + inWidthStride * sy);
+        const Tsrc *S = (const Tsrc *)(inData + inWidthStride * sy);
         for (dx = 0; dx < outWidth; ++dx)
             buf[dx] = (Tdst)0;
         for (k = 0; k < xtab_size; ++k) {
@@ -2612,7 +2618,7 @@ void resizeArea(
         }
 
         if (dy != prev_dy) {
-            Tdst* D = (Tdst*)(outData + outWidthStride * prev_dy);
+            Tdst *D = (Tdst *)(outData + outWidthStride * prev_dy);
             for (dx = 0; dx < outWidth; ++dx) {
                 D[dx] = img_saturate_cast<Tdst>(sum[dx]);
                 sum[dx] = beta * buf[dx];
@@ -2624,7 +2630,7 @@ void resizeArea(
         }
     }
 
-    Tdst* D = (Tdst*)(outData + outWidthStride * prev_dy);
+    Tdst *D = (Tdst *)(outData + outWidthStride * prev_dy);
     for (dx = 0; dx < outWidth; ++dx) {
         D[dx] = (Tdst)sum[dx];
     }
@@ -2638,16 +2644,16 @@ void resizeArea(
     _buffer = NULL;
 }
 
-template <>
+template<>
 void resizeArea<uint8_t, 3, uint8_t, 3, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (inWidth % 2 == 0 && outWidth == inWidth / 2 &&
         inHeight % 2 == 0 && outHeight == inHeight / 2) {
@@ -2664,13 +2670,13 @@ void resizeArea<uint8_t, 3, uint8_t, 3, 3>(
     }
     const int32_t nc = 3;
 
-    DecimateAlpha* _xytab = (DecimateAlpha*)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
+    DecimateAlpha *_xytab = (DecimateAlpha *)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
     DecimateAlpha *xtab = _xytab, *ytab = xtab + inWidth * 2;
 
     int32_t xtab_size = computeResizeAreaTab(inWidth, outWidth, nc, double(inWidth) / outWidth, xtab);
     int32_t ytab_size = computeResizeAreaTab(inHeight, outHeight, 1, double(inHeight) / outHeight, ytab);
 
-    int32_t* tabofs = (int32_t*)malloc((outHeight + 1) * sizeof(int32_t));
+    int32_t *tabofs = (int32_t *)malloc((outHeight + 1) * sizeof(int32_t));
     int32_t k, dy;
     for (k = 0, dy = 0; k < ytab_size; ++k) {
         if (k == 0 || ytab[k].di != ytab[k - 1].di) {
@@ -2680,7 +2686,7 @@ void resizeArea<uint8_t, 3, uint8_t, 3, 3>(
     tabofs[dy] = ytab_size;
 
     outWidth *= nc;
-    float* _buffer = (float*)malloc(outWidth * 2 * sizeof(float));
+    float *_buffer = (float *)malloc(outWidth * 2 * sizeof(float));
     float *buf = _buffer, *sum = buf + outWidth;
     int32_t j_start = tabofs[0], j_end = tabofs[outHeight], j, dx, prev_dy = ytab[j_start].di;
 
@@ -2692,7 +2698,7 @@ void resizeArea<uint8_t, 3, uint8_t, 3, 3>(
         int32_t dy = ytab[j].di;
         int32_t sy = ytab[j].si;
 
-        const uint8_t* S = (const uint8_t*)(inData + inWidthStride * sy);
+        const uint8_t *S = (const uint8_t *)(inData + inWidthStride * sy);
         for (dx = 0; dx < outWidth; ++dx)
             buf[dx] = (uint8_t)0;
         for (k = 0; k < xtab_size; ++k) {
@@ -2704,7 +2710,7 @@ void resizeArea<uint8_t, 3, uint8_t, 3, 3>(
             }
         }
         if (dy != prev_dy) {
-            uint8_t* D = (uint8_t*)(outData + outWidthStride * prev_dy);
+            uint8_t *D = (uint8_t *)(outData + outWidthStride * prev_dy);
             for (dx = 0; dx < outWidth; ++dx) {
                 D[dx] = img_saturate_cast<uint8_t>(sum[dx]);
                 sum[dx] = beta * buf[dx];
@@ -2716,7 +2722,7 @@ void resizeArea<uint8_t, 3, uint8_t, 3, 3>(
         }
     }
 
-    uint8_t* D = (uint8_t*)(outData + outWidthStride * prev_dy);
+    uint8_t *D = (uint8_t *)(outData + outWidthStride * prev_dy);
     for (dx = 0; dx < outWidth; ++dx) {
         D[dx] = (uint8_t)sum[dx];
     }
@@ -2729,16 +2735,16 @@ void resizeArea<uint8_t, 3, uint8_t, 3, 3>(
     _buffer = NULL;
 }
 
-template <>
+template<>
 void resizeArea<uint8_t, 4, uint8_t, 4, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (inWidth % 2 == 0 && outWidth == inWidth / 2 &&
         inHeight % 2 == 0 && outHeight == inHeight / 2) {
@@ -2756,13 +2762,13 @@ void resizeArea<uint8_t, 4, uint8_t, 4, 4>(
 
     const int32_t nc = 4;
 
-    DecimateAlpha* _xytab = (DecimateAlpha*)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
+    DecimateAlpha *_xytab = (DecimateAlpha *)malloc((inHeight + inWidth) * 2 * sizeof(DecimateAlpha));
     DecimateAlpha *xtab = _xytab, *ytab = xtab + inWidth * 2;
 
     int32_t xtab_size = computeResizeAreaTab(inWidth, outWidth, nc, double(inWidth) / outWidth, xtab);
     int32_t ytab_size = computeResizeAreaTab(inHeight, outHeight, 1, double(inHeight) / outHeight, ytab);
 
-    int32_t* tabofs = (int32_t*)malloc((outHeight + 1) * sizeof(int32_t));
+    int32_t *tabofs = (int32_t *)malloc((outHeight + 1) * sizeof(int32_t));
     int32_t k, dy;
     for (k = 0, dy = 0; k < ytab_size; ++k) {
         if (k == 0 || ytab[k].di != ytab[k - 1].di) {
@@ -2772,7 +2778,7 @@ void resizeArea<uint8_t, 4, uint8_t, 4, 4>(
     tabofs[dy] = ytab_size;
 
     outWidth *= nc;
-    float* _buffer = (float*)malloc(outWidth * 2 * sizeof(float));
+    float *_buffer = (float *)malloc(outWidth * 2 * sizeof(float));
     float *buf = _buffer, *sum = buf + outWidth;
     int32_t j_start = tabofs[0], j_end = tabofs[outHeight], j, dx, prev_dy = ytab[j_start].di;
 
@@ -2784,7 +2790,7 @@ void resizeArea<uint8_t, 4, uint8_t, 4, 4>(
         int32_t dy = ytab[j].di;
         int32_t sy = ytab[j].si;
 
-        const uint8_t* S = (const uint8_t*)(inData + inWidthStride * sy);
+        const uint8_t *S = (const uint8_t *)(inData + inWidthStride * sy);
         for (dx = 0; dx < outWidth; ++dx)
             buf[dx] = (uint8_t)0;
         for (k = 0; k < xtab_size; ++k) {
@@ -2796,7 +2802,7 @@ void resizeArea<uint8_t, 4, uint8_t, 4, 4>(
             }
         }
         if (dy != prev_dy) {
-            uint8_t* D = (uint8_t*)(outData + outWidthStride * prev_dy);
+            uint8_t *D = (uint8_t *)(outData + outWidthStride * prev_dy);
             for (dx = 0; dx < outWidth; ++dx) {
                 D[dx] = img_saturate_cast<uint8_t>(sum[dx]);
                 sum[dx] = beta * buf[dx];
@@ -2808,7 +2814,7 @@ void resizeArea<uint8_t, 4, uint8_t, 4, 4>(
         }
     }
 
-    uint8_t* D = (uint8_t*)(outData + outWidthStride * prev_dy);
+    uint8_t *D = (uint8_t *)(outData + outWidthStride * prev_dy);
     for (dx = 0; dx < outWidth; ++dx) {
         D[dx] = (uint8_t)sum[dx];
     }
@@ -2821,16 +2827,16 @@ void resizeArea<uint8_t, 4, uint8_t, 4, 4>(
     _buffer = NULL;
 }
 
-template <>
+template<>
 void ResizeNearestPoint<uint8_t, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -2841,16 +2847,16 @@ void ResizeNearestPoint<uint8_t, 1>(
     resizeNearestPoint<uint8_t, uint8_t, 1>(inHeight, inWidth, inWidthStride, inData, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<uint8_t, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -2861,16 +2867,16 @@ void ResizeNearestPoint<uint8_t, 3>(
     resizeNearestPoint<uint8_t, uint8_t, 3>(inHeight, inWidth, inWidthStride, inData, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<uint8_t, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -2881,16 +2887,16 @@ void ResizeNearestPoint<uint8_t, 4>(
     resizeNearestPoint<uint8_t, uint8_t, 4>(inHeight, inWidth, inWidthStride, inData, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeLinear<uint8_t, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -2901,16 +2907,16 @@ void ResizeLinear<uint8_t, 1>(
     img_resize_bilinear_neon_uchar(outData, outWidth, outHeight, outWidthStride, inData, inWidth, inHeight, inWidthStride, 1);
 }
 
-template <>
+template<>
 void ResizeLinear<uint8_t, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -2920,16 +2926,16 @@ void ResizeLinear<uint8_t, 3>(
     }
     img_resize_bilinear_neon_uchar(outData, outWidth, outHeight, outWidthStride, inData, inWidth, inHeight, inWidthStride, 3);
 }
-template <>
+template<>
 void ResizeLinear<uint8_t, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -2940,16 +2946,16 @@ void ResizeLinear<uint8_t, 4>(
     img_resize_bilinear_neon_uchar(outData, outWidth, outHeight, outWidthStride, inData, inWidth, inHeight, inWidthStride, 4);
 }
 
-template <>
+template<>
 void ResizeArea<uint8_t, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -2966,16 +2972,16 @@ void ResizeArea<uint8_t, 1>(
     }
 }
 
-template <>
+template<>
 void ResizeArea<uint8_t, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;
@@ -2991,16 +2997,16 @@ void ResizeArea<uint8_t, 3>(
     }
 }
 
-template <>
+template<>
 void ResizeArea<uint8_t, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == outData || nullptr == inData) {
         return;

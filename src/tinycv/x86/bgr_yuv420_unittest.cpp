@@ -15,20 +15,20 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <memory>
+
 #include "tinycv/cvtcolor.h"
-#include "tinycv/x86/test.h"
 #include "tinycv/debug.h"
+#include "tinycv/x86/test.h"
 
 #include <gtest/gtest.h>
-
-#include <memory>
 
 enum Color2YUV420Mode { RGB2I420_MODE,
                         BGR2I420_MODE,
                         RGB2YV12_MODE,
                         BGR2YV12_MODE };
 
-template <Color2YUV420Mode mode>
+template<Color2YUV420Mode mode>
 void Color2YUV420Test(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3]);
@@ -54,7 +54,7 @@ void Color2YUV420Test(int32_t height, int32_t width)
     checkResult<uint8_t, 1>(dst.get(), dst_ref.get(), 3 * height / 2, width, width, width, 1.01f);
 }
 
-template <Color2YUV420Mode mode>
+template<Color2YUV420Mode mode>
 void Color2YUV420MultiPlaneTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3]);
@@ -79,7 +79,7 @@ enum ColorAlpha2YUV420Mode { RGBA2I420_MODE,
                              RGBA2YV12_MODE,
                              BGRA2YV12_MODE };
 
-template <ColorAlpha2YUV420Mode mode>
+template<ColorAlpha2YUV420Mode mode>
 void ColorAlpha2YUV420Test(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 4]);
@@ -105,7 +105,7 @@ void ColorAlpha2YUV420Test(int32_t height, int32_t width)
     checkResult<uint8_t, 1>(dst.get(), dst_ref.get(), 3 * height / 2, width, width, width, 1.01f);
 }
 
-template <ColorAlpha2YUV420Mode mode>
+template<ColorAlpha2YUV420Mode mode>
 void ColorAlpha2YUV420MultiPlaneTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 4]);
@@ -130,7 +130,7 @@ enum YUV4202ColorMode { I4202RGB_MODE,
                         YV122RGB_MODE,
                         YV122BGR_MODE };
 
-template <YUV4202ColorMode mode>
+template<YUV4202ColorMode mode>
 void YUV4202ColorTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3 / 2]);
@@ -157,7 +157,7 @@ void YUV4202ColorTest(int32_t height, int32_t width)
     checkResult<uint8_t, 1>(dst.get(), dst_ref.get(), height, width, 3 * width, 3 * width, 1.01f);
 }
 
-template <YUV4202ColorMode mode>
+template<YUV4202ColorMode mode>
 void YUV4202ColorMultiPlaneTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3 / 2]);
@@ -183,7 +183,7 @@ enum YUV4202ColorAlphaMode { I4202RGBA_MODE,
                              YV122RGBA_MODE,
                              YV122BGRA_MODE };
 
-template <YUV4202ColorAlphaMode mode>
+template<YUV4202ColorAlphaMode mode>
 void YUV4202ColorAlphaTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3 / 2]);
@@ -210,7 +210,7 @@ void YUV4202ColorAlphaTest(int32_t height, int32_t width)
     checkResult<uint8_t, 1>(dst.get(), dst_ref.get(), height, width, 4 * width, 4 * width, 1.01f);
 }
 
-template <YUV4202ColorAlphaMode mode>
+template<YUV4202ColorAlphaMode mode>
 void YUV4202ColorAlphaMultiPlaneTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3 / 2]);

@@ -15,24 +15,25 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/cvtcolor.h"
-#include "tinycv/arm/typetraits.hpp"
-#include "tinycv/types.h"
-
 #include <algorithm>
+#include <arm_neon.h>
 #include <complex>
 #include <string.h>
-#include <arm_neon.h>
+
+#include "tinycv/cvtcolor.h"
+#include "tinycv/types.h"
+
+#include "tinycv/arm/typetraits.hpp"
 
 namespace tinycv {
 
 void cvt_color_bgra2bgr_uint8_t(
-    const int32_t height,
-    const int32_t width,
-    const int32_t srcStride,
-    const uint8_t* src,
-    const int32_t dstStride,
-    uint8_t* dst)
+        const int32_t height,
+        const int32_t width,
+        const int32_t srcStride,
+        const uint8_t *src,
+        const int32_t dstStride,
+        uint8_t *dst)
 {
     if (!src || !dst || height == 0 || width == 0 || srcStride == 0 || dstStride == 0) {
         return;
@@ -41,8 +42,8 @@ void cvt_color_bgra2bgr_uint8_t(
     const int32_t ncSrc = 4;
     const int32_t ncDst = 3;
 
-    const uint8_t* srcPtr = src;
-    uint8_t* dstPtr = dst;
+    const uint8_t *srcPtr = src;
+    uint8_t *dstPtr = dst;
 
     const int32_t src_step = srcStride;
     const int32_t dst_step = dstStride;
@@ -50,11 +51,11 @@ void cvt_color_bgra2bgr_uint8_t(
         int32_t i = 0;
         for (; i <= width - 8; i += 8) {
             asm volatile(
-                "ld4 {v0.8b, v1.8b, v2.8b, v3.8b}, [%0]\n\t"
-                "st3 {v0.8b, v1.8b, v2.8b}, [%1]\n\t"
-                :
-                : "r"(srcPtr + ncSrc * i), "r"(dstPtr + ncDst * i)
-                : "cc", "memory", "v0", "v1", "v2", "v3");
+                    "ld4 {v0.8b, v1.8b, v2.8b, v3.8b}, [%0]\n\t"
+                    "st3 {v0.8b, v1.8b, v2.8b}, [%1]\n\t"
+                    :
+                    : "r"(srcPtr + ncSrc * i), "r"(dstPtr + ncDst * i)
+                    : "cc", "memory", "v0", "v1", "v2", "v3");
         }
         for (; i < width; i++) {
             uint8_t b = srcPtr[ncSrc * i], g = srcPtr[ncSrc * i + 1], r = srcPtr[ncSrc * i + 2];
@@ -70,18 +71,18 @@ void cvt_color_bgra2bgr_uint8_t(
 }
 
 void cvt_color_bgr2bgr_uint8_t(
-    const int32_t height,
-    const int32_t width,
-    const int32_t srcStride,
-    const uint8_t* src,
-    const int32_t dstStride,
-    uint8_t* dst)
+        const int32_t height,
+        const int32_t width,
+        const int32_t srcStride,
+        const uint8_t *src,
+        const int32_t dstStride,
+        uint8_t *dst)
 {
     if (!src || !dst || height == 0 || width == 0 || srcStride == 0 || dstStride == 0) {
         return;
     }
-    const uint8_t* srcPtr = src;
-    uint8_t* dstPtr = dst;
+    const uint8_t *srcPtr = src;
+    uint8_t *dstPtr = dst;
 
     typedef typename DT<3, uint8_t>::vec_DT srcType;
     typedef typename DT<4, uint8_t>::vec_DT dstType;
@@ -113,20 +114,20 @@ void cvt_color_bgr2bgr_uint8_t(
     }
 }
 
-template <int32_t ncSrc, int32_t ncDst>
+template<int32_t ncSrc, int32_t ncDst>
 void cvt_color_bgr2bgr_f32(
-    const int32_t height,
-    const int32_t width,
-    const int32_t srcStride,
-    const float* src,
-    const int32_t dstStride,
-    float* dst)
+        const int32_t height,
+        const int32_t width,
+        const int32_t srcStride,
+        const float *src,
+        const int32_t dstStride,
+        float *dst)
 {
     if (!src || !dst || height == 0 || width == 0 || srcStride == 0 || dstStride == 0) {
         return;
     }
-    const float* srcPtr = src;
-    float* dstPtr = dst;
+    const float *srcPtr = src;
+    float *dstPtr = dst;
 
     typedef typename DT<ncSrc, float>::vec_DT srcType;
     typedef typename DT<ncDst, float>::vec_DT dstType;
@@ -170,47 +171,47 @@ void cvt_color_bgr2bgr_f32(
     }
 }
 
-template <>
+template<>
 void BGR2BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     return cvt_color_bgr2bgr_uint8_t(height, width, inWidthStride, inData, outWidthStride, outData);
 }
-template <>
+template<>
 void BGR2BGRA<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     return cvt_color_bgr2bgr_f32<3, 4>(height, width, inWidthStride, inData, outWidthStride, outData);
 }
-template <>
+template<>
 void BGRA2BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t* inData,
-    int32_t outWidthStride,
-    uint8_t* outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     return cvt_color_bgra2bgr_uint8_t(height, width, inWidthStride, inData, outWidthStride, outData);
 }
-template <>
+template<>
 void BGRA2BGR<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float* inData,
-    int32_t outWidthStride,
-    float* outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     return cvt_color_bgr2bgr_f32<4, 3>(height, width, inWidthStride, inData, outWidthStride, outData);
 }

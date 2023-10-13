@@ -22,72 +22,72 @@
 
 namespace tinycv {
 
-template <int32_t dcn, int32_t bIdx>
+template<int32_t dcn, int32_t bIdx>
 void YUV420ptoRGB_avx(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inDataY,
-    int32_t inUStride,
-    const uint8_t *inDataU,
-    int32_t inVStride,
-    const uint8_t *inDataV,
-    int32_t outWidthStride,
-    uint8_t *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inDataY,
+        int32_t inUStride,
+        const uint8_t *inDataU,
+        int32_t inVStride,
+        const uint8_t *inDataV,
+        int32_t outWidthStride,
+        uint8_t *outData);
 
-template <typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst>
+template<typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst>
 void BGR2GRAYImage_avx(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData);
 
-template <typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst>
+template<typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst>
 void RGB2GRAYImage_avx(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData);
 
-template <int32_t cn>
+template<int32_t cn>
 void bilateralFilter_32f_avx(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *src,
-    int32_t outWidthStride,
-    float *dst,
-    int32_t d,
-    float sigma_color,
-    float sigma_space);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *src,
+        int32_t outWidthStride,
+        float *dst,
+        int32_t d,
+        float sigma_color,
+        float sigma_space);
 
-template <typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
+template<typename Tsrc, int32_t ncSrc, typename Tdst, int32_t ncDst, int32_t nc>
 void x86ImageCrop_avx(
-    int32_t p_y,
-    int32_t p_x,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData,
-    float ratio);
+        int32_t p_y,
+        int32_t p_x,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData,
+        float ratio);
 
-template <int cn>
+template<int cn>
 void x86GaussianBlur_f_avx(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t kernel_len,
-    float sigma,
-    int32_t outWidthStride,
-    float *outData,
-    tinycv::BorderType border_type);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t kernel_len,
+        float sigma,
+        int32_t outWidthStride,
+        float *outData,
+        tinycv::BorderType border_type);
 
 } // namespace tinycv
 

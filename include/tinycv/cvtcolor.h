@@ -35,14 +35,14 @@ namespace tinycv {
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGR2BGRA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGRA images to BGR images
@@ -57,14 +57,14 @@ void BGR2BGRA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGRA2BGR(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGB images to GRAY images
@@ -79,14 +79,14 @@ void BGRA2BGR(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGB2GRAY(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert GRAY images to RGB images
@@ -101,14 +101,14 @@ void RGB2GRAY(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void GRAY2RGB(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGBA images to GRAY images
@@ -123,14 +123,14 @@ void GRAY2RGB(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGBA2GRAY(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert GRAY images to RGBA images
@@ -145,14 +145,14 @@ void RGBA2GRAY(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void GRAY2RGBA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 // BGR_GRAY
 /**
@@ -168,14 +168,14 @@ void GRAY2RGBA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGR2GRAY(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert GRAY images to BGR images
@@ -190,14 +190,14 @@ void BGR2GRAY(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void GRAY2BGR(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGRA images to GRAY images
@@ -212,14 +212,14 @@ void GRAY2BGR(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGRA2GRAY(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert GRAY images to BGRA images
@@ -234,14 +234,14 @@ void BGRA2GRAY(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void GRAY2BGRA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 // BGR_I420
 /**
@@ -257,14 +257,14 @@ void GRAY2BGRA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGR2I420(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGR images to I420 images
@@ -283,18 +283,18 @@ void BGR2I420(
  * @param outV              output V
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGR2I420(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outDataY,
-    int32_t outUStride,
-    T* outDataU,
-    int32_t outVStride,
-    T* outDataV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outDataY,
+        int32_t outUStride,
+        T *outDataU,
+        int32_t outVStride,
+        T *outDataV);
 
 /**
  * @brief Convert I420 images to BGR images
@@ -309,14 +309,14 @@ void BGR2I420(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202BGR(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert I420 images to BGR images
@@ -335,18 +335,18 @@ void I4202BGR(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202BGR(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inDataY,
-    int32_t inUStride,
-    const T* inDataU,
-    int32_t inVStride,
-    const T* inDataV,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inDataY,
+        int32_t inUStride,
+        const T *inDataU,
+        int32_t inVStride,
+        const T *inDataV,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGB images to I420 images
@@ -361,14 +361,14 @@ void I4202BGR(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGB2I420(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGB images to I420 images
@@ -387,18 +387,18 @@ void RGB2I420(
  * @param outDataV          output V
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGB2I420(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outDataY,
-    int32_t outUStride,
-    T* outDataU,
-    int32_t outVStride,
-    T* outDataV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outDataY,
+        int32_t outUStride,
+        T *outDataU,
+        int32_t outVStride,
+        T *outDataV);
 
 /**
  * @brief Convert I420 images to RGB images
@@ -413,14 +413,14 @@ void RGB2I420(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202RGB(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert I420 images to RGB images
@@ -439,18 +439,18 @@ void I4202RGB(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202RGB(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inDataY,
-    int32_t inUStride,
-    const T* inDataU,
-    int32_t inVStride,
-    const T* inDataV,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inDataY,
+        int32_t inUStride,
+        const T *inDataU,
+        int32_t inVStride,
+        const T *inDataV,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGRA images to I420 images
@@ -465,14 +465,14 @@ void I4202RGB(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGRA2I420(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGRA images to I420 images
@@ -491,18 +491,18 @@ void BGRA2I420(
  * @param outDataV          output V
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGRA2I420(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    T* inData,
-    int32_t outYStride,
-    T* outDataY,
-    int32_t outUStride,
-    T* outDataU,
-    int32_t outVStride,
-    T* outDataV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        T *inData,
+        int32_t outYStride,
+        T *outDataY,
+        int32_t outUStride,
+        T *outDataU,
+        int32_t outVStride,
+        T *outDataV);
 
 /**
  * @brief Convert I420 images to BGRA images
@@ -517,14 +517,14 @@ void BGRA2I420(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202BGRA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert I420 images to BGRA images
@@ -543,18 +543,18 @@ void I4202BGRA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202BGRA(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inDataY,
-    int32_t inUStride,
-    const T* inDataU,
-    int32_t inVStride,
-    const T* inDataV,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inDataY,
+        int32_t inUStride,
+        const T *inDataU,
+        int32_t inVStride,
+        const T *inDataV,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGBA images to I420 images
@@ -569,14 +569,14 @@ void I4202BGRA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGBA2I420(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGBA images to I420 images
@@ -595,18 +595,18 @@ void RGBA2I420(
  * @param outDataV          output V
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGBA2I420(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outDataY,
-    int32_t outUStride,
-    T* outDataU,
-    int32_t outVStride,
-    T* outDataV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outDataY,
+        int32_t outUStride,
+        T *outDataU,
+        int32_t outVStride,
+        T *outDataV);
 
 /**
  * @brief Convert I420 images to RGBA images
@@ -621,14 +621,14 @@ void RGBA2I420(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202RGBA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert I420 images to RGBA images
@@ -647,18 +647,18 @@ void I4202RGBA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202RGBA(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inDataY,
-    int32_t inUStride,
-    const T* inDataU,
-    int32_t inVStride,
-    const T* inDataV,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inDataY,
+        int32_t inUStride,
+        const T *inDataU,
+        int32_t inVStride,
+        const T *inDataV,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGR images to YV12 images
@@ -673,14 +673,14 @@ void I4202RGBA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGR2YV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert YV12 images to BGR images
@@ -695,14 +695,14 @@ void BGR2YV12(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void YV122BGR(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGB images to YV12 images
@@ -717,14 +717,14 @@ void YV122BGR(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGB2YV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert YV12 images to RGB images
@@ -739,14 +739,14 @@ void RGB2YV12(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void YV122RGB(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGRA images to YV12 images
@@ -761,14 +761,14 @@ void YV122RGB(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGRA2YV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert YV12 images to BGRA images
@@ -783,14 +783,14 @@ void BGRA2YV12(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void YV122BGRA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGBA images to YV12 images
@@ -805,14 +805,14 @@ void YV122BGRA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGBA2YV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert YV12 images to RGBA images
@@ -827,14 +827,14 @@ void RGBA2YV12(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void YV122RGBA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 // BGR_NV12
 /**
@@ -850,14 +850,14 @@ void YV122RGBA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGR2NV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 /**
  * @brief Convert BGR images to NV12 images
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t is supported.
@@ -873,16 +873,16 @@ void BGR2NV12(
  * @param outUV             output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGR2NV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outY,
-    int32_t outUVStride,
-    T* outUV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outY,
+        int32_t outUVStride,
+        T *outUV);
 
 /**
  * @brief Convert NV12 images to BGR images
@@ -897,14 +897,14 @@ void BGR2NV12(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV122BGR(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 /**
  * @brief Convert NV12 images to BGR images
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t is supported.
@@ -921,16 +921,16 @@ void NV122BGR(
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
 
-template <typename T>
+template<typename T>
 void NV122BGR(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inY,
-    int32_t inUVStride,
-    const T* inUV,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inY,
+        int32_t inUVStride,
+        const T *inUV,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGRA images to NV12 images
@@ -945,14 +945,14 @@ void NV122BGR(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGRA2NV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGRA images to NV12 images
@@ -970,16 +970,16 @@ void BGRA2NV12(
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
 
-template <typename T>
+template<typename T>
 void BGRA2NV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYtride,
-    T* outY,
-    int32_t outUVStride,
-    T* outUV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYtride,
+        T *outY,
+        int32_t outUVStride,
+        T *outUV);
 
 /**
  * @brief Convert NV12 images to BGRA images
@@ -994,14 +994,14 @@ void BGRA2NV12(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV122BGRA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert NV12 images to BGRA images
@@ -1018,16 +1018,16 @@ void NV122BGRA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV122BGRA(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inY,
-    int32_t inUVStride,
-    const T* inU,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inY,
+        int32_t inUVStride,
+        const T *inU,
+        int32_t outWidthStride,
+        T *outData);
 /**
  * @brief Convert BGR images to NV21 images
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t is supported.
@@ -1041,14 +1041,14 @@ void NV122BGRA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGR2NV21(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 /**
  * @brief Convert BGR images to NV21 images
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t is supported.
@@ -1064,16 +1064,16 @@ void BGR2NV21(
  * @param outUV             output image UV plane data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGR2NV21(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outY,
-    int32_t outUVStride,
-    T* outUV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outY,
+        int32_t outUVStride,
+        T *outUV);
 
 /**
  * @brief Convert NV21 images to BGR images
@@ -1088,14 +1088,14 @@ void BGR2NV21(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV212BGR(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert NV21 images to BGR images
@@ -1112,16 +1112,16 @@ void NV212BGR(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV212BGR(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inY,
-    int32_t inUVStride,
-    const T* inU,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inY,
+        int32_t inUVStride,
+        const T *inU,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGRA images to NV21 images
@@ -1136,14 +1136,14 @@ void NV212BGR(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGRA2NV21(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert BGRA images to NV21 images
@@ -1160,16 +1160,16 @@ void BGRA2NV21(
  * @param outUV             output image UV plane data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void BGRA2NV21(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outY,
-    int32_t outUVStride,
-    T* outUV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outY,
+        int32_t outUVStride,
+        T *outUV);
 
 /**
  * @brief Convert NV21 images to BGRA images
@@ -1184,14 +1184,14 @@ void BGRA2NV21(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV212BGRA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 /**
  * @brief Convert NV21 images to BGRA images
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t is supported.
@@ -1207,16 +1207,16 @@ void NV212BGRA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV212BGRA(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inY,
-    int32_t inUVStride,
-    const T* inU,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inY,
+        int32_t inUVStride,
+        const T *inU,
+        int32_t outWidthStride,
+        T *outData);
 
 // RGB_NV12
 /**
@@ -1232,14 +1232,14 @@ void NV212BGRA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGB2NV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGB images to NV12 images
@@ -1256,16 +1256,16 @@ void RGB2NV12(
  * @param outUV             output UV plane image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGB2NV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outY,
-    int32_t outUVStride,
-    T* outUV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outY,
+        int32_t outUVStride,
+        T *outUV);
 
 /**
  * @brief Convert NV12 images to RGB images
@@ -1280,14 +1280,14 @@ void RGB2NV12(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV122RGB(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert NV12 images to RGB images
@@ -1304,16 +1304,16 @@ void NV122RGB(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV122RGB(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inY,
-    int32_t inUVStride,
-    const T* inU,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inY,
+        int32_t inUVStride,
+        const T *inU,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGBA images to NV12 images
@@ -1328,14 +1328,14 @@ void NV122RGB(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGBA2NV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert RGBA images to NV12 images
@@ -1352,16 +1352,16 @@ void RGBA2NV12(
  * @param outUV             output uv plane data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGBA2NV12(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outY,
-    int32_t outUVStride,
-    T* outUV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outY,
+        int32_t outUVStride,
+        T *outUV);
 
 /**
  * @brief Convert NV12 images to RGBA images
@@ -1376,14 +1376,14 @@ void RGBA2NV12(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV122RGBA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert NV12 images to RGBA images
@@ -1400,16 +1400,16 @@ void NV122RGBA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV122RGBA(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inY,
-    int32_t inUVStride,
-    const T* inUV,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inY,
+        int32_t inUVStride,
+        const T *inUV,
+        int32_t outWidthStride,
+        T *outData);
 
 // RGB_NV21
 /**
@@ -1425,14 +1425,14 @@ void NV122RGBA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGB2NV21(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 /**
  * @brief Convert RGB images to NV21 images
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t is supported.
@@ -1448,16 +1448,16 @@ void RGB2NV21(
  * @param outUV             output image UV plane data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGB2NV21(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outY,
-    int32_t outUVStride,
-    T* outUV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outY,
+        int32_t outUVStride,
+        T *outUV);
 
 /**
  * @brief Convert NV21 images to RGB images
@@ -1472,14 +1472,14 @@ void RGB2NV21(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV212RGB(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert NV21 images to RGB images
@@ -1496,16 +1496,16 @@ void NV212RGB(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV212RGB(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inY,
-    int32_t inUVStride,
-    const T* inUV,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inY,
+        int32_t inUVStride,
+        const T *inUV,
+        int32_t outWidthStride,
+        T *outData);
 /**
  * @brief Convert RGBA images to NV21 images
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t is supported.
@@ -1519,14 +1519,14 @@ void NV212RGB(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGBA2NV21(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 /**
  * @brief Convert RGBA images to NV21 images
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t and \a float are supported.
@@ -1542,16 +1542,16 @@ void RGBA2NV21(
  * @param outUV             output image UV plane data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void RGBA2NV21(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outYStride,
-    T* outY,
-    int32_t outUVStride,
-    T* outUV);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outYStride,
+        T *outY,
+        int32_t outUVStride,
+        T *outUV);
 
 /**
  * @brief Convert NV21 images to RGBA images
@@ -1566,14 +1566,14 @@ void RGBA2NV21(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV212RGBA(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outWidthStride,
+        T *outData);
 /**
  * @brief Convert NV21 images to RGBA images
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t is supported.
@@ -1589,16 +1589,16 @@ void NV212RGBA(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV212RGBA(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const T* inY,
-    int32_t inUVStride,
-    const T* inUV,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const T *inY,
+        int32_t inUVStride,
+        const T *inUV,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Convert I420 images to NV21 images,format: YYYYUUUUVVVV -> YYYYVUVUVUVU
@@ -1619,20 +1619,20 @@ void NV212RGBA(
  * @param outDataUV         output UV plane data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202NV21(
-    int32_t height,
-    int32_t width,
-    int32_t inStrideY,
-    const T* inDataY,
-    int32_t inStrideU,
-    const T* inDataU,
-    int32_t inStrideV,
-    const T* inDataV,
-    int32_t outStrideY,
-    T* outDataY,
-    int32_t outStrideVU,
-    T* outDataVU);
+        int32_t height,
+        int32_t width,
+        int32_t inStrideY,
+        const T *inDataY,
+        int32_t inStrideU,
+        const T *inDataU,
+        int32_t inStrideV,
+        const T *inDataV,
+        int32_t outStrideY,
+        T *outDataY,
+        int32_t outStrideVU,
+        T *outDataVU);
 
 /**
  * @brief Convert NV21 images to I420 images,format: YYYYVUVUVUVU -> YYYYUUUUVVVV
@@ -1653,20 +1653,20 @@ void I4202NV21(
  * @param outDataV          output V plane data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV212I420(
-    int32_t height,
-    int32_t width,
-    int32_t inStrideY,
-    const T* inDataY,
-    int32_t inStrideVU,
-    const T* inDataVU,
-    int32_t outStrideY,
-    T* outDataY,
-    int32_t outStrideU,
-    T* outDataU,
-    int32_t outStrideV,
-    T* outDataV);
+        int32_t height,
+        int32_t width,
+        int32_t inStrideY,
+        const T *inDataY,
+        int32_t inStrideVU,
+        const T *inDataVU,
+        int32_t outStrideY,
+        T *outDataY,
+        int32_t outStrideU,
+        T *outDataU,
+        int32_t outStrideV,
+        T *outDataV);
 /**
  * @brief Convert I420 images to NV12 images,format: YYYYUUUUVVVV -> YYYYUVUVUVUV
  * @tparam T The data type, used for both input image and output image, currently only \a uint8_t is supported.
@@ -1686,20 +1686,20 @@ void NV212I420(
  * @param outDataUV         output UV plane data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void I4202NV12(
-    int32_t height,
-    int32_t width,
-    int32_t inStrideY,
-    const T* inDataY,
-    int32_t inStrideU,
-    const T* inDataU,
-    int32_t inStrideV,
-    const T* inDataV,
-    int32_t outStrideY,
-    T* outDataY,
-    int32_t outStrideUV,
-    T* outDataUV);
+        int32_t height,
+        int32_t width,
+        int32_t inStrideY,
+        const T *inDataY,
+        int32_t inStrideU,
+        const T *inDataU,
+        int32_t inStrideV,
+        const T *inDataV,
+        int32_t outStrideY,
+        T *outDataY,
+        int32_t outStrideUV,
+        T *outDataUV);
 
 /**
  * @brief Convert NV12 images to I420 images,format: YYYYUVUVUVUV-> YYYYUUUUVVVV
@@ -1720,20 +1720,20 @@ void I4202NV12(
  * @param outDataV          output V plane data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ****************************************************************************************************/
-template <typename T>
+template<typename T>
 void NV122I420(
-    int32_t height,
-    int32_t width,
-    int32_t inStrideY,
-    const T* inDataY,
-    int32_t inStrideUV,
-    const T* inDataUV,
-    int32_t outStrideY,
-    T* outDataY,
-    int32_t outStrideU,
-    T* outDataU,
-    int32_t outStrideV,
-    T* outDataV);
+        int32_t height,
+        int32_t width,
+        int32_t inStrideY,
+        const T *inDataY,
+        int32_t inStrideUV,
+        const T *inDataUV,
+        int32_t outStrideY,
+        T *outDataY,
+        int32_t outStrideU,
+        T *outDataU,
+        int32_t outStrideV,
+        T *outDataV);
 
 } // namespace tinycv
 

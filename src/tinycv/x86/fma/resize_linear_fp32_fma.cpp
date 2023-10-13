@@ -15,27 +15,28 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/sys.h"
-#include "tinycv/x86/sysinfo.h"
-#include "internal_fma.hpp"
-
 #include <immintrin.h>
 #include <math.h>
+
+#include "tinycv/sys.h"
+#include "tinycv/x86/sysinfo.h"
+
+#include "internal_fma.hpp"
 
 namespace tinycv {
 namespace fma {
 
 int32_t resize_linear_twoline_fp32_fma(
-    int32_t max_length,
-    int32_t channels,
-    const float *in_data_0,
-    const float *in_data_1,
-    const int32_t *w_offset,
-    const float *w_coeff,
-    float h_coeff,
-    float *row_0,
-    float *row_1,
-    float *out_data)
+        int32_t max_length,
+        int32_t channels,
+        const float *in_data_0,
+        const float *in_data_1,
+        const int32_t *w_offset,
+        const float *w_coeff,
+        float h_coeff,
+        float *row_0,
+        float *row_1,
+        float *out_data)
 {
     bool bSupportFMA = CpuSupports(ISA_X86_FMA);
     if (!bSupportFMA) {
@@ -96,5 +97,5 @@ int32_t resize_linear_twoline_fp32_fma(
     return i;
 }
 
-}
-} // namespace tinycv::fma
+} // namespace fma
+} // namespace tinycv

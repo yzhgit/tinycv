@@ -15,31 +15,33 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "intrinutils_avx.hpp"
-#include "internal_avx.hpp"
-#include "tinycv/sys.h"
-#include "tinycv/x86/util.hpp"
-#include "tinycv/copymakeborder.h"
-
-#include <immintrin.h>
+#include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <immintrin.h>
 #include <vector>
-#include <algorithm>
+
+#include "tinycv/copymakeborder.h"
+#include "tinycv/sys.h"
+
+#include "tinycv/x86/util.hpp"
+
+#include "internal_avx.hpp"
+#include "intrinutils_avx.hpp"
 
 namespace tinycv {
 
-template <int32_t cn>
+template<int32_t cn>
 void bilateralFilter_32f_avx(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float* src,
-    int32_t outWidthStride,
-    float* dst,
-    int32_t d,
-    float sigma_color,
-    float sigma_space)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *src,
+        int32_t outWidthStride,
+        float *dst,
+        int32_t d,
+        float sigma_color,
+        float sigma_space)
 {
     double gauss_color_coeff = -0.5 / (sigma_color * sigma_color);
     double gauss_space_coeff = -0.5 / (sigma_space * sigma_space);
@@ -75,18 +77,18 @@ void bilateralFilter_32f_avx(
     int32_t tempWidth = width + 2 * radius;
     int32_t tempstep = (tempWidth)*cn;
     std::vector<float> padded_images(tempHeight * tempWidth * cn);
-    float* temp = padded_images.data();
+    float *temp = padded_images.data();
     CopyMakeBorder<float, cn>(height, width, inWidthStride, src, tempHeight, tempWidth, tempstep, temp, tinycv::BORDER_REFLECT_101, 0);
 
     std::vector<float> _space_weight(d * d);
     std::vector<int32_t> _space_ofs(d * d);
-    float* space_weight = &_space_weight[0];
-    int32_t* space_ofs = &_space_ofs[0];
+    float *space_weight = &_space_weight[0];
+    int32_t *space_ofs = &_space_ofs[0];
 
     len = (float)(maxValSrc - minValSrc) * cn;
     kExpNumBins = kExpNumBinsPerChannel * cn;
     std::vector<float> _expLUT(kExpNumBins + 2);
-    float* expLUT = &_expLUT[0];
+    float *expLUT = &_expLUT[0];
     scale_index = kExpNumBins / len;
 
     for (i = 0; i < kExpNumBins + 2; i++) {
@@ -109,20 +111,22 @@ void bilateralFilter_32f_avx(
 #ifdef _MSC_VER
     int __declspec(align(32)) idxBuf[8];
     static const unsigned int __declspec(align(32)) bufSignMask[] = {
-        0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000};
+        0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000
+    };
 #else
     int idxBuf[8] __attribute__((aligned(64)));
     static const unsigned int bufSignMask[] __attribute__((aligned(64))) = {
-        0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000};
+        0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000
+    };
 
 #endif
     for (i = 0; i < height; i++) {
-        const float* sptr = (const float*)(temp + (i + radius) * tempstep) + radius * cn;
-        float* dptr = (float*)(dst + i * outWidthStride);
+        const float *sptr = (const float *)(temp + (i + radius) * tempstep) + radius * cn;
+        float *dptr = (float *)(dst + i * outWidthStride);
 
         __m256 _scale_index, _signMask;
         _scale_index = _mm256_broadcast_ss(&scale_index);
-        _signMask = _mm256_load_ps((const float*)bufSignMask);
+        _signMask = _mm256_load_ps((const float *)bufSignMask);
 
         if (cn == 1) {
             for (j = 0; j <= width - 8; j += 8) {
@@ -133,7 +137,7 @@ void bilateralFilter_32f_avx(
                     __m256 _val = _mm256_loadu_ps(sptr + j + space_ofs[k]);
                     __m256 _alpha = _mm256_mul_ps(_mm256_andnot_ps(_signMask, _mm256_sub_ps(_val, _val0)), _scale_index);
                     __m256i _idx = _mm256_cvtps_epi32(_alpha);
-                    _mm256_store_si256((__m256i*)idxBuf, _idx);
+                    _mm256_store_si256((__m256i *)idxBuf, _idx);
                     _alpha = _mm256_sub_ps(_alpha, _mm256_cvtepi32_ps(_idx));
                     __m256 _explut = _mm256_set_ps(expLUT[idxBuf[7]], expLUT[idxBuf[6]], expLUT[idxBuf[5]], expLUT[idxBuf[4]], expLUT[idxBuf[3]], expLUT[idxBuf[2]], expLUT[idxBuf[1]], expLUT[idxBuf[0]]);
                     __m256 _explut1 = _mm256_set_ps(expLUT[idxBuf[7] + 1], expLUT[idxBuf[6] + 1], expLUT[idxBuf[5] + 1], expLUT[idxBuf[4] + 1], expLUT[idxBuf[3] + 1], expLUT[idxBuf[2] + 1], expLUT[idxBuf[1] + 1], expLUT[idxBuf[0] + 1]);
@@ -178,7 +182,7 @@ void bilateralFilter_32f_avx(
                     sum3nc = _mm256_add_ps(sum3nc, _mm256_andnot_ps(_signMask, _mm256_sub_ps(r1, r0)));
                     __m256 _alpha = _mm256_mul_ps(sum3nc, _scale_index);
                     __m256i _idx = _mm256_cvtps_epi32(_alpha);
-                    _mm256_store_si256((__m256i*)idxBuf, _idx);
+                    _mm256_store_si256((__m256i *)idxBuf, _idx);
                     _alpha = _mm256_sub_ps(_alpha, _mm256_cvtepi32_ps(_idx));
                     __m256 _explut = _mm256_set_ps(expLUT[idxBuf[7]], expLUT[idxBuf[6]], expLUT[idxBuf[5]], expLUT[idxBuf[4]], expLUT[idxBuf[3]], expLUT[idxBuf[2]], expLUT[idxBuf[1]], expLUT[idxBuf[0]]);
                     __m256 _explut1 = _mm256_set_ps(expLUT[idxBuf[7] + 1], expLUT[idxBuf[6] + 1], expLUT[idxBuf[5] + 1], expLUT[idxBuf[4] + 1], expLUT[idxBuf[3] + 1], expLUT[idxBuf[2] + 1], expLUT[idxBuf[1] + 1], expLUT[idxBuf[0] + 1]);
@@ -202,7 +206,7 @@ void bilateralFilter_32f_avx(
                 float sum_b = 0, sum_g = 0, sum_r = 0, wsum = 0;
                 float b0 = sptr[j], g0 = sptr[j + 1], r0 = sptr[j + 2];
                 for (k = 0; k < maxk; k++) {
-                    const float* sptr_k = sptr + j + space_ofs[k];
+                    const float *sptr_k = sptr + j + space_ofs[k];
                     float b = sptr_k[0], g = sptr_k[1], r = sptr_k[2];
                     float alpha = (float)((std::abs(b - b0) +
                                            std::abs(g - g0) + std::abs(r - r0)) *
@@ -228,25 +232,25 @@ void bilateralFilter_32f_avx(
 }
 
 template void bilateralFilter_32f_avx<1>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float* src,
-    int32_t outWidthStride,
-    float* dst,
-    int32_t d,
-    float sigma_color,
-    float sigma_space);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *src,
+        int32_t outWidthStride,
+        float *dst,
+        int32_t d,
+        float sigma_color,
+        float sigma_space);
 
 template void bilateralFilter_32f_avx<3>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float* src,
-    int32_t outWidthStride,
-    float* dst,
-    int32_t d,
-    float sigma_color,
-    float sigma_space);
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *src,
+        int32_t outWidthStride,
+        float *dst,
+        int32_t d,
+        float sigma_color,
+        float sigma_space);
 
 } // namespace tinycv

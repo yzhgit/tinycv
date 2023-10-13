@@ -15,16 +15,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/resize.h"
-#include "tinycv/types.h"
-#include "tinycv/sys.h"
-
-#include <string.h>
-#include <limits.h>
-#include <immintrin.h>
 #include <float.h>
-#include <stdint.h>
+#include <immintrin.h>
+#include <limits.h>
 #include <math.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "tinycv/resize.h"
+#include "tinycv/sys.h"
+#include "tinycv/types.h"
 
 namespace tinycv {
 
@@ -34,12 +34,12 @@ static inline int32_t resize_img_floor(float a)
 }
 
 static void resize_nearest_calc_offset_fp32(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t *h_offset,
-    int32_t *w_offset)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t *h_offset,
+        int32_t *w_offset)
 {
     double inv_scale_h = (double)outHeight / inHeight;
     double scale_h = 1.0 / inv_scale_h;
@@ -65,16 +65,16 @@ static void resize_nearest_calc_offset_fp32(
 }
 
 static void resize_nearest_c1_w_fourline_kernel_fp32(
-    const float *inData_0,
-    const float *inData_1,
-    const float *inData_2,
-    const float *inData_3,
-    int32_t outWidth,
-    int32_t *w_offset,
-    float *outData_0,
-    float *outData_1,
-    float *outData_2,
-    float *outData_3)
+        const float *inData_0,
+        const float *inData_1,
+        const float *inData_2,
+        const float *inData_3,
+        int32_t outWidth,
+        int32_t *w_offset,
+        float *outData_0,
+        float *outData_1,
+        float *outData_2,
+        float *outData_3)
 {
     int32_t i = 0;
     for (; i <= outWidth - 4; i += 4) {
@@ -109,16 +109,16 @@ static void resize_nearest_c1_w_fourline_kernel_fp32(
 }
 
 static void resize_nearest_c3_w_fourline_kernel_fp32(
-    const float *inData_0,
-    const float *inData_1,
-    const float *inData_2,
-    const float *inData_3,
-    int32_t outWidth,
-    int32_t *w_offset,
-    float *outData_0,
-    float *outData_1,
-    float *outData_2,
-    float *outData_3)
+        const float *inData_0,
+        const float *inData_1,
+        const float *inData_2,
+        const float *inData_3,
+        int32_t outWidth,
+        int32_t *w_offset,
+        float *outData_0,
+        float *outData_1,
+        float *outData_2,
+        float *outData_3)
 {
     int32_t i = 0;
     for (; i < outWidth - 1; ++i) {
@@ -148,16 +148,16 @@ static void resize_nearest_c3_w_fourline_kernel_fp32(
 }
 
 static void resize_nearest_c4_w_fourline_kernel_fp32(
-    const float *inData_0,
-    const float *inData_1,
-    const float *inData_2,
-    const float *inData_3,
-    int32_t outWidth,
-    int32_t *w_offset,
-    float *outData_0,
-    float *outData_1,
-    float *outData_2,
-    float *outData_3)
+        const float *inData_0,
+        const float *inData_1,
+        const float *inData_2,
+        const float *inData_3,
+        int32_t outWidth,
+        int32_t *w_offset,
+        float *outData_0,
+        float *outData_1,
+        float *outData_2,
+        float *outData_3)
 {
     for (int32_t i = 0; i < outWidth; ++i) {
         __m128 m_data_0 = _mm_loadu_ps(inData_0 + w_offset[i] * 4);
@@ -172,10 +172,10 @@ static void resize_nearest_c4_w_fourline_kernel_fp32(
 }
 
 static void resize_nearest_c1_w_oneline_kernel_fp32(
-    const float *inData,
-    int32_t outWidth,
-    int32_t *w_offset,
-    float *outData)
+        const float *inData,
+        int32_t outWidth,
+        int32_t *w_offset,
+        float *outData)
 {
     int32_t i = 0;
     for (; i <= outWidth - 4; i += 4) {
@@ -190,10 +190,10 @@ static void resize_nearest_c1_w_oneline_kernel_fp32(
 }
 
 static void resize_nearest_c3_w_oneline_kernel_fp32(
-    const float *inData,
-    int32_t outWidth,
-    int32_t *w_offset,
-    float *outData)
+        const float *inData,
+        int32_t outWidth,
+        int32_t *w_offset,
+        float *outData)
 {
     int32_t i = 0;
     for (; i < outWidth - 1; ++i) {
@@ -208,10 +208,10 @@ static void resize_nearest_c3_w_oneline_kernel_fp32(
 }
 
 static void resize_nearest_c4_w_oneline_kernel_fp32(
-    const float *inData,
-    int32_t outWidth,
-    int32_t *w_offset,
-    float *outData)
+        const float *inData,
+        int32_t outWidth,
+        int32_t *w_offset,
+        float *outData)
 {
     for (int32_t i = 0; i < outWidth; ++i) {
         __m128 m_data = _mm_loadu_ps(inData + w_offset[i] * 4);
@@ -220,15 +220,15 @@ static void resize_nearest_c4_w_oneline_kernel_fp32(
 }
 
 static void resize_nearest_kernel_fp32(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t channels,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t channels,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     uint64_t size_for_h_offset = (outHeight * sizeof(int32_t) + 128 - 1) / 128 * 128;
     uint64_t size_for_w_offset = (outWidth * sizeof(int32_t) + 128 - 1) / 128 * 128;
@@ -245,42 +245,42 @@ static void resize_nearest_kernel_fp32(
     for (; i <= outHeight - 4; i += 4) {
         if (channels == 1) {
             resize_nearest_c1_w_fourline_kernel_fp32(
-                inData + h_offset[i + 0] * inWidthStride,
-                inData + h_offset[i + 1] * inWidthStride,
-                inData + h_offset[i + 2] * inWidthStride,
-                inData + h_offset[i + 3] * inWidthStride,
-                outWidth,
-                w_offset,
-                outData + (i + 0) * outWidthStride,
-                outData + (i + 1) * outWidthStride,
-                outData + (i + 2) * outWidthStride,
-                outData + (i + 3) * outWidthStride);
+                    inData + h_offset[i + 0] * inWidthStride,
+                    inData + h_offset[i + 1] * inWidthStride,
+                    inData + h_offset[i + 2] * inWidthStride,
+                    inData + h_offset[i + 3] * inWidthStride,
+                    outWidth,
+                    w_offset,
+                    outData + (i + 0) * outWidthStride,
+                    outData + (i + 1) * outWidthStride,
+                    outData + (i + 2) * outWidthStride,
+                    outData + (i + 3) * outWidthStride);
         }
         if (channels == 3) {
             resize_nearest_c3_w_fourline_kernel_fp32(
-                inData + h_offset[i + 0] * inWidthStride,
-                inData + h_offset[i + 1] * inWidthStride,
-                inData + h_offset[i + 2] * inWidthStride,
-                inData + h_offset[i + 3] * inWidthStride,
-                outWidth,
-                w_offset,
-                outData + (i + 0) * outWidthStride,
-                outData + (i + 1) * outWidthStride,
-                outData + (i + 2) * outWidthStride,
-                outData + (i + 3) * outWidthStride);
+                    inData + h_offset[i + 0] * inWidthStride,
+                    inData + h_offset[i + 1] * inWidthStride,
+                    inData + h_offset[i + 2] * inWidthStride,
+                    inData + h_offset[i + 3] * inWidthStride,
+                    outWidth,
+                    w_offset,
+                    outData + (i + 0) * outWidthStride,
+                    outData + (i + 1) * outWidthStride,
+                    outData + (i + 2) * outWidthStride,
+                    outData + (i + 3) * outWidthStride);
         }
         if (channels == 4) {
             resize_nearest_c4_w_fourline_kernel_fp32(
-                inData + h_offset[i + 0] * inWidthStride,
-                inData + h_offset[i + 1] * inWidthStride,
-                inData + h_offset[i + 2] * inWidthStride,
-                inData + h_offset[i + 3] * inWidthStride,
-                outWidth,
-                w_offset,
-                outData + (i + 0) * outWidthStride,
-                outData + (i + 1) * outWidthStride,
-                outData + (i + 2) * outWidthStride,
-                outData + (i + 3) * outWidthStride);
+                    inData + h_offset[i + 0] * inWidthStride,
+                    inData + h_offset[i + 1] * inWidthStride,
+                    inData + h_offset[i + 2] * inWidthStride,
+                    inData + h_offset[i + 3] * inWidthStride,
+                    outWidth,
+                    w_offset,
+                    outData + (i + 0) * outWidthStride,
+                    outData + (i + 1) * outWidthStride,
+                    outData + (i + 2) * outWidthStride,
+                    outData + (i + 3) * outWidthStride);
         }
     }
     for (; i < outHeight; ++i) {
@@ -308,16 +308,16 @@ static void resize_nearest_kernel_fp32(
     tinycv::AlignedFree(temp_buffer);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<float, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -327,19 +327,19 @@ void ResizeNearestPoint<float, 1>(
     }
 
     resize_nearest_kernel_fp32(
-        inHeight, inWidth, inWidthStride, inData, 1, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 1, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<float, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -349,19 +349,19 @@ void ResizeNearestPoint<float, 3>(
     }
 
     resize_nearest_kernel_fp32(
-        inHeight, inWidth, inWidthStride, inData, 3, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 3, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeNearestPoint<float, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -371,7 +371,7 @@ void ResizeNearestPoint<float, 4>(
     }
 
     resize_nearest_kernel_fp32(
-        inHeight, inWidth, inWidthStride, inData, 4, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 4, outHeight, outWidth, outWidthStride, outData);
 }
 
 } // namespace tinycv

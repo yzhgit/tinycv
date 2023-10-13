@@ -15,27 +15,28 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <algorithm>
+#include <cmath>
+#include <immintrin.h>
+#include <limits.h>
+#include <string.h>
+
 #include "tinycv/cvtcolor.h"
+#include "tinycv/sys.h"
+#include "tinycv/types.h"
+#include "tinycv/x86/sysinfo.h"
+
 #include "tinycv/x86/avx/internal_avx.hpp"
 #include "tinycv/x86/fma/internal_fma.hpp"
 #include "tinycv/x86/intrinutils.hpp"
-#include "tinycv/types.h"
 #include "tinycv/x86/util.hpp"
-#include "tinycv/sys.h"
-#include "tinycv/x86/sysinfo.h"
-
-#include <string.h>
-#include <cmath>
-#include <limits.h>
-#include <immintrin.h>
-#include <algorithm>
 
 namespace tinycv {
 
-template <typename _Tp>
+template<typename _Tp>
 struct ColorChannel {
 };
-template <>
+template<>
 struct ColorChannel<float> {
     typedef float worktype_f;
     static float max()
@@ -47,7 +48,7 @@ struct ColorChannel<float> {
         return 0.5f;
     }
 };
-template <>
+template<>
 struct ColorChannel<uint8_t> {
     typedef uint8_t worktype_f;
     static uint8_t max()
@@ -59,12 +60,12 @@ struct ColorChannel<uint8_t> {
         return 128;
     }
 };
-template <typename _Tp>
+template<typename _Tp>
 struct Gray2RGB {
     typedef _Tp channel_type;
 
     Gray2RGB(int32_t _dstcn)
-        : dstcn(_dstcn) {}
+            : dstcn(_dstcn) {}
     void operator()(const _Tp *src, _Tp *dst, int32_t n) const
     {
         if (dstcn == 3)
@@ -83,14 +84,14 @@ struct Gray2RGB {
     int32_t dstcn;
 };
 
-template <typename _Tp>
+template<typename _Tp>
 struct RGB2Gray {
     typedef _Tp channel_type;
 
     RGB2Gray(int32_t _srccn, int32_t blueIdx, const float *_coeffs)
-        : srccn(_srccn)
+            : srccn(_srccn)
     {
-        static const float coeffs0[] = {0.299f, 0.587f, 0.114f};
+        static const float coeffs0[] = { 0.299f, 0.587f, 0.114f };
         memcpy(coeffs, _coeffs ? _coeffs : coeffs0, 3 * sizeof(coeffs[0]));
         if (blueIdx == 0)
             std::swap(coeffs[0], coeffs[2]);
@@ -131,16 +132,17 @@ struct RGB2Gray {
     __m128 v_cb, v_cg, v_cr;
 };
 
-template <>
+template<>
 struct RGB2Gray<uint8_t> {
     typedef uint8_t channel_type;
 
     RGB2Gray(int32_t _srccn, int32_t blueIdx, const int32_t *coeffs)
-        : srccn(_srccn)
+            : srccn(_srccn)
     {
         yuv_shift = 14;
-        const int32_t coeffs0[] = {4899, 9617, 1868};
-        if (!coeffs) coeffs = coeffs0;
+        const int32_t coeffs0[] = { 4899, 9617, 1868 };
+        if (!coeffs)
+            coeffs = coeffs0;
 
         int32_t b = 0, g = 0, r = (1 << (yuv_shift - 1));
         int32_t db = coeffs[blueIdx ^ 2], dg = coeffs[1], dr = coeffs[blueIdx];
@@ -163,12 +165,12 @@ struct RGB2Gray<uint8_t> {
     int32_t yuv_shift;
 };
 void bgr2gray_operator(
-    const uint8_t *src,
-    uint8_t *dst,
-    int32_t width,
-    int32_t height,
-    int32_t stride,
-    bool flag)
+        const uint8_t *src,
+        uint8_t *dst,
+        int32_t width,
+        int32_t height,
+        int32_t stride,
+        bool flag)
 {
     const int32_t shift = 15;
     const int32_t halfshift = 1 << (shift - 1);
@@ -224,14 +226,14 @@ void bgr2gray_operator(
     }
 }
 
-template <>
+template<>
 void BGR2GRAY<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -257,14 +259,14 @@ void BGR2GRAY<float>(
     }
 }
 
-template <>
+template<>
 void BGR2GRAY<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -278,14 +280,14 @@ void BGR2GRAY<uint8_t>(
     return bgr2gray_operator(inData, outData, width, height, inWidthStride, true);
 }
 
-template <>
+template<>
 void BGRA2GRAY<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -308,14 +310,14 @@ void BGRA2GRAY<float>(
         dst += outWidthStride;
     }
 }
-template <>
+template<>
 void BGRA2GRAY<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -336,14 +338,14 @@ void BGRA2GRAY<uint8_t>(
     }
 }
 
-template <>
+template<>
 void RGB2GRAY<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -368,14 +370,14 @@ void RGB2GRAY<float>(
         dst += outWidthStride;
     }
 }
-template <>
+template<>
 void RGB2GRAY<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -397,14 +399,14 @@ void RGB2GRAY<uint8_t>(
     }
 }
 
-template <>
+template<>
 void RGBA2GRAY<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -427,14 +429,14 @@ void RGBA2GRAY<float>(
         dst += outWidthStride;
     }
 }
-template <>
+template<>
 void RGBA2GRAY<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -455,14 +457,14 @@ void RGBA2GRAY<uint8_t>(
     }
 }
 
-template <>
+template<>
 void GRAY2BGR<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -482,14 +484,14 @@ void GRAY2BGR<float>(
         dst += outWidthStride;
     }
 }
-template <>
+template<>
 void GRAY2BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -510,14 +512,14 @@ void GRAY2BGR<uint8_t>(
     }
 }
 
-template <>
+template<>
 void GRAY2BGRA<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -537,14 +539,14 @@ void GRAY2BGRA<float>(
         dst += outWidthStride;
     }
 }
-template <>
+template<>
 void GRAY2BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -565,14 +567,14 @@ void GRAY2BGRA<uint8_t>(
     }
 }
 
-template <>
+template<>
 void GRAY2RGB<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -592,14 +594,14 @@ void GRAY2RGB<float>(
         dst += outWidthStride;
     }
 }
-template <>
+template<>
 void GRAY2RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -620,14 +622,14 @@ void GRAY2RGB<uint8_t>(
     }
 }
 
-template <>
+template<>
 void GRAY2RGBA<float>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const float *inData,
-    int32_t outWidthStride,
-    float *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const float *inData,
+        int32_t outWidthStride,
+        float *outData)
 {
     if (nullptr == inData) {
         return;
@@ -647,14 +649,14 @@ void GRAY2RGBA<float>(
         dst += outWidthStride;
     }
 }
-template <>
+template<>
 void GRAY2RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;

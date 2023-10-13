@@ -15,28 +15,29 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <algorithm>
+#include <cmath>
+#include <immintrin.h>
+#include <limits.h>
+#include <string.h>
+
 #include "tinycv/cvtcolor.h"
+#include "tinycv/sys.h"
+#include "tinycv/types.h"
+#include "tinycv/x86/sysinfo.h"
+
 #include "tinycv/x86/avx/internal_avx.hpp"
 #include "tinycv/x86/fma/internal_fma.hpp"
 #include "tinycv/x86/util.hpp"
-#include "tinycv/types.h"
-#include "tinycv/sys.h"
-#include "tinycv/x86/sysinfo.h"
-
-#include <string.h>
-#include <cmath>
-#include <limits.h>
-#include <immintrin.h>
-#include <algorithm>
 
 namespace tinycv {
 
-#define CY_coeff  1220542
+#define CY_coeff 1220542
 #define CUB_coeff 2116026
 #define CUG_coeff -409993
 #define CVG_coeff -852492
 #define CVR_coeff 1673527
-#define SHIFT     20
+#define SHIFT 20
 
 // Coefficients for RGB to YUV420p conversion
 #define CRY_coeff 269484
@@ -49,16 +50,16 @@ namespace tinycv {
 #define CBV_coeff -74448
 
 #define DESCALE(x, n) (((x) + (1 << ((n)-1))) >> (n))
-template <int32_t srccn, int32_t bIdx, bool isUV>
+template<int32_t srccn, int32_t bIdx, bool isUV>
 void rgb_2_nv(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outY,
-    int32_t outUVStride,
-    uint8_t *outUV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outY,
+        int32_t outUVStride,
+        uint8_t *outUV)
 {
     for (int32_t i = 0; i < height; i += 2) {
         const uint8_t *src0 = inData + i * inWidthStride;
@@ -108,16 +109,16 @@ void rgb_2_nv(
     }
 }
 
-template <int32_t dstcn, int32_t blueIdx, bool isUV>
+template<int32_t dstcn, int32_t blueIdx, bool isUV>
 void nv_2_rgb(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUVStride,
-    const uint8_t *inUV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUVStride,
+        const uint8_t *inUV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     const uint8_t delta_uv = 128, alpha = 255;
     for (int32_t i = 0; i < height; i += 2) {
@@ -170,14 +171,14 @@ void nv_2_rgb(
     }
 }
 
-template <>
+template<>
 void BGR2NV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -188,14 +189,14 @@ void BGR2NV12<uint8_t>(
     rgb_2_nv<3, 0, true>(height, width, inWidthStride, inData, outWidthStride, outData, outWidthStride, outData + height * outWidthStride);
 }
 
-template <>
+template<>
 void BGRA2NV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -206,14 +207,14 @@ void BGRA2NV12<uint8_t>(
     rgb_2_nv<4, 0, true>(height, width, inWidthStride, inData, outWidthStride, outData, outWidthStride, outData + height * outWidthStride);
 }
 
-template <>
+template<>
 void NV122BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -228,14 +229,14 @@ void NV122BGR<uint8_t>(
     }
 }
 
-template <>
+template<>
 void NV122BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -246,14 +247,14 @@ void NV122BGRA<uint8_t>(
     nv_2_rgb<4, 0, true>(height, width, inWidthStride, inData, inWidthStride, inData + height * inWidthStride, outWidthStride, outData);
 }
 
-template <>
+template<>
 void RGB2NV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -264,14 +265,14 @@ void RGB2NV12<uint8_t>(
     rgb_2_nv<3, 2, true>(height, width, inWidthStride, inData, outWidthStride, outData, outWidthStride, outData + height * outWidthStride);
 }
 
-template <>
+template<>
 void RGBA2NV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -282,14 +283,14 @@ void RGBA2NV12<uint8_t>(
     rgb_2_nv<4, 2, true>(height, width, inWidthStride, inData, outWidthStride, outData, outWidthStride, outData + height * outWidthStride);
 }
 
-template <>
+template<>
 void NV122RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -304,14 +305,14 @@ void NV122RGB<uint8_t>(
     }
 }
 
-template <>
+template<>
 void NV122RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -322,16 +323,16 @@ void NV122RGBA<uint8_t>(
     nv_2_rgb<4, 2, true>(height, width, inWidthStride, inData, inWidthStride, inData + height * inWidthStride, outWidthStride, outData);
 }
 
-template <>
+template<>
 void BGR2NV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outY,
-    int32_t outUVStride,
-    uint8_t *outUV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outY,
+        int32_t outUVStride,
+        uint8_t *outUV)
 {
     if (nullptr == inData && nullptr == outY && nullptr == outUV) {
         return;
@@ -342,16 +343,16 @@ void BGR2NV12<uint8_t>(
     rgb_2_nv<3, 0, true>(height, width, inWidthStride, inData, outYStride, outY, outUVStride, outUV);
 }
 
-template <>
+template<>
 void BGRA2NV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outY,
-    int32_t outUVStride,
-    uint8_t *outUV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outY,
+        int32_t outUVStride,
+        uint8_t *outUV)
 {
     if (nullptr == inData && nullptr == outY && nullptr == outUV) {
         return;
@@ -362,16 +363,16 @@ void BGRA2NV12<uint8_t>(
     rgb_2_nv<4, 0, true>(height, width, inWidthStride, inData, outYStride, outY, outUVStride, outUV);
 }
 
-template <>
+template<>
 void NV122BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUVStride,
-    const uint8_t *inUV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUVStride,
+        const uint8_t *inUV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inY && nullptr == inUV) {
         return;
@@ -389,16 +390,16 @@ void NV122BGR<uint8_t>(
     }
 }
 
-template <>
+template<>
 void NV122BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUVStride,
-    const uint8_t *inUV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUVStride,
+        const uint8_t *inUV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inY && nullptr == inUV) {
         return;
@@ -412,16 +413,16 @@ void NV122BGRA<uint8_t>(
     nv_2_rgb<4, 0, true>(height, width, inYStride, inY, inUVStride, inUV, outWidthStride, outData);
 }
 
-template <>
+template<>
 void RGB2NV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outY,
-    int32_t outUVStride,
-    uint8_t *outUV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outY,
+        int32_t outUVStride,
+        uint8_t *outUV)
 {
     if (nullptr == inData && nullptr == outY && nullptr == outUV) {
         return;
@@ -432,16 +433,16 @@ void RGB2NV12<uint8_t>(
     rgb_2_nv<3, 2, true>(height, width, inWidthStride, inData, outYStride, outY, outUVStride, outUV);
 }
 
-template <>
+template<>
 void RGBA2NV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outY,
-    int32_t outUVStride,
-    uint8_t *outUV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outY,
+        int32_t outUVStride,
+        uint8_t *outUV)
 {
     if (nullptr == inData && nullptr == outY && nullptr == outUV) {
         return;
@@ -452,16 +453,16 @@ void RGBA2NV12<uint8_t>(
     rgb_2_nv<4, 2, true>(height, width, inWidthStride, inData, outYStride, outY, outUVStride, outUV);
 }
 
-template <>
+template<>
 void NV122RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUVStride,
-    const uint8_t *inUV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUVStride,
+        const uint8_t *inUV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inY && nullptr == inUV) {
         return;
@@ -479,16 +480,16 @@ void NV122RGB<uint8_t>(
     }
 }
 
-template <>
+template<>
 void NV122RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUVStride,
-    const uint8_t *inUV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUVStride,
+        const uint8_t *inUV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inY && nullptr == inUV) {
         return;
@@ -502,14 +503,14 @@ void NV122RGBA<uint8_t>(
     nv_2_rgb<4, 2, true>(height, width, inYStride, inY, inUVStride, inUV, outWidthStride, outData);
 }
 
-template <>
+template<>
 void BGR2NV21<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -520,14 +521,14 @@ void BGR2NV21<uint8_t>(
     rgb_2_nv<3, 0, false>(height, width, inWidthStride, inData, outWidthStride, outData, outWidthStride, outData + height * outWidthStride);
 }
 
-template <>
+template<>
 void BGRA2NV21<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -538,14 +539,14 @@ void BGRA2NV21<uint8_t>(
     rgb_2_nv<4, 0, false>(height, width, inWidthStride, inData, outWidthStride, outData, outWidthStride, outData + height * outWidthStride);
 }
 
-template <>
+template<>
 void NV212BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -560,14 +561,14 @@ void NV212BGR<uint8_t>(
     }
 }
 
-template <>
+template<>
 void NV212BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -578,14 +579,14 @@ void NV212BGRA<uint8_t>(
     nv_2_rgb<4, 0, false>(height, width, inWidthStride, inData, inWidthStride, inData + height * inWidthStride, outWidthStride, outData);
 }
 
-template <>
+template<>
 void RGB2NV21<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -596,14 +597,14 @@ void RGB2NV21<uint8_t>(
     rgb_2_nv<3, 2, false>(height, width, inWidthStride, inData, outWidthStride, outData, outWidthStride, outData + height * outWidthStride);
 }
 
-template <>
+template<>
 void RGBA2NV21<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -614,14 +615,14 @@ void RGBA2NV21<uint8_t>(
     rgb_2_nv<4, 2, false>(height, width, inWidthStride, inData, outWidthStride, outData, outWidthStride, outData + height * outWidthStride);
 }
 
-template <>
+template<>
 void NV212RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -636,14 +637,14 @@ void NV212RGB<uint8_t>(
     }
 }
 
-template <>
+template<>
 void NV212RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData && nullptr == outData) {
         return;
@@ -654,16 +655,16 @@ void NV212RGBA<uint8_t>(
     nv_2_rgb<4, 2, false>(height, width, inWidthStride, inData, inWidthStride, inData + height * inWidthStride, outWidthStride, outData);
 }
 
-template <>
+template<>
 void BGR2NV21<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outY,
-    int32_t outUVStride,
-    uint8_t *outUV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outY,
+        int32_t outUVStride,
+        uint8_t *outUV)
 {
     if (nullptr == inData && nullptr == outY && nullptr == outUV) {
         return;
@@ -674,16 +675,16 @@ void BGR2NV21<uint8_t>(
     rgb_2_nv<3, 0, false>(height, width, inWidthStride, inData, outYStride, outY, outUVStride, outUV);
 }
 
-template <>
+template<>
 void BGRA2NV21<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outY,
-    int32_t outUVStride,
-    uint8_t *outUV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outY,
+        int32_t outUVStride,
+        uint8_t *outUV)
 {
     if (nullptr == inData && nullptr == outY && nullptr == outUV) {
         return;
@@ -694,16 +695,16 @@ void BGRA2NV21<uint8_t>(
     rgb_2_nv<4, 0, false>(height, width, inWidthStride, inData, outYStride, outY, outUVStride, outUV);
 }
 
-template <>
+template<>
 void NV212BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUVStride,
-    const uint8_t *inUV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUVStride,
+        const uint8_t *inUV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inY && nullptr == inUV) {
         return;
@@ -721,16 +722,16 @@ void NV212BGR<uint8_t>(
     }
 }
 
-template <>
+template<>
 void NV212BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUVStride,
-    const uint8_t *inUV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUVStride,
+        const uint8_t *inUV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inY && nullptr == inUV) {
         return;
@@ -744,16 +745,16 @@ void NV212BGRA<uint8_t>(
     nv_2_rgb<4, 0, false>(height, width, inYStride, inY, inUVStride, inUV, outWidthStride, outData);
 }
 
-template <>
+template<>
 void RGB2NV21<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outY,
-    int32_t outUVStride,
-    uint8_t *outUV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outY,
+        int32_t outUVStride,
+        uint8_t *outUV)
 {
     if (nullptr == inData && nullptr == outY && nullptr == outUV) {
         return;
@@ -764,16 +765,16 @@ void RGB2NV21<uint8_t>(
     rgb_2_nv<3, 2, false>(height, width, inWidthStride, inData, outYStride, outY, outUVStride, outUV);
 }
 
-template <>
+template<>
 void RGBA2NV21<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outYStride,
-    uint8_t *outY,
-    int32_t outUVStride,
-    uint8_t *outUV)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outYStride,
+        uint8_t *outY,
+        int32_t outUVStride,
+        uint8_t *outUV)
 {
     if (nullptr == inData && nullptr == outY && nullptr == outUV) {
         return;
@@ -784,16 +785,16 @@ void RGBA2NV21<uint8_t>(
     rgb_2_nv<4, 2, false>(height, width, inWidthStride, inData, outYStride, outY, outUVStride, outUV);
 }
 
-template <>
+template<>
 void NV212RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUVStride,
-    const uint8_t *inUV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUVStride,
+        const uint8_t *inUV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inY && nullptr == inUV) {
         return;
@@ -811,16 +812,16 @@ void NV212RGB<uint8_t>(
     }
 }
 
-template <>
+template<>
 void NV212RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUVStride,
-    const uint8_t *inUV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUVStride,
+        const uint8_t *inUV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inY && nullptr == inUV) {
         return;

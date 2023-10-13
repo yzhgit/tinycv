@@ -15,12 +15,12 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <memory>
+
 #include "tinycv/cvtcolor.h"
+#include "tinycv/debug.h"
 #include "tinycv/sys.h"
 #include "tinycv/x86/test.h"
-#include "tinycv/debug.h"
-
-#include <memory>
 
 enum Color2NVMode { RGB2NV12_MODE,
                     RGB2NV21_MODE,
@@ -28,19 +28,19 @@ enum Color2NVMode { RGB2NV12_MODE,
                     BGR2NV21_MODE };
 namespace tinycv {
 
-template <>
+template<>
 void I4202NV21<uint8_t>(int32_t height,
                         int32_t width,
                         int32_t inStrideY,
-                        const uint8_t* inDataY,
+                        const uint8_t *inDataY,
                         int32_t inStrideU,
-                        const uint8_t* inDataU,
+                        const uint8_t *inDataU,
                         int32_t inStrideV,
-                        const uint8_t* inDataV,
+                        const uint8_t *inDataV,
                         int32_t outStrideY,
-                        uint8_t* outDataY,
+                        uint8_t *outDataY,
                         int32_t outStrideVU,
-                        uint8_t* outDataVU)
+                        uint8_t *outDataVU)
 {
     assert((height % 2) == 0);
     assert((width % 2) == 0);
@@ -64,19 +64,19 @@ void I4202NV21<uint8_t>(int32_t height,
     }
 }
 
-template <>
+template<>
 void I4202NV12<uint8_t>(int32_t height,
                         int32_t width,
                         int32_t inStrideY,
-                        const uint8_t* inDataY,
+                        const uint8_t *inDataY,
                         int32_t inStrideU,
-                        const uint8_t* inDataU,
+                        const uint8_t *inDataU,
                         int32_t inStrideV,
-                        const uint8_t* inDataV,
+                        const uint8_t *inDataV,
                         int32_t outStrideY,
-                        uint8_t* outDataY,
+                        uint8_t *outDataY,
                         int32_t outStrideUV,
-                        uint8_t* outDataUV)
+                        uint8_t *outDataUV)
 {
     assert((height % 2) == 0);
     assert((width % 2) == 0);
@@ -100,19 +100,19 @@ void I4202NV12<uint8_t>(int32_t height,
     }
 }
 
-template <>
+template<>
 void NV212I420<uint8_t>(int32_t height,
                         int32_t width,
                         int32_t inStrideY,
-                        const uint8_t* inDataY,
+                        const uint8_t *inDataY,
                         int32_t inStrideVU,
-                        const uint8_t* inDataVU,
+                        const uint8_t *inDataVU,
                         int32_t outStrideY,
-                        uint8_t* outDataY,
+                        uint8_t *outDataY,
                         int32_t outStrideU,
-                        uint8_t* outDataU,
+                        uint8_t *outDataU,
                         int32_t outStrideV,
-                        uint8_t* outDataV)
+                        uint8_t *outDataV)
 {
     assert((height % 2) == 0);
     assert((width % 2) == 0);
@@ -136,19 +136,19 @@ void NV212I420<uint8_t>(int32_t height,
     }
 }
 
-template <>
+template<>
 void NV122I420<uint8_t>(int32_t height,
                         int32_t width,
                         int32_t inStrideY,
-                        const uint8_t* inDataY,
+                        const uint8_t *inDataY,
                         int32_t inStrideUV,
-                        const uint8_t* inDataUV,
+                        const uint8_t *inDataUV,
                         int32_t outStrideY,
-                        uint8_t* outDataY,
+                        uint8_t *outDataY,
                         int32_t outStrideU,
-                        uint8_t* outDataU,
+                        uint8_t *outDataU,
                         int32_t outStrideV,
-                        uint8_t* outDataV)
+                        uint8_t *outDataV)
 {
     assert((height % 2) == 0);
     assert((width % 2) == 0);
@@ -174,7 +174,7 @@ void NV122I420<uint8_t>(int32_t height,
 
 } // namespace tinycv
 
-template <Color2NVMode mode>
+template<Color2NVMode mode>
 void Color2NVTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3]);
@@ -184,7 +184,7 @@ void Color2NVTest(int32_t height, int32_t width)
 
     cv::Mat srcMat(height, width, CV_MAKETYPE(cv::DataType<uint8_t>::depth, 3), src.get());
     cv::Mat dstMatI420(3 * height / 2, width, CV_MAKETYPE(cv::DataType<uint8_t>::depth, 1));
-    uint8_t* i420_ptr = dstMatI420.ptr();
+    uint8_t *i420_ptr = dstMatI420.ptr();
     if (mode == RGB2NV12_MODE) {
         cv::cvtColor(srcMat, dstMatI420, cv::COLOR_RGB2YUV_I420);
         tinycv::RGB2NV12<uint8_t>(height, width, width * 3, src.get(), width, dst.get());
@@ -205,7 +205,7 @@ void Color2NVTest(int32_t height, int32_t width)
     checkResult<uint8_t, 1>(dst.get(), dst_ref.get(), 3 * height / 2, width, width, width, 1.01f);
 }
 
-template <Color2NVMode mode>
+template<Color2NVMode mode>
 void Color2NVMultiPlaneTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3]);
@@ -215,7 +215,7 @@ void Color2NVMultiPlaneTest(int32_t height, int32_t width)
 
     cv::Mat srcMat(height, width, CV_MAKETYPE(cv::DataType<uint8_t>::depth, 3), src.get());
     cv::Mat dstMatI420(3 * height / 2, width, CV_MAKETYPE(cv::DataType<uint8_t>::depth, 1));
-    uint8_t* i420_ptr = dstMatI420.ptr();
+    uint8_t *i420_ptr = dstMatI420.ptr();
     if (mode == RGB2NV12_MODE) {
         cv::cvtColor(srcMat, dstMatI420, cv::COLOR_RGB2YUV_I420);
         tinycv::RGB2NV12<uint8_t>(height, width, width * 3, src.get(), width, dst.get(), width, dst.get() + height * width);
@@ -240,7 +240,7 @@ enum NV2ColorMode { NV122RGB_MODE,
                     NV212RGB_MODE,
                     NV212BGR_MODE };
 
-template <NV2ColorMode mode>
+template<NV2ColorMode mode>
 void NV2ColorTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3 / 2]);
@@ -267,7 +267,7 @@ void NV2ColorTest(int32_t height, int32_t width)
     checkResult<uint8_t, 3>(dst.get(), dst_ref.get(), height, width, 3 * width, 3 * width, 1.01f);
 }
 
-template <NV2ColorMode mode>
+template<NV2ColorMode mode>
 void NV2ColorMultiPlaneTest(int32_t height, int32_t width)
 {
     std::unique_ptr<uint8_t[]> src(new uint8_t[width * height * 3 / 2]);

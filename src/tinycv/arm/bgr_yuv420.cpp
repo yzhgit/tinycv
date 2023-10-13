@@ -15,25 +15,25 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/types.h"
+#include <algorithm>
+#include <arm_neon.h>
+#include <limits.h>
+
 #include "tinycv/cvtcolor.h"
+#include "tinycv/types.h"
 
 #include "color_yuv_simd.hpp"
 
-#include <limits.h>
-#include <algorithm>
-#include <arm_neon.h>
-
 namespace tinycv {
 
-template <int32_t dcn, int32_t bIdx, int32_t uIdx>
+template<int32_t dcn, int32_t bIdx, int32_t uIdx>
 void YUV420ptoRGB(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (width % 2 != 0 || height % 2 != 0) {
         return;
@@ -44,7 +44,9 @@ void YUV420ptoRGB(
     int32_t ustepIdx = 0;
     int32_t vstepIdx = height % 4 == 2 ? 1 : 0;
 
-    if (uIdx == 1) { std::swap(u, v); }
+    if (uIdx == 1) {
+        std::swap(u, v);
+    }
     if (dcn == 3) {
         YUV4202RGB_u8_neon s = YUV4202RGB_u8_neon(bIdx);
         s.convert_from_yuv420_continuous_layout(height, width, y, u, v, outData, inWidthStride, ustepIdx, vstepIdx, outWidthStride);
@@ -54,18 +56,18 @@ void YUV420ptoRGB(
     }
 }
 
-template <int32_t dcn, int32_t bIdx>
+template<int32_t dcn, int32_t bIdx>
 void YUV420ptoRGB(
-    int32_t height,
-    int32_t width,
-    int32_t ystride,
-    int32_t ustride,
-    int32_t vstride,
-    const uint8_t *y,
-    const uint8_t *u,
-    const uint8_t *v,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t ystride,
+        int32_t ustride,
+        int32_t vstride,
+        const uint8_t *y,
+        const uint8_t *u,
+        const uint8_t *v,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (width % 2 != 0 || height % 2 != 0) {
         return;
@@ -79,14 +81,14 @@ void YUV420ptoRGB(
     }
 }
 
-template <int32_t scn, int32_t bIdx>
+template<int32_t scn, int32_t bIdx>
 void RGBtoYUV420p(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (width % 2 != 0 || height % 2 != 0) {
         return;
@@ -95,18 +97,18 @@ void RGBtoYUV420p(
     s.operator()(height, width, scn, inData, outData, outData + outWidthStride * height, outData + (height + (height / 2) / 2) * outWidthStride + ((height / 2) % 2) * (width / 2), inWidthStride, outWidthStride);
 }
 
-template <int32_t scn, int32_t bIdx>
+template<int32_t scn, int32_t bIdx>
 void RGBtoYUV420p(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t ystride,
-    int32_t ustride,
-    int32_t vstride,
-    uint8_t *y,
-    uint8_t *u,
-    uint8_t *v)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t ystride,
+        int32_t ustride,
+        int32_t vstride,
+        uint8_t *y,
+        uint8_t *u,
+        uint8_t *v)
 {
     if (width % 2 != 0 || height % 2 != 0) {
         return;
@@ -115,14 +117,14 @@ void RGBtoYUV420p(
     s.operator()(height, width, scn, inData, y, u, v, inWidthStride, ystride, ustride, vstride);
 }
 
-template <>
+template<>
 void I4202BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -136,32 +138,32 @@ void I4202BGR<uint8_t>(
     const uint8_t *vptr = inData + inWidthStride * height + inWidthStride * height / 4;
 
     yuv420_to_bgr_uchar_video_range<YUV_I420, 3, 0>(
-        height,
-        width,
-        yStride,
-        yptr,
-        uStride,
-        uptr,
-        vStride,
-        vptr,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            yStride,
+            yptr,
+            uStride,
+            uptr,
+            vStride,
+            vptr,
+            outWidthStride,
+            outData);
 #else
     YUV420ptoRGB<3, 0, 0>(height, width, inWidthStride, inData, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void I4202BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t ystride,
-    const uint8_t *iny,
-    int32_t ustride,
-    const uint8_t *inu,
-    int32_t vstride,
-    const uint8_t *inv,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t ystride,
+        const uint8_t *iny,
+        int32_t ustride,
+        const uint8_t *inu,
+        int32_t vstride,
+        const uint8_t *inv,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!iny || !inu || !inv || !outData || height == 0 || width == 0) {
         return;
@@ -171,28 +173,28 @@ void I4202BGR<uint8_t>(
     }
 #ifdef USE_QUANTIZED
     yuv420_to_bgr_uchar_video_range<YUV_I420, 3, 0>(
-        height,
-        width,
-        ystride,
-        iny,
-        ustride,
-        inu,
-        vstride,
-        inv,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            ystride,
+            iny,
+            ustride,
+            inu,
+            vstride,
+            inv,
+            outWidthStride,
+            outData);
 #else
     YUV420ptoRGB<3, 0>(height, width, ystride, ustride, vstride, iny, inu, inv, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void I4202BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -206,32 +208,32 @@ void I4202BGRA<uint8_t>(
     const uint8_t *vptr = inData + inWidthStride * height + inWidthStride * height / 4;
 
     yuv420_to_bgr_uchar_video_range<YUV_I420, 4, 0>(
-        height,
-        width,
-        yStride,
-        yptr,
-        uStride,
-        uptr,
-        vStride,
-        vptr,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            yStride,
+            yptr,
+            uStride,
+            uptr,
+            vStride,
+            vptr,
+            outWidthStride,
+            outData);
 #else
     YUV420ptoRGB<4, 0, 0>(height, width, inWidthStride, inData, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void I4202BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t ystride,
-    const uint8_t *iny,
-    int32_t ustride,
-    const uint8_t *inu,
-    int32_t vstride,
-    const uint8_t *inv,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t ystride,
+        const uint8_t *iny,
+        int32_t ustride,
+        const uint8_t *inu,
+        int32_t vstride,
+        const uint8_t *inv,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!iny || !inu || !inv || !outData || height == 0 || width == 0) {
         return;
@@ -242,29 +244,29 @@ void I4202BGRA<uint8_t>(
 
 #ifdef USE_QUANTIZED
     yuv420_to_bgr_uchar_video_range<YUV_I420, 4, 0>(
-        height,
-        width,
-        ystride,
-        iny,
-        ustride,
-        inu,
-        vstride,
-        inv,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            ystride,
+            iny,
+            ustride,
+            inu,
+            vstride,
+            inv,
+            outWidthStride,
+            outData);
 #else
     YUV420ptoRGB<4, 0>(height, width, ystride, ustride, vstride, iny, inu, inv, outWidthStride, outData);
 #endif
 }
 
-template <>
+template<>
 void BGR2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -283,18 +285,18 @@ void BGR2I420<uint8_t>(
     RGBtoYUV420p<3, 0>(height, width, inWidthStride, inData, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void BGR2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t ystride,
-    uint8_t *outy,
-    int32_t ustride,
-    uint8_t *outu,
-    int32_t vstride,
-    uint8_t *outv)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t ystride,
+        uint8_t *outy,
+        int32_t ustride,
+        uint8_t *outu,
+        int32_t vstride,
+        uint8_t *outv)
 {
     if (!inData || !outy || !outu || !outv || height == 0 || width == 0) {
         return;
@@ -316,14 +318,14 @@ void BGR2I420<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void BGRA2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -342,18 +344,18 @@ void BGRA2I420<uint8_t>(
     RGBtoYUV420p<4, 0>(height, width, inWidthStride, inData, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void BGRA2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t ystride,
-    uint8_t *outy,
-    int32_t ustride,
-    uint8_t *outu,
-    int32_t vstride,
-    uint8_t *outv)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t ystride,
+        uint8_t *outy,
+        int32_t ustride,
+        uint8_t *outu,
+        int32_t vstride,
+        uint8_t *outv)
 {
     if (!inData || !outy || !outu || !outv || height == 0 || width == 0) {
         return;
@@ -375,14 +377,14 @@ void BGRA2I420<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void BGR2YV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -405,14 +407,14 @@ void BGR2YV12<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void BGRA2YV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -444,14 +446,14 @@ void BGRA2YV12<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void YV122BGR<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -466,16 +468,16 @@ void YV122BGR<uint8_t>(
     const uint8_t *uptr = inData + inWidthStride * height + inWidthStride * height / 4;
 
     yuv420_to_bgr_uchar_video_range<YUV_YV12, 3, 0>(
-        height,
-        width,
-        yStride,
-        yptr,
-        uStride,
-        uptr,
-        vStride,
-        vptr,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            yStride,
+            yptr,
+            uStride,
+            uptr,
+            vStride,
+            vptr,
+            outWidthStride,
+            outData);
 #else
     const uint8_t *inDataY = inData;
     const uint8_t *inDataV = inData + height * inWidthStride;
@@ -484,14 +486,14 @@ void YV122BGR<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void YV122BGRA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -506,16 +508,16 @@ void YV122BGRA<uint8_t>(
     const uint8_t *uptr = inData + inWidthStride * height + inWidthStride * height / 4;
 
     yuv420_to_bgr_uchar_video_range<YUV_YU12, 4, 0>(
-        height,
-        width,
-        yStride,
-        yptr,
-        uStride,
-        uptr,
-        vStride,
-        vptr,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            yStride,
+            yptr,
+            uStride,
+            uptr,
+            vStride,
+            vptr,
+            outWidthStride,
+            outData);
 #else
     const uint8_t *inDataY = inData;
     const uint8_t *inDataV = inData + height * inWidthStride;
@@ -533,14 +535,14 @@ void YV122BGRA<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void I4202RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -555,32 +557,32 @@ void I4202RGB<uint8_t>(
     const uint8_t *vptr = inData + inWidthStride * height + inWidthStride * height / 4;
 
     yuv420_to_bgr_uchar_video_range<YUV_I420, 3, 2>(
-        height,
-        width,
-        yStride,
-        yptr,
-        uStride,
-        uptr,
-        vStride,
-        vptr,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            yStride,
+            yptr,
+            uStride,
+            uptr,
+            vStride,
+            vptr,
+            outWidthStride,
+            outData);
 #else
     YUV420ptoRGB<3, 2, 0>(height, width, inWidthStride, inData, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void I4202RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t ystride,
-    const uint8_t *iny,
-    int32_t ustride,
-    const uint8_t *inu,
-    int32_t vstride,
-    const uint8_t *inv,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t ystride,
+        const uint8_t *iny,
+        int32_t ustride,
+        const uint8_t *inu,
+        int32_t vstride,
+        const uint8_t *inv,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!iny || !inu || !inv || !outData || height == 0 || width == 0) {
         return;
@@ -591,28 +593,28 @@ void I4202RGB<uint8_t>(
 
 #ifdef USE_QUANTIZED
     yuv420_to_bgr_uchar_video_range<YUV_I420, 3, 2>(
-        height,
-        width,
-        ystride,
-        iny,
-        ustride,
-        inu,
-        vstride,
-        inv,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            ystride,
+            iny,
+            ustride,
+            inu,
+            vstride,
+            inv,
+            outWidthStride,
+            outData);
 #else
     YUV420ptoRGB<3, 2>(height, width, ystride, ustride, vstride, iny, inu, inv, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void I4202RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -626,32 +628,32 @@ void I4202RGBA<uint8_t>(
     const uint8_t *vptr = inData + inWidthStride * height + inWidthStride * height / 4;
 
     yuv420_to_bgr_uchar_video_range<YUV_I420, 4, 2>(
-        height,
-        width,
-        yStride,
-        yptr,
-        uStride,
-        uptr,
-        vStride,
-        vptr,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            yStride,
+            yptr,
+            uStride,
+            uptr,
+            vStride,
+            vptr,
+            outWidthStride,
+            outData);
 #else
     YUV420ptoRGB<4, 2, 0>(height, width, inWidthStride, inData, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void I4202RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t ystride,
-    const uint8_t *iny,
-    int32_t ustride,
-    const uint8_t *inu,
-    int32_t vstride,
-    const uint8_t *inv,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t ystride,
+        const uint8_t *iny,
+        int32_t ustride,
+        const uint8_t *inu,
+        int32_t vstride,
+        const uint8_t *inv,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!iny || !inu || !inv || !outData || height == 0 || width == 0) {
         return;
@@ -662,29 +664,29 @@ void I4202RGBA<uint8_t>(
 
 #ifdef USE_QUANTIZED
     yuv420_to_bgr_uchar_video_range<YUV_I420, 4, 2>(
-        height,
-        width,
-        ystride,
-        iny,
-        ustride,
-        inu,
-        vstride,
-        inv,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            ystride,
+            iny,
+            ustride,
+            inu,
+            vstride,
+            inv,
+            outWidthStride,
+            outData);
 #else
     YUV420ptoRGB<4, 2>(height, width, ystride, ustride, vstride, iny, inu, inv, outWidthStride, outData);
 #endif
 }
 
-template <>
+template<>
 void YV122RGB<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -699,16 +701,16 @@ void YV122RGB<uint8_t>(
     const uint8_t *uptr = inData + inWidthStride * height + inWidthStride * height / 4;
 
     yuv420_to_bgr_uchar_video_range<YUV_I420, 3, 2>(
-        height,
-        width,
-        yStride,
-        yptr,
-        uStride,
-        uptr,
-        vStride,
-        vptr,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            yStride,
+            yptr,
+            uStride,
+            uptr,
+            vStride,
+            vptr,
+            outWidthStride,
+            outData);
 #else
     const uint8_t *inDataY = inData;
     const uint8_t *inDataV = inData + height * inWidthStride;
@@ -726,14 +728,14 @@ void YV122RGB<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void YV122RGBA<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -747,16 +749,16 @@ void YV122RGBA<uint8_t>(
     const uint8_t *vptr = inData + inWidthStride * height;
     const uint8_t *uptr = inData + inWidthStride * height + inWidthStride * height / 4;
     yuv420_to_bgr_uchar_video_range<YUV_I420, 4, 2>(
-        height,
-        width,
-        yStride,
-        yptr,
-        uStride,
-        uptr,
-        vStride,
-        vptr,
-        outWidthStride,
-        outData);
+            height,
+            width,
+            yStride,
+            yptr,
+            uStride,
+            uptr,
+            vStride,
+            vptr,
+            outWidthStride,
+            outData);
 #else
     const uint8_t *inDataY = inData;
     const uint8_t *inDataV = inData + height * inWidthStride;
@@ -774,14 +776,14 @@ void YV122RGBA<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void RGB2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -800,18 +802,18 @@ void RGB2I420<uint8_t>(
     RGBtoYUV420p<3, 2>(height, width, inWidthStride, inData, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void RGB2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t ystride,
-    uint8_t *outy,
-    int32_t ustride,
-    uint8_t *outu,
-    int32_t vstride,
-    uint8_t *outv)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t ystride,
+        uint8_t *outy,
+        int32_t ustride,
+        uint8_t *outu,
+        int32_t vstride,
+        uint8_t *outv)
 {
     if (!inData || !outy || !outu || !outv || height == 0 || width == 0) {
         return;
@@ -833,14 +835,14 @@ void RGB2I420<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void RGBA2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -859,18 +861,18 @@ void RGBA2I420<uint8_t>(
     RGBtoYUV420p<4, 2>(height, width, inWidthStride, inData, outWidthStride, outData);
 #endif
 }
-template <>
+template<>
 void RGBA2I420<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t ystride,
-    uint8_t *outy,
-    int32_t ustride,
-    uint8_t *outu,
-    int32_t vstride,
-    uint8_t *outv)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t ystride,
+        uint8_t *outy,
+        int32_t ustride,
+        uint8_t *outu,
+        int32_t vstride,
+        uint8_t *outv)
 {
     if (!inData || !outy || !outu || !outv || height == 0 || width == 0) {
         return;
@@ -892,14 +894,14 @@ void RGBA2I420<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void RGB2YV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;
@@ -923,14 +925,14 @@ void RGB2YV12<uint8_t>(
 #endif
 }
 
-template <>
+template<>
 void RGBA2YV12<uint8_t>(
-    int32_t height,
-    int32_t width,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (!inData || !outData || height == 0 || width == 0 || inWidthStride == 0 || outWidthStride == 0) {
         return;

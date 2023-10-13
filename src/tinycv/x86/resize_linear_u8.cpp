@@ -15,24 +15,25 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/resize.h"
-#include "tinycv/types.h"
-#include "tinycv/sys.h"
-#include "tinycv/x86/sysinfo.h"
-#include "tinycv/x86/fma/internal_fma.hpp"
-
-#include <string.h>
-#include <limits.h>
-#include <immintrin.h>
-#include <float.h>
-#include <stdint.h>
-#include <cmath>
-#include <stdlib.h>
 #include <algorithm>
+#include <cmath>
+#include <float.h>
+#include <immintrin.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "tinycv/resize.h"
+#include "tinycv/sys.h"
+#include "tinycv/types.h"
+#include "tinycv/x86/sysinfo.h"
+
+#include "tinycv/x86/fma/internal_fma.hpp"
 
 namespace tinycv {
 
-#define INTER_RESIZE_COEF_BITS  (11)
+#define INTER_RESIZE_COEF_BITS (11)
 #define INTER_RESIZE_COEF_SCALE (1 << INTER_RESIZE_COEF_BITS)
 
 static inline int32_t resize_img_floor(float a)
@@ -59,16 +60,16 @@ static inline int16_t resize_img_saturate_cast_short(float x)
 }
 
 static void resize_linear_calc_offset_u8(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t channels,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t &w_max,
-    int32_t *h_offset,
-    int32_t *w_offset,
-    int16_t *h_coeff,
-    int16_t *w_coeff)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t channels,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t &w_max,
+        int32_t *h_offset,
+        int32_t *w_offset,
+        int16_t *h_coeff,
+        int16_t *w_coeff)
 {
     double inv_scale_h = (double)outHeight / inHeight;
     double scale_h = 1.0 / inv_scale_h;
@@ -112,14 +113,14 @@ static void resize_linear_calc_offset_u8(
 }
 
 static void resize_linear_w_oneline_u8(
-    int32_t inWidth,
-    int32_t outWidth,
-    int32_t channels,
-    const uint8_t *inData,
-    int32_t w_max,
-    const int32_t *w_offset,
-    const int16_t *w_coeff,
-    int32_t *row)
+        int32_t inWidth,
+        int32_t outWidth,
+        int32_t channels,
+        const uint8_t *inData,
+        int32_t w_max,
+        const int32_t *w_offset,
+        const int16_t *w_coeff,
+        int32_t *row)
 {
     int32_t i = 0;
 
@@ -162,13 +163,13 @@ static void resize_linear_w_oneline_u8(
 }
 
 static void resize_linear_h_u8(
-    int32_t outWidth,
-    int32_t channels,
-    const int32_t *row_0,
-    const int32_t *row_1,
-    int32_t h_idx,
-    int16_t h_coeff,
-    uint8_t *outData)
+        int32_t outWidth,
+        int32_t channels,
+        const int32_t *row_0,
+        const int32_t *row_1,
+        int32_t h_idx,
+        int16_t h_coeff,
+        uint8_t *outData)
 {
     int32_t i = 0;
     int16_t h_coeff_1 = INTER_RESIZE_COEF_SCALE - h_coeff;
@@ -210,15 +211,15 @@ static void resize_linear_h_u8(
 }
 
 static void resize_linear_kernel_u8(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t channels,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t channels,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     int32_t cn_width = channels * outWidth;
     uint64_t size_for_h_offset = (outHeight * sizeof(int32_t) + 128 - 1) / 128 * 128;
@@ -252,8 +253,8 @@ static void resize_linear_kernel_u8(
 
     int32_t h = 0;
 
-    int32_t prev_h[2] = {-1, -1};
-    int32_t *prev_ptr[2] = {nullptr, nullptr};
+    int32_t prev_h[2] = { -1, -1 };
+    int32_t *prev_ptr[2] = { nullptr, nullptr };
 
     int32_t reuse_count;
     int32_t *row_ptr[2];
@@ -317,12 +318,12 @@ static void resize_linear_kernel_u8(
 }
 
 static void resize_linear_shrink2_c1_kernel_u8(
-    const uint8_t *inData,
-    int32_t inWidthStride,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        const uint8_t *inData,
+        int32_t inWidthStride,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     __m128i m_zero = _mm_set1_epi8(0);
     __m128i m_epi16_two = _mm_set1_epi16(2);
@@ -381,12 +382,12 @@ static void resize_linear_shrink2_c1_kernel_u8(
 }
 
 static void resize_linear_shrink2_c4_kernel_u8(
-    const uint8_t *inData,
-    int32_t inWidthStride,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        const uint8_t *inData,
+        int32_t inWidthStride,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     const int32_t channels = 4;
 
@@ -472,16 +473,16 @@ static void resize_linear_shrink2_c4_kernel_u8(
     }
 }
 
-template <>
+template<>
 void ResizeLinear<uint8_t, 1>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -496,19 +497,19 @@ void ResizeLinear<uint8_t, 1>(
     }
 
     resize_linear_kernel_u8(
-        inHeight, inWidth, inWidthStride, inData, 1, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 1, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeLinear<uint8_t, 3>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -518,19 +519,19 @@ void ResizeLinear<uint8_t, 3>(
     }
 
     resize_linear_kernel_u8(
-        inHeight, inWidth, inWidthStride, inData, 3, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 3, outHeight, outWidth, outWidthStride, outData);
 }
 
-template <>
+template<>
 void ResizeLinear<uint8_t, 4>(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const uint8_t *inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const uint8_t *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     if (nullptr == inData) {
         return;
@@ -545,7 +546,7 @@ void ResizeLinear<uint8_t, 4>(
     }
 
     resize_linear_kernel_u8(
-        inHeight, inWidth, inWidthStride, inData, 4, outHeight, outWidth, outWidthStride, outData);
+            inHeight, inWidth, inWidthStride, inData, 4, outHeight, outWidth, outWidthStride, outData);
 }
 
 } // namespace tinycv

@@ -18,15 +18,16 @@
 #ifndef __ST_TINYCV_ARM_TEST_H_
 #define __ST_TINYCV_ARM_TEST_H_
 
-#include <gtest/gtest.h>
 #include <cmath>
 #include <float.h>
-#include <random>
 #include <iostream>
+#include <random>
+
+#include <gtest/gtest.h>
 
 #define USE_QUANTIZED
 
-template <typename T, int32_t nc>
+template<typename T, int32_t nc>
 inline void checkResult(const T *data1,
                         const T *data2,
                         const int32_t height,
@@ -56,7 +57,7 @@ struct Size {
     int height;
 };
 
-template <typename T, int nc>
+template<typename T, int nc>
 void checkResult(const T *data1,
                  const T *data2,
                  const int height,

@@ -18,14 +18,15 @@
 #ifndef __ST_TINYCV_X86_TEST_H_
 #define __ST_TINYCV_X86_TEST_H_
 
-#include <gtest/gtest.h>
 #include <cmath>
 #include <float.h>
 #include <random>
 
-template <typename T, int32_t nc>
-inline void checkResult(const T* data1,
-                        const T* data2,
+#include <gtest/gtest.h>
+
+template<typename T, int32_t nc>
+inline void checkResult(const T *data1,
+                        const T *data2,
                         const int32_t height,
                         const int32_t width,
                         int32_t dstep1,
@@ -48,13 +49,14 @@ inline void checkResult(const T* data1,
     EXPECT_LT(max, diff_THR);
 }
 
-template <typename T, bool is_integral>
+template<typename T, bool is_integral>
 class RandomFillImpl;
 
-template <typename T>
-class RandomFillImpl<T, false> {
+template<typename T>
+class RandomFillImpl<T, false>
+{
 public:
-    static void randomFill(T* array, size_t N, T min, T max)
+    static void randomFill(T *array, size_t N, T min, T max)
     {
         std::default_random_engine eng(clock());
         std::uniform_real_distribution<T> dis(min, max);
@@ -64,10 +66,11 @@ public:
     }
 };
 
-template <typename T>
-class RandomFillImpl<T, true> {
+template<typename T>
+class RandomFillImpl<T, true>
+{
 public:
-    static void randomFill(T* array, size_t N, T min, T max)
+    static void randomFill(T *array, size_t N, T min, T max)
     {
         std::default_random_engine eng(clock());
         std::uniform_int_distribution<T> dis(min, max);
@@ -77,14 +80,14 @@ public:
     }
 };
 
-template <typename T>
-inline void randomFill(T* array, size_t N, T min, T max)
+template<typename T>
+inline void randomFill(T *array, size_t N, T min, T max)
 {
     RandomFillImpl<T, std::is_integral<T>::value>::randomFill(array, N, min, max);
 }
 
-template <typename T>
-inline void randomFill(T* array, size_t N)
+template<typename T>
+inline void randomFill(T *array, size_t N)
 {
     RandomFillImpl<T, std::is_integral<T>::value>::randomFill(array, N, std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
 }

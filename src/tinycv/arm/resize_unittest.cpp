@@ -15,9 +15,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include "tinycv/resize.h"
 #include "tinycv/arm/test.h"
 #include "tinycv/debug.h"
+#include "tinycv/resize.h"
 
 #include <gtest/gtest.h>
 #include <opencv2/imgproc.hpp>
@@ -29,8 +29,9 @@ struct Size_p {
     int outHeight;
 };
 
-template <typename T, int c>
-class Resize : public ::testing::TestWithParam<std::tuple<Size_p, float>> {
+template<typename T, int c>
+class Resize : public ::testing::TestWithParam<std::tuple<Size_p, float>>
+{
 public:
     using ResizeParam = std::tuple<Size_p, float>;
     Resize()
@@ -58,23 +59,23 @@ public:
         cv::resize(src_opencv, dst_opencv, cv::Size(size.outWidth, size.outHeight), 0, 0, cv::INTER_LINEAR);
 
         tinycv::ResizeLinear<T, c>(
-            size.inHeight,
-            size.inWidth,
-            size.inWidth * c,
-            src.get(),
-            size.outHeight,
-            size.outWidth,
-            size.outWidth * c,
-            dst.get());
+                size.inHeight,
+                size.inWidth,
+                size.inWidth * c,
+                src.get(),
+                size.outHeight,
+                size.outWidth,
+                size.outWidth * c,
+                dst.get());
 
         checkResult<T, c>(
-            dst_ref.get(),
-            dst.get(),
-            size.outHeight,
-            size.outWidth,
-            size.outWidth * c,
-            size.outWidth * c,
-            diff);
+                dst_ref.get(),
+                dst.get(),
+                size.outHeight,
+                size.outWidth,
+                size.outWidth * c,
+                size.outWidth * c,
+                diff);
     }
 
     void NearestPointapply(const ResizeParam &param)
@@ -94,23 +95,23 @@ public:
         cv::resize(src_opencv, dst_opencv, cv::Size(size.outWidth, size.outHeight), 0, 0, cv::INTER_NEAREST);
 
         tinycv::ResizeNearestPoint<T, c>(
-            size.inHeight,
-            size.inWidth,
-            size.inWidth * c,
-            src.get(),
-            size.outHeight,
-            size.outWidth,
-            size.outWidth * c,
-            dst.get());
+                size.inHeight,
+                size.inWidth,
+                size.inWidth * c,
+                src.get(),
+                size.outHeight,
+                size.outWidth,
+                size.outWidth * c,
+                dst.get());
 
         checkResult<T, c>(
-            dst_ref.get(),
-            dst.get(),
-            size.outHeight,
-            size.outWidth,
-            size.outWidth * c,
-            size.outWidth * c,
-            diff);
+                dst_ref.get(),
+                dst.get(),
+                size.outHeight,
+                size.outWidth,
+                size.outWidth * c,
+                size.outWidth * c,
+                diff);
     }
 
     void Areaapply(const ResizeParam &param)
@@ -130,23 +131,23 @@ public:
         cv::resize(src_opencv, dst_opencv, cv::Size(size.outWidth, size.outHeight), 0, 0, cv::INTER_AREA);
 
         tinycv::ResizeArea<T, c>(
-            size.inHeight,
-            size.inWidth,
-            size.inWidth * c,
-            src.get(),
-            size.outHeight,
-            size.outWidth,
-            size.outWidth * c,
-            dst.get());
+                size.inHeight,
+                size.inWidth,
+                size.inWidth * c,
+                src.get(),
+                size.outHeight,
+                size.outWidth,
+                size.outWidth * c,
+                dst.get());
 
         checkResult<T, c>(
-            dst_ref.get(),
-            dst.get(),
-            size.outHeight,
-            size.outWidth,
-            size.outWidth * c,
-            size.outWidth * c,
-            diff);
+                dst_ref.get(),
+                dst.get(),
+                size.outHeight,
+                size.outWidth,
+                size.outWidth * c,
+                size.outWidth * c,
+                diff);
     }
 };
 
@@ -156,7 +157,7 @@ public:
     {                                  \
         this->Linearapply(GetParam()); \
     }                                  \
-    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size_p{320, 240, 640, 480}, Size_p{640, 480, 320, 240}, Size_p{1080, 1920, 270, 480}, Size_p{1080, 1920, 180, 320}), ::testing::Values(diff)));
+    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size_p{ 320, 240, 640, 480 }, Size_p{ 640, 480, 320, 240 }, Size_p{ 1080, 1920, 270, 480 }, Size_p{ 1080, 1920, 180, 320 }), ::testing::Values(diff)));
 R1(ResizeLinear_f32c1, float, 1, 1e-1f)
 R1(ResizeLinear_f32c3, float, 3, 1e-1f)
 R1(ResizeLinear_f32c4, float, 4, 1e-1f)
@@ -171,7 +172,7 @@ R1(ResizeLinear_u8c4, uint8_t, 4, 2.01f)
     {                                        \
         this->NearestPointapply(GetParam()); \
     }                                        \
-    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size_p{320, 240, 640, 480}, Size_p{640, 480, 320, 240}), ::testing::Values(diff)));
+    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size_p{ 320, 240, 640, 480 }, Size_p{ 640, 480, 320, 240 }), ::testing::Values(diff)));
 R2(ResizeNearestPoint_f32c1, float, 1, 1e-5f)
 R2(ResizeNearestPoint_f32c3, float, 3, 1e-5f)
 R2(ResizeNearestPoint_f32c4, float, 4, 1e-5f)
@@ -186,7 +187,7 @@ R2(ResizeNearestPoint_u8c4, uint8_t, 4, 1.01f)
     {                                \
         this->Areaapply(GetParam()); \
     }                                \
-    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size_p{320, 240, 640, 480}, Size_p{640, 480, 320, 240}), ::testing::Values(diff)));
+    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size_p{ 320, 240, 640, 480 }, Size_p{ 640, 480, 320, 240 }), ::testing::Values(diff)));
 
 R3(ResizeArea_u8c1, uint8_t, 1, 1.01f)
 R3(ResizeArea_u8c3, uint8_t, 3, 1.01f)

@@ -1,11 +1,12 @@
+#include "tinycv/arm/test.h"
 #include "tinycv/cvtcolor.h"
 #include "tinycv/debug.h"
-#include "tinycv/arm/test.h"
 
 #include <gtest/gtest.h>
 
-template <typename T>
-class BGR2GRAY : public ::testing::TestWithParam<std::tuple<Size, int32_t, float>> {
+template<typename T>
+class BGR2GRAY : public ::testing::TestWithParam<std::tuple<Size, int32_t, float>>
+{
 public:
     using BGR2GRAYParam = std::tuple<Size, int32_t, float>;
     BGR2GRAY()
@@ -37,21 +38,21 @@ public:
             cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_BGR2GRAY);
 
             tinycv::BGR2GRAY<T>(
-                size.height,
-                size.width,
-                size.width * input_channels,
-                src.get(),
-                size.width * output_channels,
-                dst.get());
+                    size.height,
+                    size.width,
+                    size.width * input_channels,
+                    src.get(),
+                    size.width * output_channels,
+                    dst.get());
 
             checkResult<T, 1>(
-                dst_ref.get(),
-                dst.get(),
-                size.height,
-                size.width,
-                size.width * output_channels,
-                size.width * output_channels,
-                diff);
+                    dst_ref.get(),
+                    dst.get(),
+                    size.height,
+                    size.width,
+                    size.width * output_channels,
+                    size.width * output_channels,
+                    diff);
         }
 
         if (mode == 1) {
@@ -69,21 +70,21 @@ public:
             cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_GRAY2BGR);
 
             tinycv::GRAY2BGR<T>(
-                size.height,
-                size.width,
-                size.width * input_channels,
-                src.get(),
-                size.width * output_channels,
-                dst.get());
+                    size.height,
+                    size.width,
+                    size.width * input_channels,
+                    src.get(),
+                    size.width * output_channels,
+                    dst.get());
 
             checkResult<T, 3>(
-                dst_ref.get(),
-                dst.get(),
-                size.height,
-                size.width,
-                size.width * output_channels,
-                size.width * output_channels,
-                diff);
+                    dst_ref.get(),
+                    dst.get(),
+                    size.height,
+                    size.width,
+                    size.width * output_channels,
+                    size.width * output_channels,
+                    diff);
         }
 
         if (mode == 2) {
@@ -101,21 +102,21 @@ public:
             cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_BGRA2GRAY);
 
             tinycv::BGRA2GRAY<T>(
-                size.height,
-                size.width,
-                size.width * input_channels,
-                src.get(),
-                size.width * output_channels,
-                dst.get());
+                    size.height,
+                    size.width,
+                    size.width * input_channels,
+                    src.get(),
+                    size.width * output_channels,
+                    dst.get());
 
             checkResult<T, 1>(
-                dst_ref.get(),
-                dst.get(),
-                size.height,
-                size.width,
-                size.width * output_channels,
-                size.width * output_channels,
-                diff);
+                    dst_ref.get(),
+                    dst.get(),
+                    size.height,
+                    size.width,
+                    size.width * output_channels,
+                    size.width * output_channels,
+                    diff);
         }
 
         if (mode == 3) {
@@ -133,21 +134,21 @@ public:
             cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_GRAY2BGRA);
 
             tinycv::GRAY2BGRA<T>(
-                size.height,
-                size.width,
-                size.width * input_channels,
-                src.get(),
-                size.width * output_channels,
-                dst.get());
+                    size.height,
+                    size.width,
+                    size.width * input_channels,
+                    src.get(),
+                    size.width * output_channels,
+                    dst.get());
 
             checkResult<T, 4>(
-                dst_ref.get(),
-                dst.get(),
-                size.height,
-                size.width,
-                size.width * output_channels,
-                size.width * output_channels,
-                diff);
+                    dst_ref.get(),
+                    dst.get(),
+                    size.height,
+                    size.width,
+                    size.width * output_channels,
+                    size.width * output_channels,
+                    diff);
         }
 
         if (mode == 4) {
@@ -165,21 +166,21 @@ public:
             cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_RGB2GRAY);
 
             tinycv::RGB2GRAY<T>(
-                size.height,
-                size.width,
-                size.width * input_channels,
-                src.get(),
-                size.width * output_channels,
-                dst.get());
+                    size.height,
+                    size.width,
+                    size.width * input_channels,
+                    src.get(),
+                    size.width * output_channels,
+                    dst.get());
 
             checkResult<T, 1>(
-                dst_ref.get(),
-                dst.get(),
-                size.height,
-                size.width,
-                size.width * output_channels,
-                size.width * output_channels,
-                diff);
+                    dst_ref.get(),
+                    dst.get(),
+                    size.height,
+                    size.width,
+                    size.width * output_channels,
+                    size.width * output_channels,
+                    diff);
         }
 
         if (mode == 5) {
@@ -197,21 +198,21 @@ public:
             cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_GRAY2RGB);
 
             tinycv::GRAY2RGB<T>(
-                size.height,
-                size.width,
-                size.width * input_channels,
-                src.get(),
-                size.width * output_channels,
-                dst.get());
+                    size.height,
+                    size.width,
+                    size.width * input_channels,
+                    src.get(),
+                    size.width * output_channels,
+                    dst.get());
 
             checkResult<T, 3>(
-                dst_ref.get(),
-                dst.get(),
-                size.height,
-                size.width,
-                size.width * output_channels,
-                size.width * output_channels,
-                diff);
+                    dst_ref.get(),
+                    dst.get(),
+                    size.height,
+                    size.width,
+                    size.width * output_channels,
+                    size.width * output_channels,
+                    diff);
         }
 
         if (mode == 6) {
@@ -229,21 +230,21 @@ public:
             cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_RGBA2GRAY);
 
             tinycv::RGBA2GRAY<T>(
-                size.height,
-                size.width,
-                size.width * input_channels,
-                src.get(),
-                size.width * output_channels,
-                dst.get());
+                    size.height,
+                    size.width,
+                    size.width * input_channels,
+                    src.get(),
+                    size.width * output_channels,
+                    dst.get());
 
             checkResult<T, 1>(
-                dst_ref.get(),
-                dst.get(),
-                size.height,
-                size.width,
-                size.width * output_channels,
-                size.width * output_channels,
-                diff);
+                    dst_ref.get(),
+                    dst.get(),
+                    size.height,
+                    size.width,
+                    size.width * output_channels,
+                    size.width * output_channels,
+                    diff);
         }
 
         if (mode == 7) {
@@ -261,21 +262,21 @@ public:
             cv::cvtColor(src_opencv, dst_opencv, cv::COLOR_GRAY2RGBA);
 
             tinycv::GRAY2RGBA<T>(
-                size.height,
-                size.width,
-                size.width * input_channels,
-                src.get(),
-                size.width * output_channels,
-                dst.get());
+                    size.height,
+                    size.width,
+                    size.width * input_channels,
+                    src.get(),
+                    size.width * output_channels,
+                    dst.get());
 
             checkResult<T, 4>(
-                dst_ref.get(),
-                dst.get(),
-                size.height,
-                size.width,
-                size.width * output_channels,
-                size.width * output_channels,
-                diff);
+                    dst_ref.get(),
+                    dst.get(),
+                    size.height,
+                    size.width,
+                    size.width * output_channels,
+                    size.width * output_channels,
+                    diff);
         }
     }
 };
@@ -290,7 +291,7 @@ constexpr int32_t c4 = 4;
     {                                  \
         this->apply(GetParam());       \
     }                                  \
-    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size{320, 256}, Size{720, 480}), ::testing::Values(mode), ::testing::Values(diff)));
+    INSTANTIATE_TEST_CASE_P(standard, name, ::testing::Combine(::testing::Values(Size{ 320, 256 }, Size{ 720, 480 }), ::testing::Values(mode), ::testing::Values(diff)));
 R(UT_BGR2GRAY_float_aarch64, float, c3, c1, 0, 1e-4)
 R(UT_BGR2GRAY_uint8_t_aarch64, uint8_t, c3, c1, 0, 1.01)
 R(UT_GRAY2BGR_float_aarch64, float, c1, c3, 1, 1e-4)

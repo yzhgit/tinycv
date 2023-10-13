@@ -36,16 +36,16 @@ namespace tinycv {
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ***************************************************************************************************/
-template <typename T, int32_t channels>
+template<typename T, int32_t channels>
 void ResizeNearestPoint(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Resize the image with linear interpolation method.
@@ -62,16 +62,16 @@ void ResizeNearestPoint(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ***************************************************************************************************/
-template <typename T, int32_t channels>
+template<typename T, int32_t channels>
 void ResizeLinear(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        T *outData);
 
 /**
  * @brief Scale the image with area interpolation method
@@ -88,16 +88,16 @@ void ResizeLinear(
  * @param outData           output image data
  * @warning All input parameters must be valid, or undefined behaviour may occur.
  ***************************************************************************************************/
-template <typename T, int channels>
+template<typename T, int channels>
 void ResizeArea(
-    int32_t inHeight,
-    int32_t inWidth,
-    int32_t inWidthStride,
-    const T* inData,
-    int32_t outHeight,
-    int32_t outWidth,
-    int32_t outWidthStride,
-    T* outData);
+        int32_t inHeight,
+        int32_t inWidth,
+        int32_t inWidthStride,
+        const T *inData,
+        int32_t outHeight,
+        int32_t outWidth,
+        int32_t outWidthStride,
+        T *outData);
 
 } // namespace tinycv
 

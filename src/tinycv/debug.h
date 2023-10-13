@@ -22,24 +22,24 @@
 
 #if defined(TINYCV_UNITTEST_OPENCV) || defined(TINYCV_BENCHMARK_OPENCV)
 #include <opencv2/imgproc.hpp>
-template <typename T, int32_t channels>
+template<typename T, int32_t channels>
 struct T2CvType {
 };
-template <int32_t channels>
+template<int32_t channels>
 struct T2CvType<float, channels> {
     static constexpr int32_t type = CV_MAKETYPE(CV_32F, channels);
 };
-template <int32_t channels>
+template<int32_t channels>
 struct T2CvType<uint8_t, channels> {
     static constexpr int32_t type = CV_MAKETYPE(CV_8U, channels);
 };
-template <int32_t channels>
+template<int32_t channels>
 struct T2CvType<int16_t, channels> {
     static constexpr int32_t type = CV_MAKETYPE(CV_16S, channels);
 };
 
 #define CV_GET_CHANNELS(type) (((type) >> 3) + 1)
-#define CV_GET_TYPE(type)     ((type) & 0x07)
+#define CV_GET_TYPE(type) ((type)&0x07)
 
 #endif // TINYCV_UNITTEST_OPENCV || TINYCV_BENCHMARK_OPENCV
 
@@ -84,13 +84,14 @@ constexpr int32_t subsample2 = 2;
 constexpr int32_t subsample3 = 3;
 constexpr int32_t subsample4 = 4;
 
-template <typename T, bool is_integral>
+template<typename T, bool is_integral>
 class RandomFillImpl;
 
-template <typename T>
-class RandomFillImpl<T, false> {
+template<typename T>
+class RandomFillImpl<T, false>
+{
 public:
-    static void randomFill(T* array, size_t N, T min, T max)
+    static void randomFill(T *array, size_t N, T min, T max)
     {
         std::default_random_engine eng(clock());
         std::uniform_real_distribution<T> dis(min, max);
@@ -100,10 +101,11 @@ public:
     }
 };
 
-template <typename T>
-class RandomFillImpl<T, true> {
+template<typename T>
+class RandomFillImpl<T, true>
+{
 public:
-    static void randomFill(T* array, size_t N, T min, T max)
+    static void randomFill(T *array, size_t N, T min, T max)
     {
         std::default_random_engine eng(clock());
 #ifdef _MSC_VER
@@ -118,20 +120,19 @@ public:
     }
 };
 
-template <typename T>
-inline void randomFill(T* array, size_t N, T min, T max)
+template<typename T>
+inline void randomFill(T *array, size_t N, T min, T max)
 {
     RandomFillImpl<T, std::is_integral<T>::value>::randomFill(array, N, min, max);
 }
 
-template <typename T>
-inline void randomFill(T* array, size_t N)
+template<typename T>
+inline void randomFill(T *array, size_t N)
 {
     RandomFillImpl<T, std::is_integral<T>::value>::randomFill(array, N, std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
 }
 
 } // namespace debug
-
 } // namespace tinycv
 
 #endif //! __ST_TINYCV_DEBUG_H_

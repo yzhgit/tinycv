@@ -18,8 +18,8 @@
 #ifndef __ST_HPC_TINYCV_TYPES_H_
 #define __ST_HPC_TINYCV_TYPES_H_
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 namespace tinycv {
 

@@ -15,16 +15,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <memory>
+
 #include "tinycv/copymakeborder.h"
 #include "tinycv/debug.h"
 
 #include <benchmark/benchmark.h>
 
-#include <memory>
-
 namespace {
 
-template <typename T, int32_t nc, tinycv::BorderType border_type>
+template<typename T, int32_t nc, tinycv::BorderType border_type>
 void BM_Copymakeborder_tinycv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -44,37 +44,37 @@ void BM_Copymakeborder_tinycv_x86(benchmark::State &state)
 }
 
 using namespace tinycv::debug;
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c1, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c3, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c4, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c1, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c3, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c4, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c1, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c3, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c4, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c1, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c3, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c4, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c1, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c3, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c4, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c1, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c3, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c4, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c1, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c3, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c4, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c1, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c3, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c4, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c1, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c3, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c4, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c1, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c3, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c4, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c1, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c3, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c4, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c1, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c3, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c4, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c1, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c3, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c4, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c1, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c3, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c4, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c1, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c3, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, float, c4, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c1, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c3, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_tinycv_x86, uint8_t, c4, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
 #ifdef TINYCV_BENCHMARK_OPENCV
 
-template <typename T, int32_t nc, tinycv::BorderType border_type>
+template<typename T, int32_t nc, tinycv::BorderType border_type>
 void BM_Copymakeborder_opencv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -106,32 +106,32 @@ void BM_Copymakeborder_opencv_x86(benchmark::State &state)
     state.SetItemsProcessed(state.iterations() * 1);
 }
 
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c1, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c3, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c4, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c1, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c3, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c4, tinycv::BORDER_CONSTANT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c1, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c3, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c4, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c1, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c3, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c4, tinycv::BORDER_CONSTANT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c1, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c3, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c4, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c1, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c3, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c4, tinycv::BORDER_REPLICATE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c1, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c3, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c4, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c1, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c3, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c4, tinycv::BORDER_REPLICATE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c1, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c3, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c4, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c1, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c3, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c4, tinycv::BORDER_REFLECT)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c1, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c3, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c4, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c1, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c3, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c4, tinycv::BORDER_REFLECT)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c1, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c3, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c4, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c1, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c3, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c4, tinycv::BORDER_REFLECT101)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c1, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c3, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, float, c4, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c1, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c3, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_Copymakeborder_opencv_x86, uint8_t, c4, tinycv::BORDER_REFLECT101)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 #endif //! TINYCV_BENCHMARK_OPENCV
 } // namespace

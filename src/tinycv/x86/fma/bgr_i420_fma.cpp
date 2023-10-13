@@ -15,39 +15,40 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <algorithm>
+#include <cmath>
+#include <immintrin.h>
+#include <limits.h>
+#include <string.h>
+
 #include "tinycv/types.h"
+
 #include "tinycv/x86/util.hpp"
 
-#include <string.h>
-#include <cmath>
-#include <limits.h>
-#include <immintrin.h>
-#include <algorithm>
-
-#define CY_coeff  1220542
+#define CY_coeff 1220542
 #define CUB_coeff 2116026
 #define CUG_coeff -409993
 #define CVG_coeff -852492
 #define CVR_coeff 1673527
-#define SHIFT     20
+#define SHIFT 20
 
 namespace tinycv {
 namespace fma {
 
 #define DESCALE(x, n) (((x) + (1 << ((n)-1))) >> (n))
 
-template <int32_t dstcn, int32_t blueIdx>
+template<int32_t dstcn, int32_t blueIdx>
 void i420_2_rgb(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUStride,
-    const uint8_t *inU,
-    int32_t inVStride,
-    const uint8_t *inV,
-    int32_t outWidthStride,
-    uint8_t *outData)
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUStride,
+        const uint8_t *inU,
+        int32_t inVStride,
+        const uint8_t *inV,
+        int32_t outWidthStride,
+        uint8_t *outData)
 {
     const uint8_t delta_uv = 128, alpha = 255;
     __m256i CY_coeff_VEC = _mm256_set1_epi32(CY_coeff);
@@ -153,28 +154,28 @@ void i420_2_rgb(
 }
 
 template void i420_2_rgb<3, 0>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUStride,
-    const uint8_t *inU,
-    int32_t inVStride,
-    const uint8_t *inV,
-    int32_t outWidthStride,
-    uint8_t *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUStride,
+        const uint8_t *inU,
+        int32_t inVStride,
+        const uint8_t *inV,
+        int32_t outWidthStride,
+        uint8_t *outData);
 
 template void i420_2_rgb<3, 2>(
-    int32_t height,
-    int32_t width,
-    int32_t inYStride,
-    const uint8_t *inY,
-    int32_t inUStride,
-    const uint8_t *inU,
-    int32_t inVStride,
-    const uint8_t *inV,
-    int32_t outWidthStride,
-    uint8_t *outData);
+        int32_t height,
+        int32_t width,
+        int32_t inYStride,
+        const uint8_t *inY,
+        int32_t inUStride,
+        const uint8_t *inU,
+        int32_t inVStride,
+        const uint8_t *inV,
+        int32_t outWidthStride,
+        uint8_t *outData);
 
-}
-} // namespace tinycv::fma
+} // namespace fma
+} // namespace tinycv

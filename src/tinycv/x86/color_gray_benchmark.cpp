@@ -15,16 +15,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <memory>
+
 #include "tinycv/cvtcolor.h"
 #include "tinycv/debug.h"
 
 #include <benchmark/benchmark.h>
 
-#include <memory>
-
 namespace {
 
-template <typename T>
+template<typename T>
 void BM_BGR2GRAY_tinycv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -40,11 +40,11 @@ void BM_BGR2GRAY_tinycv_x86(benchmark::State &state)
 
 using namespace tinycv::debug;
 
-BENCHMARK_TEMPLATE(BM_BGR2GRAY_tinycv_x86, float)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_BGR2GRAY_tinycv_x86, uint8_t)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_BGR2GRAY_tinycv_x86, float)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_BGR2GRAY_tinycv_x86, uint8_t)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
 #ifdef TINYCV_BENCHMARK_OPENCV
-template <typename T>
+template<typename T>
 void BM_BGR2GRAY_opencv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -60,8 +60,8 @@ void BM_BGR2GRAY_opencv_x86(benchmark::State &state)
     state.SetItemsProcessed(state.iterations() * 1);
 }
 
-BENCHMARK_TEMPLATE(BM_BGR2GRAY_opencv_x86, float)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_BGR2GRAY_opencv_x86, uint8_t)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_BGR2GRAY_opencv_x86, float)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_BGR2GRAY_opencv_x86, uint8_t)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
 #endif //! TINYCV_BENCHMARK_OPENCV
 } // namespace

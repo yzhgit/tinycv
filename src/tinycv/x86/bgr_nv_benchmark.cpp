@@ -15,13 +15,13 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#include <memory>
+
 #include "tinycv/cvtcolor.h"
 #include "tinycv/debug.h"
 
-#include <opencv2/imgproc.hpp>
 #include <benchmark/benchmark.h>
-
-#include <memory>
+#include <opencv2/imgproc.hpp>
 
 namespace {
 
@@ -30,7 +30,7 @@ enum NV2ColorMode { NV122RGB_MODE,
                     NV212RGB_MODE,
                     NV212BGR_MODE };
 
-template <typename T, NV2ColorMode mode>
+template<typename T, NV2ColorMode mode>
 void BM_NV2BGR_tinycv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -54,14 +54,14 @@ void BM_NV2BGR_tinycv_x86(benchmark::State &state)
 
 using namespace tinycv::debug;
 
-BENCHMARK_TEMPLATE(BM_NV2BGR_tinycv_x86, uint8_t, NV122RGB_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_NV2BGR_tinycv_x86, uint8_t, NV122BGR_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_NV2BGR_tinycv_x86, uint8_t, NV212RGB_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_NV2BGR_tinycv_x86, uint8_t, NV212BGR_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_NV2BGR_tinycv_x86, uint8_t, NV122RGB_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_NV2BGR_tinycv_x86, uint8_t, NV122BGR_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_NV2BGR_tinycv_x86, uint8_t, NV212RGB_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_NV2BGR_tinycv_x86, uint8_t, NV212BGR_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
 #ifdef TINYCV_BENCHMARK_OPENCV
 
-template <typename T, NV2ColorMode mode>
+template<typename T, NV2ColorMode mode>
 void BM_NV2BGR_opencv_x86(benchmark::State &state)
 {
     int32_t width = state.range(0);
@@ -87,10 +87,10 @@ void BM_NV2BGR_opencv_x86(benchmark::State &state)
 
 using namespace tinycv::debug;
 
-BENCHMARK_TEMPLATE(BM_NV2BGR_opencv_x86, uint8_t, NV122RGB_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_NV2BGR_opencv_x86, uint8_t, NV122BGR_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_NV2BGR_opencv_x86, uint8_t, NV212RGB_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
-BENCHMARK_TEMPLATE(BM_NV2BGR_opencv_x86, uint8_t, NV212BGR_MODE)->Args({320, 240})->Args({640, 480})->Args({1280, 720})->Args({1920, 1080})->Args({3840, 2160});
+BENCHMARK_TEMPLATE(BM_NV2BGR_opencv_x86, uint8_t, NV122RGB_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_NV2BGR_opencv_x86, uint8_t, NV122BGR_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_NV2BGR_opencv_x86, uint8_t, NV212RGB_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
+BENCHMARK_TEMPLATE(BM_NV2BGR_opencv_x86, uint8_t, NV212BGR_MODE)->Args({ 320, 240 })->Args({ 640, 480 })->Args({ 1280, 720 })->Args({ 1920, 1080 })->Args({ 3840, 2160 });
 
 #endif //! TINYCV_BENCHMARK_OPENCV
 } // namespace
